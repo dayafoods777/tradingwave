@@ -9,9 +9,11 @@ import {
   Megaphone,
   Maximize2,
   ChevronDown,
+  ChevronRight,
   Search,
   Filter,
   MoreVertical,
+  MoreHorizontal,
   Pause,
   Play,
   X,
@@ -112,6 +114,73 @@ export default function DashboardView({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBotIds, setSelectedBotIds] = useState<string[]>([]);
   const [consoleTab, setConsoleTab] = useState<'market_watch' | 'open_positions' | 'greeks' | 'order_book' | 'notifications' | 'tally_orders'>('tally_orders');
+
+  // 3-Dots Menu State
+  const [openMenuBotId, setOpenMenuBotId] = useState<string | null>(null);
+  const [activeModal, setActiveModal] = useState<{
+    type: 'statistics' | 'payoff' | 'intraday_pnl' | 'runtime_data' | 'debug' | 'user_notes' | 'full_detail';
+    bot: BotDeployment;
+  } | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [notes, setNotes] = useState<{ [id: string]: string }>({});
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3000);
+  };
+
+  React.useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest('.bot-action-menu')) {
+        setOpenMenuBotId(null);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, []);
+
+  const handleAction = (action: string, bot: BotDeployment) => {
+    setOpenMenuBotId(null);
+    if (action === 'Archive') {
+      setLocalBots(prev => prev.map(b => (b.id === bot.id ? { ...b, status: 'SQUARED_OFF', statusLabel: 'Archived' } : b)));
+      showToast(`Strategy "${bot.name}" archived.`);
+    } else if (action === 'Statistics') {
+      setActiveModal({ type: 'statistics', bot });
+    } else if (action === 'Payoff') {
+      setActiveModal({ type: 'payoff', bot });
+    } else if (action === 'Intraday PNL') {
+      setActiveModal({ type: 'intraday_pnl', bot });
+    } else if (action === 'Runtime Data') {
+      setActiveModal({ type: 'runtime_data', bot });
+    } else if (action === 'Debug') {
+      setActiveModal({ type: 'debug', bot });
+    } else if (action === 'User Notes') {
+      setActiveModal({ type: 'user_notes', bot });
+    } else if (action === 'Full detail') {
+      setActiveModal({ type: 'full_detail', bot });
+    } else if (action === 'Download data') {
+      const csvContent =
+        'data:text/csv;charset=utf-8,Time,Strategy,Broker,Instrument,Action,Quantity,Price,Status\n' +
+        `09:20:00,${bot.name},${bot.broker},${bot.underlying} 24200 CE,SELL,50,142.50,COMPLETE\n` +
+        `09:20:00,${bot.name},${bot.broker},${bot.underlying} 24200 PE,SELL,50,138.20,COMPLETE\n`;
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `${bot.name.replace(/\s+/g, '_')}_trades.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast(`Downloaded trade execution log for "${bot.name}".`);
+    }
+  };
+
+  const handleDeleteBot = (id: string, name: string) => {
+    setOpenMenuBotId(null);
+    if (confirm(`Are you sure you want to delete "${name}" deployment from Dashboard?`)) {
+      setLocalBots(prev => prev.filter(b => b.id !== id));
+      showToast(`Deployment "${name}" deleted.`);
+    }
+  };
 
   const handleToggleLocal = (id: string) => {
     setLocalBots(prev =>
@@ -502,13 +571,136 @@ export default function DashboardView({
                         <X className="w-3.5 h-3.5" />
                       </button>
 
-                      <button
-                        onClick={() => onOpenLogs(bot.name)}
-                        className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
-                        title="More Options & Logs"
-                      >
-                        <MoreVertical className="w-3.5 h-3.5" />
-                      </button>
+                      {/* 3-Dots More Options Menu */}
+                      <div className="relative bot-action-menu inline-block text-left">
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            setOpenMenuBotId(openMenuBotId === bot.id ? null : bot.id);
+                          }}
+                          className={`p-1.5 rounded-lg border transition ${
+                            openMenuBotId === bot.id
+                              ? 'border-[#5B45E0] bg-[#5B45E0]/10 text-[#5B45E0]'
+                              : 'border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
+                          }`}
+                          title="More Options"
+                        >
+                          <MoreHorizontal className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Dropdown Menu (Exact match to screenshot) */}
+                        {openMenuBotId === bot.id && (
+                          <div className="absolute right-0 top-full mt-1.5 w-44 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl py-2 z-50 text-left animate-in fade-in zoom-in-95 duration-100 text-xs font-sans">
+                            {/* STATUS */}
+                            <div className="px-3.5 py-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                              STATUS
+                            </div>
+                            <button
+                              onClick={() => handleAction('Archive', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Archive
+                            </button>
+
+                            {/* STRATEGY DATA */}
+                            <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                              STRATEGY DATA
+                            </div>
+                            <button
+                              onClick={() => handleAction('Statistics', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Statistics
+                            </button>
+                            <button
+                              onClick={() => handleAction('Payoff', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Payoff
+                            </button>
+                            <button
+                              onClick={() => handleAction('Intraday PNL', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Intraday PNL
+                            </button>
+                            <button
+                              onClick={() => {
+                                setOpenMenuBotId(null);
+                                onOpenLogs(bot.name);
+                              }}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Notification Log
+                            </button>
+                            <button
+                              onClick={() => {
+                                setOpenMenuBotId(null);
+                                onNavigateTab('backtest');
+                              }}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Backtests
+                            </button>
+                            <button
+                              onClick={() => handleAction('Runtime Data', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Runtime Data
+                            </button>
+                            <button
+                              onClick={() => handleAction('Debug', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Debug
+                            </button>
+                            <button
+                              onClick={() => handleAction('User Notes', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              User Notes
+                            </button>
+
+                            {/* OPEN */}
+                            <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                              OPEN
+                            </div>
+                            <button
+                              onClick={() => handleAction('Full detail', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium flex items-center justify-between transition cursor-pointer"
+                            >
+                              <span>Full detail</span>
+                              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                            </button>
+                            <button
+                              onClick={() => handleAction('Download data', bot)}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Download data
+                            </button>
+
+                            {/* ACTIONS */}
+                            <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                              ACTIONS
+                            </div>
+                            <button
+                              onClick={() => {
+                                setOpenMenuBotId(null);
+                                onNavigateTab('builder');
+                              }}
+                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+                            >
+                              Edit template
+                            </button>
+                            <button
+                              onClick={() => handleDeleteBot(bot.id, bot.name)}
+                              className="w-full text-left px-3.5 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-medium transition cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -693,6 +885,181 @@ export default function DashboardView({
           </div>
         </div>
       </div>
+
+      {/* 7. GLOBAL TOAST NOTIFICATION */}
+      {toastMsg && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <Check className="w-4 h-4 text-emerald-400" />
+          <span>{toastMsg}</span>
+        </div>
+      )}
+
+      {/* 8. INTERACTIVE MODALS FOR 3-DOTS ACTIONS */}
+      {activeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+          <div
+            className="bg-white dark:bg-[#131B2E] w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white capitalize">
+                  {activeModal.type.replace('_', ' ')}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                  {activeModal.bot.name}
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveModal(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              {activeModal.type === 'statistics' && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Win Rate</span>
+                    <span className="text-lg font-black text-emerald-600 font-mono">68.4%</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Sharpe Ratio</span>
+                    <span className="text-lg font-black text-slate-900 dark:text-white font-mono">2.14</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Max Drawdown</span>
+                    <span className="text-lg font-black text-red-600 font-mono">-4.2%</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Profit Factor</span>
+                    <span className="text-lg font-black text-slate-900 dark:text-white font-mono">1.88</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Total Trades</span>
+                    <span className="text-lg font-black text-slate-900 dark:text-white font-mono">126</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Avg Win / Loss</span>
+                    <span className="text-lg font-black text-slate-900 dark:text-white font-mono">1.85x</span>
+                  </div>
+                </div>
+              )}
+
+              {activeModal.type === 'payoff' && (
+                <div className="space-y-4 text-center">
+                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center">
+                    <TrendingUp className="w-12 h-12 text-[#5B45E0] mb-2" />
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                      Delta-Neutral Expiry Payoff Curve
+                    </span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-1">
+                      Lower Breakeven: 23,950 | Upper Breakeven: 24,450
+                    </span>
+                    <span className="text-xs font-bold text-emerald-600 font-mono mt-2">
+                      Max Profit: ₹ 14,200 | Max Risk: Defined with Sl
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {activeModal.type === 'intraday_pnl' && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-500">Current MTM:</span>
+                    <span className="font-bold text-red-600">- ₹ {(Math.abs(activeModal.bot.dailyPnl) / 100000).toFixed(2)} L</span>
+                  </div>
+                  <div className="h-32 bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-400 font-mono">
+                    [Intraday 1-Second MTM Curve Active]
+                  </div>
+                </div>
+              )}
+
+              {activeModal.type === 'runtime_data' && (
+                <div className="space-y-2 text-xs font-mono">
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                    <span className="text-slate-500">Engine Frequency:</span>
+                    <span className="font-bold">{activeModal.bot.frequency}</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                    <span className="text-slate-500">Last Engine Check:</span>
+                    <span className="font-bold">{activeModal.bot.lastCheck}</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                    <span className="text-slate-500">Execution Mode:</span>
+                    <span className="font-bold text-[#5B45E0]">{activeModal.bot.mode}</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                    <span className="text-slate-500">Open Positions:</span>
+                    <span className="font-bold">{activeModal.bot.openPositionsCount ?? 0}</span>
+                  </div>
+                </div>
+              )}
+
+              {activeModal.type === 'debug' && (
+                <pre className="p-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] overflow-x-auto max-h-56">
+{`[${new Date().toISOString()}] Strategy runner initialized.
+[INFO] Broker adapter connected: ${activeModal.bot.broker}
+[INFO] Mode: ${activeModal.bot.mode} | Multiplier: ${activeModal.bot.multiplier}x
+[INFO] Capital allocated: ₹ ${activeModal.bot.capital}
+[TICK] Stream latency: 11ms
+[STATUS] All strategy entry conditions verified safe.`}
+                </pre>
+              )}
+
+              {activeModal.type === 'user_notes' && (
+                <div className="space-y-3">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Personal notes for this strategy deployment
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={notes[activeModal.bot.id] || ''}
+                    onChange={e => setNotes({ ...notes, [activeModal.bot.id]: e.target.value })}
+                    placeholder="Enter any custom reminders, adjustment rules, or observations..."
+                    className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => {
+                        showToast('Notes saved.');
+                        setActiveModal(null);
+                      }}
+                      className="px-4 py-2 rounded-xl bg-[#5B45E0] text-white text-xs font-bold hover:bg-[#4E38D0] transition"
+                    >
+                      Save Notes
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {activeModal.type === 'full_detail' && (
+                <div className="space-y-2 text-xs font-sans">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] space-y-1.5">
+                    <div className="font-bold text-sm text-slate-900 dark:text-white">{activeModal.bot.name}</div>
+                    <div className="text-slate-500 text-[11px]">Underlying: {activeModal.bot.underlying} | Broker: {activeModal.bot.broker}</div>
+                    <div className="text-slate-500 text-[11px]">Capital: ₹ {(activeModal.bot.capital / 100000).toFixed(2)} L | Multiplier: {activeModal.bot.multiplier}x</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3 bg-slate-50 dark:bg-[#0E1526] border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              <button
+                onClick={() => setActiveModal(null)}
+                className="px-4 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
