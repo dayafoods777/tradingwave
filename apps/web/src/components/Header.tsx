@@ -5,7 +5,6 @@ import {
   Sparkles,
   Layers,
   Wand2,
-  Cpu,
   LineChart,
   Bot,
   Zap,
@@ -15,8 +14,6 @@ import {
   ShieldAlert,
   ChevronDown,
   ArrowRight,
-  BookOpen,
-  FileText,
   TrendingUp,
   LayoutGrid
 } from 'lucide-react';
@@ -126,113 +123,44 @@ export default function Header({
 
               {createMenuOpen && (
                 <div
-                  className="absolute left-0 top-full mt-2 w-[540px] bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-4 shadow-2xl z-50 grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute left-0 top-full mt-2 w-[480px] sm:w-[520px] bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                 >
-                  {/* Column 1: Build */}
-                  <div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#FF6600] mb-2 px-2">
-                      Build Strategy
-                    </div>
-                    <div className="space-y-1">
-                      <button
-                        onClick={() => handleSelectCreateItem('builder')}
-                        className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-orange-500/10 text-[#FF6600] group-hover:bg-[#FF6600] group-hover:text-white transition">
-                          <Cpu className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">Advanced Strategy Builder</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">Full control — sets, legs & conditions</div>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => handleSelectCreateItem('wizard')}
-                        className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition">
-                          <Wand2 className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">Option Wizard</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">Guided multi-leg straddles & spreads</div>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => handleSelectCreateItem('builder')}
-                        className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white transition">
-                          <Sparkles className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">Using AI (Claude / GPT)</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">Natural language prompt to algo</div>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => handleSelectCreateItem('wizard')}
-                        className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition">
-                          <LineChart className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">Pine Script Bridge</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">Webhook alerts from TradingView</div>
-                        </div>
-                      </button>
-                    </div>
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3 px-1">
+                    BUILD
                   </div>
 
-                  {/* Column 2: Ready-Made Setups */}
-                  <div className="border-l border-slate-200 dark:border-[#1E293B] pl-4">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 px-2">
-                      Ready-Made Setups
-                    </div>
-                    <div className="space-y-1">
-                      <button
-                        onClick={() => handleSelectCreateItem('builder')}
-                        className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-orange-500/10 text-[#FF6600] group-hover:bg-[#FF6600] group-hover:text-white transition">
-                          <BookOpen className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">Strategy Templates (7 Ready)</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">1-click 9:20 straddle, condor & scalpers</div>
-                        </div>
-                      </button>
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* 1. Using AI */}
+                    <button
+                      onClick={() => handleSelectCreateItem('builder')}
+                      className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:hover:border-[#1E293B] transition group flex flex-col items-start"
+                    >
+                      <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+                        <Sparkles className="w-5 h-5 stroke-[2.2]" />
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#4F46E5] dark:group-hover:text-[#818CF8] transition-colors">
+                        Using AI
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                        Connect Claude, ChatGPT and other AI tools
+                      </div>
+                    </button>
 
-                      <button
-                        onClick={() => handleSelectCreateItem('optionchain')}
-                        className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition">
-                          <Zap className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">Option Chain Strategy</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">Direct leg execution from NSE chain</div>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => handleSelectCreateItem('backtest')}
-                        className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
-                      >
-                        <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition">
-                          <LineChart className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">Backtest Simulation</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">Historical testing with zero lookahead</div>
-                        </div>
-                      </button>
-                    </div>
+                    {/* 2. Advanced Strategy Builder */}
+                    <button
+                      onClick={() => handleSelectCreateItem('builder')}
+                      className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:hover:border-[#1E293B] transition group flex flex-col items-start"
+                    >
+                      <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+                        <LayoutGrid className="w-5 h-5 stroke-[2.2]" />
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#4F46E5] dark:group-hover:text-[#818CF8] transition-colors">
+                        Advanced Strategy Builder
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                        Full control — sets, legs and conditions
+                      </div>
+                    </button>
                   </div>
                 </div>
               )}
