@@ -12,12 +12,25 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error('TradingWave Client-Side Error Boundary caught exception:', error);
+    // Automatic silent recovery for chunk mismatch after server rebuild
+    if (
+      typeof window !== 'undefined' &&
+      error?.message &&
+      (error.message.includes('Loading chunk') || error.message.includes('failed to fetch'))
+    ) {
+      const lastAttempt = sessionStorage.getItem('tw_chunk_auto_reload');
+      const now = Date.now();
+      if (!lastAttempt || now - parseInt(lastAttempt, 10) > 10000) {
+        sessionStorage.setItem('tw_chunk_auto_reload', String(now));
+        window.location.reload();
+      }
+    }
   }, [error]);
 
   const handleHardReload = () => {
     try {
       if (typeof window !== 'undefined') {
-        window.location.reload();
+        window.location.href = window.location.pathname + '?_t=' + Date.now();
       }
     } catch (_) {
       reset();
@@ -27,9 +40,8 @@ export default function GlobalError({
   const handleClearAndReload = () => {
     try {
       if (typeof window !== 'undefined') {
-        localStorage.clear();
         sessionStorage.clear();
-        window.location.href = '/';
+        window.location.href = '/?_t=' + Date.now();
       }
     } catch (_) {
       reset();
