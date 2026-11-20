@@ -27,6 +27,9 @@ export default function TradingWaveApp() {
   const [logModalBot, setLogModalBot] = useState<string | null>(null);
   const [brokerModalName, setBrokerModalName] = useState<string | null>(null);
 
+  // Connected Brokers state (starts empty, user connects via BrokerModal)
+  const [connectedBrokers, setConnectedBrokers] = useState<string[]>([]);
+
   // Global Notification Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -35,84 +38,8 @@ export default function TradingWaveApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Deployed Bots State
-  const [deployedBots, setDeployedBots] = useState<BotDeployment[]>([
-    {
-      id: 'bot_01',
-      name: 'NIFTY 9:20 Intraday Short Straddle',
-      underlying: 'NIFTY 50',
-      status: 'ACTIVE',
-      mode: 'LIVE_AUTO',
-      broker: 'Zerodha Kite',
-      multiplier: 2,
-      dailyPnl: 8450.0,
-      capital: 160000,
-      legs: ['SELL 2x 24350 CE @ 125.40', 'SELL 2x 24350 PE @ 118.20'],
-      lastCheck: '3s ago',
-      frequency: 'Continuous'
-    },
-    {
-      id: 'bot_02',
-      name: 'BANKNIFTY Multi-Timeframe Supertrend',
-      underlying: 'BANKNIFTY',
-      status: 'ACTIVE',
-      mode: 'LIVE_AUTO',
-      broker: 'DhanHQ',
-      multiplier: 1,
-      dailyPnl: 5800.0,
-      capital: 85000,
-      legs: ['BUY 1x 52200 CE @ 245.00'],
-      lastCheck: '5s ago',
-      frequency: 'Continuous'
-    },
-    {
-      id: 'bot_03',
-      name: 'NIFTY Weekly Iron Condor',
-      underlying: 'NIFTY 50',
-      status: 'ACTIVE',
-      mode: 'PAPER',
-      broker: 'Paper Sandbox',
-      multiplier: 1,
-      dailyPnl: 1850.0,
-      capital: 95000,
-      legs: ['BUY 24050 PE', 'SELL 24200 PE', 'SELL 24500 CE', 'BUY 24650 CE'],
-      lastCheck: '12s ago',
-      frequency: '1 min'
-    },
-    {
-      id: 'bot_04',
-      name: 'FINNIFTY 0-DTE Theta Scalper',
-      underlying: 'FINNIFTY',
-      status: 'ACTIVE',
-      mode: 'LIVE_OFFLINE',
-      broker: 'Zerodha Kite',
-      multiplier: 1,
-      dailyPnl: 2950.0,
-      capital: 120000,
-      legs: ['SELL 1x 23900 CE @ 64.00', 'SELL 1x 23900 PE @ 58.50'],
-      lastCheck: '1s ago',
-      frequency: 'Continuous'
-    }
-  ]);
-
-  // Live P&L tick simulation for realism
-  useEffect(() => {
-    if (isKillSwitchTriggered) return;
-    const interval = setInterval(() => {
-      setDeployedBots(prev =>
-        prev.map(b => {
-          if (b.status !== 'ACTIVE') return b;
-          const delta = (Math.random() - 0.45) * 35;
-          return {
-            ...b,
-            dailyPnl: Math.round((b.dailyPnl + delta) * 100) / 100
-          };
-        })
-      );
-    }, 2500);
-
-    return () => clearInterval(interval);
-  }, [isKillSwitchTriggered]);
+  // Deployed Bots State - Starts empty with 0 fake/dummy bots
+  const [deployedBots, setDeployedBots] = useState<BotDeployment[]>([]);
 
   // Theme synchronization (Default: Light Mode)
   const toggleTheme = () => {
@@ -157,7 +84,7 @@ export default function TradingWaveApp() {
   };
 
   const handleUniversalKillSwitch = () => {
-    if (confirm('🚨 EMERGENCY WARNING: Activate Universal Kill Switch? This will cancel all open orders and square off all live positions across Zerodha Kite, Dhan, and all connected brokers immediately.')) {
+    if (confirm('🚨 EMERGENCY WARNING: Activate Universal Kill Switch? This will cancel all open orders and square off all live positions across all connected brokers immediately.')) {
       setIsKillSwitchTriggered(true);
       setDeployedBots(prev => prev.map(b => ({ ...b, status: 'SQUARED_OFF' })));
       showToast('UNIVERSAL KILL SWITCH EXECUTED: All bot positions squared off.');
@@ -168,10 +95,10 @@ export default function TradingWaveApp() {
     const newBot: BotDeployment = {
       id: `bot_${Date.now()}`,
       name: strategyName,
-      underlying: 'NIFTY 50',
+      underlying: strategyName.includes('BANKNIFTY') ? 'BANKNIFTY' : 'NIFTY 50',
       status: 'ACTIVE',
       mode: 'PAPER',
-      broker: 'Paper Sandbox',
+      broker: connectedBrokers.length > 0 ? connectedBrokers[0] : 'Paper Sandbox',
       multiplier: 1,
       dailyPnl: 0,
       capital: 100000,
@@ -214,6 +141,7 @@ export default function TradingWaveApp() {
         {activeTab === 'dashboard' && (
           <DashboardView
             bots={deployedBots}
+            connectedBrokersCount={connectedBrokers.length}
             onToggleBot={handleToggleBot}
             onSquareOffBot={handleSquareOffBot}
             onOpenLogs={botName => setLogModalBot(botName)}
@@ -241,7 +169,10 @@ export default function TradingWaveApp() {
         )}
 
         {activeTab === 'brokers' && (
-          <BrokersView onConfigure={brokerName => setBrokerModalName(brokerName)} />
+          <BrokersView
+            connectedBrokers={connectedBrokers}
+            onConfigure={brokerName => setBrokerModalName(brokerName)}
+          />
         )}
 
         {activeTab === 'backtest' && (
@@ -273,6 +204,7 @@ export default function TradingWaveApp() {
         brokerName={brokerModalName || ''}
         onClose={() => setBrokerModalName(null)}
         onConnected={name => {
+          setConnectedBrokers(prev => (prev.includes(name) ? prev : [...prev, name]));
           showToast(`Successfully connected and authenticated ${name} API!`);
         }}
       />

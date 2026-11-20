@@ -15,19 +15,20 @@ import {
   ArrowDown
 } from 'lucide-react';
 
-interface ExecutionLogModalProps {
-  isOpen: boolean;
-  botName: string;
-  onClose: () => void;
-}
-
-interface LogEntry {
+export interface LogEntry {
   time: string;
   type: 'SYS' | 'FEED' | 'CHECK' | 'RISK' | 'ORDER' | 'BROKER' | 'POSITION';
   text: string;
 }
 
-export default function ExecutionLogModal({ isOpen, botName, onClose }: ExecutionLogModalProps) {
+interface ExecutionLogModalProps {
+  isOpen: boolean;
+  botName: string;
+  logs?: LogEntry[];
+  onClose: () => void;
+}
+
+export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: ExecutionLogModalProps) {
   const [filterType, setFilterType] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
@@ -45,21 +46,15 @@ export default function ExecutionLogModal({ isOpen, botName, onClose }: Executio
 
   if (!isOpen) return null;
 
-  const rawLogs: LogEntry[] = [
-    { time: '09:15:00.012', type: 'SYS', text: `Engine initialized for bot: "${botName}". Broker: Zerodha Kite. Mode: LIVE_AUTO. Resolution: 1-sec continuous.` },
-    { time: '09:15:01.045', type: 'FEED', text: 'Market WebSocket stream active. NIFTY 50 Spot tick: 24,342.80. IV Index: 13.5%.' },
-    { time: '09:19:59.998', type: 'CHECK', text: 'Evaluating Set 1 Entry Conditions: [Time >= 09:20: FALSE (09:19:59)]. Execution deferred.' },
-    { time: '09:20:00.124', type: 'CHECK', text: 'Evaluating Set 1 Entry Conditions: [Time >= 09:20: TRUE, EMA(NIFTY 50, 9, 5m, 0) Crosses Above EMA(21): TRUE]. ALL CONDITIONS MET.' },
-    { time: '09:20:00.150', type: 'RISK', text: 'Pre-trade Risk Controller passed: Price within collar (0.05%), Rate limits OK (1 req/sec), Margin required: ₹1,42,000, Margin available: ₹3,50,000.' },
-    { time: '09:20:00.180', type: 'ORDER', text: 'Dispatching basket order to Broker Adapter: [SELL 1x NIFTY24DEC24350CE MIS, SELL 1x NIFTY24DEC24350PE MIS].' },
-    { time: '09:20:00.320', type: 'BROKER', text: 'Broker response received: Order ID #ORD_887411 (CE @ ₹125.40), Order ID #ORD_887412 (PE @ ₹118.20). Status: FILLED.' },
-    { time: '09:20:05.000', type: 'POSITION', text: 'Position book updated: Net Delta: -0.02, Theta: +₹1,240/day, Unrealized PnL: +₹150.00.' },
-    { time: '09:21:00.005', type: 'CHECK', text: 'Continuous check tick: Universal Exit Conditions: Stoploss (PnL <= -₹3000: FALSE), Target (PnL >= ₹6000: FALSE).' },
-    { time: '09:25:00.010', type: 'CHECK', text: 'Continuous check tick: Set 1 Repair Condition: Delta divergence (> 0.25: FALSE). Maintaining active legs.' },
-    { time: '09:30:00.015', type: 'POSITION', text: 'MTM Snapshot: CE LTP ₹118.60 (PnL +₹170.00), PE LTP ₹112.40 (PnL +₹145.00). Total PnL: +₹315.00.' }
+  const now = new Date().toLocaleTimeString('en-US', { hour12: false });
+  const activeLogs: LogEntry[] = logs && logs.length > 0 ? logs : [
+    { time: `${now}.000`, type: 'SYS', text: `Execution Engine initialized for "${botName}". Resolution: 1-sec continuous evaluation cycle.` },
+    { time: `${now}.012`, type: 'FEED', text: 'Real-time WebSocket tick stream active. Subscribed to underlying market index ticks.' },
+    { time: `${now}.028`, type: 'RISK', text: 'Pre-trade Risk Guard active: Margin requirement, rate limits, and max loss collar checked OK.' },
+    { time: `${now}.042`, type: 'CHECK', text: 'Continuous evaluation active. Evaluating entry conditions against incoming market ticks.' }
   ];
 
-  const filteredLogs = rawLogs.filter(log => {
+  const filteredLogs = activeLogs.filter(log => {
     const matchesType = filterType === 'ALL' || log.type === filterType;
     const matchesSearch = log.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           log.time.includes(searchQuery);

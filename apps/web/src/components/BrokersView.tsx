@@ -12,44 +12,54 @@ interface BrokerInfo {
   segments: string[];
 }
 
-export const ALL_BROKERS: BrokerInfo[] = [
-  { name: 'Zerodha Kite', category: 'Discount', apiName: 'Kite Connect v3 REST & WebSocket', status: 'CONNECTED', algoCharge: '₹0 (Free on TradingWave)', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
-  { name: 'Dhan', category: 'Discount', apiName: 'DhanHQ v2 Fast REST API', status: 'CONNECTED', algoCharge: 'Free Official API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX', 'Currency'] },
-  { name: 'Angel One', category: 'Full Service', apiName: 'SmartAPI REST v2', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
-  { name: 'Groww', category: 'Discount', apiName: 'Groww Trading API v1', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Fyers', category: 'Discount', apiName: 'Fyers API v3 WebSocket', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
-  { name: 'Upstox', category: 'Discount', apiName: 'Upstox Pro API v2', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
-  { name: 'Kotak Neo', category: 'Full Service', apiName: 'Neo Trade API v2', status: 'READY_TO_CONNECT', algoCharge: 'Free for Youth Plan', segments: ['NSE EQ', 'NSE F&O', 'BSE'] },
-  { name: 'Finvasia', category: 'Discount', apiName: 'Shoonya API REST', status: 'READY_TO_CONNECT', algoCharge: 'Zero Brokerage & Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
-  { name: '5paisa', category: 'Discount', apiName: 'Open API 5paisa v2', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
-  { name: 'AliceBlue', category: 'Discount', apiName: 'ANT Web API v2', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
-  { name: 'FlatTrade', category: 'Discount', apiName: 'WallConnect Zero API', status: 'READY_TO_CONNECT', algoCharge: 'Zero Brokerage', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Motilal Oswal', category: 'Full Service', apiName: 'MO Trading API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
-  { name: 'Paytm Money', category: 'Discount', apiName: 'Paytm Money Algo API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'IIFL', category: 'Full Service', apiName: 'IIFL Blazr API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE'] },
-  { name: 'MStock', category: 'Discount', apiName: 'Mirae MStock API', status: 'READY_TO_CONNECT', algoCharge: 'Zero Brokerage Lifetime', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Delta India', category: 'Crypto & Global', apiName: 'Delta Exchange API v2', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['Crypto BTC/ETH Options'] },
-  { name: 'CoinDCX', category: 'Crypto & Global', apiName: 'CoinDCX Pro API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['Crypto Futures'] },
-  { name: 'Definedge', category: 'Discount', apiName: 'Definedge Securities API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Anand Rathi', category: 'Full Service', apiName: 'Trade Mobi API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Bigul', category: 'Discount', apiName: 'Bigul Speed API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Choice', category: 'Full Service', apiName: 'Jiffy Choice API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Firstock', category: 'Discount', apiName: 'TheFirstock API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Indira Securities', category: 'Full Service', apiName: 'Indira Trade API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Mastertrust', category: 'Discount', apiName: 'MasterConnect API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Nirmal Bang', category: 'Full Service', apiName: 'Beyond Trading API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Nuvama', category: 'Full Service', apiName: 'Nuvama Wealth API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'ICICI Direct Breeze', category: 'Full Service', apiName: 'Breeze API v2', status: 'READY_TO_CONNECT', algoCharge: 'Free for Prime', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'HDFC Sky', category: 'Discount', apiName: 'Sky Algo API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Sharekhan', category: 'Full Service', apiName: 'Sharekhan Espresso API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Coinswitch', category: 'Crypto & Global', apiName: 'CoinSwitchX API', status: 'READY_TO_CONNECT', algoCharge: 'Free API', segments: ['Crypto Spot & Perps'] }
+export const ALL_BROKERS_BASE: Omit<BrokerInfo, 'status'>[] = [
+  { name: 'Zerodha Kite', category: 'Discount', apiName: 'Kite Connect v3 REST & WebSocket', algoCharge: 'Free Official API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
+  { name: 'Dhan', category: 'Discount', apiName: 'DhanHQ v2 Fast REST API', algoCharge: 'Free Official API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX', 'Currency'] },
+  { name: 'Angel One', category: 'Full Service', apiName: 'SmartAPI REST v2', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
+  { name: 'Groww', category: 'Discount', apiName: 'Groww Trading API v1', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Fyers', category: 'Discount', apiName: 'Fyers API v3 WebSocket', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
+  { name: 'Upstox', category: 'Discount', apiName: 'Upstox Pro API v2', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
+  { name: 'Kotak Neo', category: 'Full Service', apiName: 'Neo Trade API v2', algoCharge: 'Free for Youth Plan', segments: ['NSE EQ', 'NSE F&O', 'BSE'] },
+  { name: 'Finvasia', category: 'Discount', apiName: 'Shoonya API REST', algoCharge: 'Zero Brokerage & Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
+  { name: '5paisa', category: 'Discount', apiName: 'Open API 5paisa v2', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
+  { name: 'AliceBlue', category: 'Discount', apiName: 'ANT Web API v2', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
+  { name: 'FlatTrade', category: 'Discount', apiName: 'WallConnect Zero API', algoCharge: 'Zero Brokerage', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Motilal Oswal', category: 'Full Service', apiName: 'MO Trading API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
+  { name: 'Paytm Money', category: 'Discount', apiName: 'Paytm Money Algo API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'IIFL', category: 'Full Service', apiName: 'IIFL Blazr API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE'] },
+  { name: 'MStock', category: 'Discount', apiName: 'Mirae MStock API', algoCharge: 'Zero Brokerage Lifetime', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Delta India', category: 'Crypto & Global', apiName: 'Delta Exchange API v2', algoCharge: 'Free API', segments: ['Crypto BTC/ETH Options'] },
+  { name: 'CoinDCX', category: 'Crypto & Global', apiName: 'CoinDCX Pro API', algoCharge: 'Free API', segments: ['Crypto Futures'] },
+  { name: 'Definedge', category: 'Discount', apiName: 'Definedge Securities API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Anand Rathi', category: 'Full Service', apiName: 'Trade Mobi API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Bigul', category: 'Discount', apiName: 'Bigul Speed API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Choice', category: 'Full Service', apiName: 'Jiffy Choice API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Firstock', category: 'Discount', apiName: 'TheFirstock API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Indira Securities', category: 'Full Service', apiName: 'Indira Trade API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Mastertrust', category: 'Discount', apiName: 'MasterConnect API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Nirmal Bang', category: 'Full Service', apiName: 'Beyond Trading API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Nuvama', category: 'Full Service', apiName: 'Nuvama Wealth API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'ICICI Direct Breeze', category: 'Full Service', apiName: 'Breeze API v2', algoCharge: 'Free for Prime', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'HDFC Sky', category: 'Discount', apiName: 'Sky Algo API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Sharekhan', category: 'Full Service', apiName: 'Sharekhan Espresso API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Coinswitch', category: 'Crypto & Global', apiName: 'CoinSwitchX API', algoCharge: 'Free API', segments: ['Crypto Spot & Perps'] }
 ];
 
-export default function BrokersView({ onConfigure }: { onConfigure: (brokerName: string) => void }) {
+interface BrokersViewProps {
+  onConfigure: (brokerName: string) => void;
+  connectedBrokers?: string[];
+}
+
+export default function BrokersView({ onConfigure, connectedBrokers = [] }: BrokersViewProps) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<'All' | 'Discount' | 'Full Service' | 'Crypto & Global'>('All');
 
-  const filtered = ALL_BROKERS.filter(b => {
+  const brokersList: BrokerInfo[] = ALL_BROKERS_BASE.map(b => ({
+    ...b,
+    status: connectedBrokers.includes(b.name) ? 'CONNECTED' : 'READY_TO_CONNECT'
+  }));
+
+  const filtered = brokersList.filter(b => {
     const matchCat = category === 'All' || b.category === category;
     const matchSearch = b.name.toLowerCase().includes(search.toLowerCase()) || b.apiName.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
@@ -68,11 +78,13 @@ export default function BrokersView({ onConfigure }: { onConfigure: (brokerName:
         </div>
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm">
-            <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">2 Active</div>
+            <div className={`text-lg font-bold ${connectedBrokers.length > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`}>
+              {connectedBrokers.length} Active
+            </div>
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Connected</div>
           </div>
           <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm">
-            <div className="text-lg font-bold text-slate-900 dark:text-white">38 Total</div>
+            <div className="text-lg font-bold text-slate-900 dark:text-white">{ALL_BROKERS_BASE.length} Total</div>
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Available</div>
           </div>
         </div>
@@ -106,67 +118,57 @@ export default function BrokersView({ onConfigure }: { onConfigure: (brokerName:
         </div>
       </div>
 
-      {/* Brokers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* Grid of Brokers */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map(broker => (
           <div
             key={broker.name}
-            className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] hover:border-slate-300 dark:hover:border-slate-700 transition flex flex-col justify-between shadow-sm dark:shadow-lg"
+            className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col justify-between hover:border-[#FF6600]/40 transition shadow-sm dark:shadow-md"
           >
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] flex items-center justify-center font-bold text-slate-800 dark:text-white text-sm shadow-inner">
-                    {broker.name.slice(0, 2).toUpperCase()}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-base text-slate-900 dark:text-white">{broker.name}</h3>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">{broker.category}</span>
-                  </div>
-                </div>
-
-                {broker.status === 'CONNECTED' ? (
-                  <span className="text-[11px] px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> Connected
-                  </span>
-                ) : (
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium">
-                    Ready
-                  </span>
-                )}
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                  {broker.category}
+                </span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                  broker.status === 'CONNECTED'
+                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                }`}>
+                  {broker.status === 'CONNECTED' ? '● Connected' : 'Ready to Connect'}
+                </span>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] space-y-1.5 mb-4 text-xs font-mono">
-                <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span>API Protocol:</span>
-                  <span className="text-slate-900 dark:text-white font-sans text-[11px]">{broker.apiName}</span>
-                </div>
-                <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span>Algo Fees:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-sans text-[11px] font-semibold">{broker.algoCharge}</span>
-                </div>
+              <h3 className="font-bold text-base text-slate-900 dark:text-white">{broker.name}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">{broker.apiName}</p>
+
+              <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                <span className="text-slate-500">API Cost:</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400">{broker.algoCharge}</span>
               </div>
 
-              <div className="flex flex-wrap gap-1 mb-4">
-                {broker.segments.map(seg => (
-                  <span key={seg} className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-400 font-semibold">
-                    {seg}
+              <div className="mt-2 flex flex-wrap gap-1">
+                {broker.segments.map(s => (
+                  <span key={s} className="text-[9px] px-1.5 py-0.5 rounded bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-slate-600 dark:text-slate-400 font-mono">
+                    {s}
                   </span>
                 ))}
               </div>
             </div>
 
-            <button
-              onClick={() => onConfigure(broker.name)}
-              className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition ${
-                broker.status === 'CONNECTED'
-                  ? 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700'
-                  : 'bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
-              }`}
-            >
-              <Key className="w-3.5 h-3.5" />
-              <span>{broker.status === 'CONNECTED' ? 'Manage Credentials & Token' : 'Connect Broker API'}</span>
-            </button>
+            <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-2">
+              <button
+                onClick={() => onConfigure(broker.name)}
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                  broker.status === 'CONNECTED'
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white hover:bg-slate-200'
+                    : 'bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
+                }`}
+              >
+                <Key className="w-3.5 h-3.5" />
+                <span>{broker.status === 'CONNECTED' ? 'Edit Credentials' : 'Connect Account'}</span>
+              </button>
+            </div>
           </div>
         ))}
       </div>
