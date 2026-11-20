@@ -100,29 +100,6 @@ interface DashboardViewProps {
   onNavigateTab: (tab: any) => void;
 }
 
-// Default initial deployment from Tradetron screenshot
-const DEFAULT_TRADETRON_DEPLOYMENT: BotDeployment = {
-  id: 'bot_nifty_ohol_01',
-  name: 'TradingWave Nifty OHOL 3M',
-  underlying: 'NIFTY 50',
-  status: 'ACTIVE',
-  mode: 'PAPER',
-  broker: 'TT Paper Trading',
-  multiplier: 1,
-  dailyPnl: -935080,
-  capital: 100000,
-  legs: ['SELL 1x ATM CE', 'SELL 1x ATM PE'],
-  lastCheck: 'Just now',
-  frequency: 'Continuous',
-  sid: '30844042',
-  author: 'algobulls',
-  statusLabel: 'Live-Entered',
-  openPositionsCount: 0,
-  totalPositionsCount: 126,
-  pnlPercent: -935.08,
-  runCount: 5
-};
-
 export default function DashboardView({
   bots,
   connectedBrokersCount = 0,
@@ -131,20 +108,12 @@ export default function DashboardView({
   onOpenLogs,
   onNavigateTab
 }: DashboardViewProps) {
-  // Combine passed bots with default screenshot bot if bots is empty or append
-  const [localBots, setLocalBots] = useState<BotDeployment[]>([
-    DEFAULT_TRADETRON_DEPLOYMENT,
-    ...bots.filter(b => b.name !== DEFAULT_TRADETRON_DEPLOYMENT.name)
-  ]);
+  // Real deployed bots (zero fake data by default, exactly as shown in screenshot)
+  const [localBots, setLocalBots] = useState<BotDeployment[]>(bots);
 
   // Keep synced with parent bots
   React.useEffect(() => {
-    if (bots.length > 0) {
-      setLocalBots(prev => {
-        const custom = bots.filter(b => b.id !== DEFAULT_TRADETRON_DEPLOYMENT.id);
-        return [DEFAULT_TRADETRON_DEPLOYMENT, ...custom];
-      });
-    }
+    setLocalBots(bots);
   }, [bots]);
 
   const [activeFilterPill, setActiveFilterPill] = useState<'All' | 'Deployed' | 'Archived' | 'Shared'>('All');
@@ -281,6 +250,14 @@ export default function DashboardView({
     );
   });
 
+  // Dynamic metrics calculated from live deployments (zero fake data)
+  const totalDeployedCount = filteredBots.length;
+  const totalDeployedCapital = filteredBots.reduce((sum, b) => sum + (b.capital || 0), 0);
+  const totalPnl = filteredBots.reduce((sum, b) => sum + (b.dailyPnl || 0), 0);
+  const openMarketValue = 0;
+  const activeStrategiesCount = filteredBots.filter(b => b.status === 'ACTIVE').length;
+  const totalOpenPositions = filteredBots.reduce((sum, b) => sum + (b.openPositionsCount || 0), 0);
+
   return (
     <div className="space-y-6 pb-12">
       {/* 1. TOP TICKER STRIP (Tradetron Live Continuous Scrolling Ticker) */}
@@ -363,90 +340,91 @@ export default function DashboardView({
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
-            <Megaphone className="w-3.5 h-3.5 text-slate-400" />
+          <button className="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
+            <Megaphone className="w-3.5 h-3.5 text-slate-500" />
             <span>Alerts</span>
           </button>
-          <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
-            <Maximize2 className="w-3.5 h-3.5 text-slate-400" />
+          <button className="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
+            <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
             <span>Pop out P&amp;L</span>
           </button>
           <div className="flex items-center gap-2 text-xs">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">SHOWING</span>
-            <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1F2937] text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            <button className="px-4 py-1 rounded-full border border-[#5B45E0] dark:border-[#818CF8] bg-white dark:bg-[#1F2937] text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
               <span>Today</span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4. THREE TOP METRIC CARDS (Exact match to screenshot) */}
+      {/* 4. THREE TOP METRIC CARDS (Exact match to screenshot media_1795199082798_d1a3d96a.png) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Card 1: DEPLOYED CAPITAL */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
-            <CreditCard className="w-4 h-4 text-slate-400" />
-            <span>DEPLOYED CAPITAL</span>
+        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+              <CreditCard className="w-4 h-4 text-slate-400" />
+              <span>DEPLOYED CAPITAL</span>
+            </div>
+            <div className="text-xs text-slate-400 font-medium">
+              Across {totalDeployedCount} deployed strateg{totalDeployedCount === 1 ? 'y' : 'ies'}
+            </div>
           </div>
-          <div className="my-4">
-            <span className="text-3xl font-black text-slate-900 dark:text-white font-mono">
-              ₹ 1.00 L
+          <div className="text-right">
+            <span className="text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
+              {totalDeployedCapital > 0 ? `₹ ${(totalDeployedCapital / 100000).toFixed(2)} L` : '0.00'}
             </span>
-          </div>
-          <div className="text-xs text-slate-400 font-medium">
-            Across {filteredBots.length} deployed strateg{filteredBots.length === 1 ? 'y' : 'ies'}
           </div>
         </div>
 
-        {/* Card 2: P&L (With subtle rounded highlight border) */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border-2 border-indigo-100 dark:border-indigo-950/60 shadow-sm flex flex-col justify-between relative overflow-hidden">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
-                <TrendingUp className="w-4 h-4 text-slate-400" />
-                <span>P&amp;L</span>
-              </div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-mono whitespace-nowrap">
-                - ₹ 1.16 L booked today · +₹ 0.00 open
-              </div>
-              <div className="text-[11px] text-slate-400 font-mono mt-0.5 whitespace-nowrap">
-                Market value of open positions: ₹ 0.00
-              </div>
+        {/* Card 2: P&L (With subtle purple/indigo highlight border matching screenshot) */}
+        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border-2 border-indigo-100 dark:border-indigo-950/60 shadow-sm flex items-center justify-between relative overflow-hidden">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+              <TrendingUp className="w-4 h-4 text-slate-400" />
+              <span>P&amp;L</span>
             </div>
-
-            {/* Red MTM Negative Value */}
-            <div className="text-right shrink-0">
-              <div className="text-red-600 dark:text-red-400 font-black text-2xl font-mono whitespace-nowrap tracking-tight">
-                -₹ 1.16 L
-              </div>
-              <div className="mt-1 flex justify-end">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 text-xs font-bold font-mono whitespace-nowrap">
-                  <span className="text-[10px] leading-none">▼</span>
-                  <span>-116.12%</span>
-                </span>
-              </div>
+            <div className="text-xs text-slate-400 font-mono">
+              Market value of open positions: {openMarketValue.toFixed(2)}
             </div>
           </div>
 
-          <div className="text-right text-[11px] text-slate-400 font-medium mt-3">
-            Live Offline only
+          <div className="text-right shrink-0">
+            {totalPnl === 0 ? (
+              <div className="text-emerald-600 dark:text-emerald-400 font-black text-3xl font-mono flex items-center justify-end gap-1.5 whitespace-nowrap tracking-tight">
+                <span className="text-base leading-none">▲</span>
+                <span>+0.00</span>
+              </div>
+            ) : totalPnl > 0 ? (
+              <div className="text-emerald-600 dark:text-emerald-400 font-black text-3xl font-mono flex items-center justify-end gap-1.5 whitespace-nowrap tracking-tight">
+                <span className="text-base leading-none">▲</span>
+                <span>+₹ ${(totalPnl / 100000).toFixed(2)} L</span>
+              </div>
+            ) : (
+              <div className="text-red-600 dark:text-red-400 font-black text-3xl font-mono flex items-center justify-end gap-1.5 whitespace-nowrap tracking-tight">
+                <span className="text-base leading-none">▼</span>
+                <span>-₹ {(Math.abs(totalPnl) / 100000).toFixed(2)} L</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Card 3: OPEN POSITIONS */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
-            <Layers className="w-4 h-4 text-slate-400" />
-            <span>OPEN POSITIONS</span>
+        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+              <Layers className="w-4 h-4 text-slate-400" />
+              <span>OPEN POSITIONS</span>
+            </div>
+            <div className="text-xs text-slate-400 font-medium">
+              {activeStrategiesCount} strateg{activeStrategiesCount === 1 ? 'y' : 'ies'} running
+            </div>
           </div>
-          <div className="my-4">
-            <span className="text-3xl font-black text-slate-900 dark:text-white font-mono">
-              0
+          <div className="text-right">
+            <span className="text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
+              {totalOpenPositions}
             </span>
-          </div>
-          <div className="text-xs text-slate-400 font-medium">
-            {filteredBots.filter(b => b.status === 'ACTIVE').length} strategy running
           </div>
         </div>
       </div>
@@ -523,7 +501,36 @@ export default function DashboardView({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-sans">
-              {filteredBots.map((bot, idx) => (
+              {filteredBots.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="py-16 text-center text-slate-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Layers className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+                      <div className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+                        No deployed strategies yet
+                      </div>
+                      <div className="text-xs text-slate-400 max-w-sm">
+                        Deploy strategies from{' '}
+                        <button
+                          onClick={() => onNavigateTab('mystrategies')}
+                          className="text-[#5B45E0] dark:text-[#818CF8] font-semibold underline hover:brightness-110"
+                        >
+                          My Strategies
+                        </button>{' '}
+                        or{' '}
+                        <button
+                          onClick={() => onNavigateTab('readystrategies')}
+                          className="text-[#5B45E0] dark:text-[#818CF8] font-semibold underline hover:brightness-110"
+                        >
+                          Ready Strategies
+                        </button>{' '}
+                        to monitor live execution here.
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredBots.map((bot, idx) => (
                 <tr
                   key={bot.id}
                   className={`hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition ${
@@ -648,7 +655,7 @@ export default function DashboardView({
                     </div>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>
