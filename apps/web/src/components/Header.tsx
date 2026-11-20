@@ -6,7 +6,6 @@ import {
   Layers,
   Wand2,
   Cpu,
-  ShoppingBag,
   LineChart,
   Bot,
   Zap,
@@ -176,15 +175,15 @@ export default function Header({
                     </button>
 
                     <button
-                      onClick={() => handleSelectCreateItem('marketplace')}
+                      onClick={() => handleSelectCreateItem('backtest')}
                       className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-start gap-2.5 group"
                     >
-                      <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white transition">
-                        <ShoppingBag className="w-4 h-4" />
+                      <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition">
+                        <LineChart className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-slate-900 dark:text-white">Clone from Marketplace</div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400">300+ profitable quants to duplicate</div>
+                        <div className="text-xs font-bold text-slate-900 dark:text-white">Backtest Simulation</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">Historical testing with zero lookahead</div>
                       </div>
                     </button>
                   </div>
@@ -195,16 +194,6 @@ export default function Header({
 
           {/* Primary Top Nav Links */}
           <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-slate-600 dark:text-slate-300">
-            <button
-              onClick={() => setActiveTab('marketplace')}
-              className={`hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5 ${activeTab === 'marketplace' ? 'text-[#FF6600] font-bold' : ''}`}
-            >
-              <span>Marketplace</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-orange-500/15 text-[#FF6600] font-bold">
-                300+
-              </span>
-            </button>
-
             <button
               onClick={() => setActiveTab('brokers')}
               className={`hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5 ${activeTab === 'brokers' ? 'text-[#FF6600] font-bold' : ''}`}
@@ -290,7 +279,6 @@ export default function Header({
             { id: 'builder', label: '🛠️ Advanced Strategy Builder' },
             { id: 'wizard', label: '🧙 Option Wizard & Greeks' },
             { id: 'optionchain', label: '📊 Live Option Chain' },
-            { id: 'marketplace', label: '🏪 Strategy Marketplace' },
             { id: 'brokers', label: '🔌 38+ Brokers & APIs' },
             { id: 'backtest', label: '📈 Backtest Studio' },
             { id: 'pricing', label: '💳 Plans & Pricing (7 Tiers)' }

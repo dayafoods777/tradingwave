@@ -97,15 +97,15 @@ export default function PricingView() {
       monthlyPrice: '₹10,000',
       yearlyPrice: '₹8,300',
       period: '/month',
-      description: 'For algo creators and quant influencers publishing strategies on Marketplace.',
+      description: 'For algo creators and quant teams running high-capacity automated strategies.',
       badge: 'Creators Choice',
       highlight: false,
       features: [
         '32 Live Trading Bots',
-        'Publish on TradingWave Marketplace',
-        'Automated subscriber billing',
-        'Creator revenue share (85%)',
-        'Public performance verification badge'
+        'Institutional API & Webhook Dispatch',
+        'Automated multi-account execution',
+        'Advanced Risk & Margin Governor',
+        'Dedicated Execution Node'
       ],
       cta: 'Choose Creator'
     },
@@ -230,7 +230,7 @@ export default function PricingView() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-lg text-slate-900 dark:text-white">Advanced & Creator Tiers</h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400">For high-volume traders, quant hedge funds, and marketplace creators</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">For high-volume traders, quant hedge funds, and private wealth desks</p>
           </div>
         </div>
 

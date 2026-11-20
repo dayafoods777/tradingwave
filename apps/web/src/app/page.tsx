@@ -6,7 +6,6 @@ import DashboardView, { BotDeployment } from '../components/DashboardView';
 import StrategyBuilderView from '../components/StrategyBuilderView';
 import OptionWizardView from '../components/OptionWizardView';
 import OptionChainView from '../components/OptionChainView';
-import MarketplaceView from '../components/MarketplaceView';
 import BrokersView from '../components/BrokersView';
 import BacktestView from '../components/BacktestView';
 import PricingView from '../components/PricingView';
@@ -16,7 +15,7 @@ import BrokerModal from '../components/BrokerModal';
 
 export default function TradingWaveApp() {
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'builder' | 'wizard' | 'optionchain' | 'marketplace' | 'brokers' | 'backtest' | 'pricing'
+    'dashboard' | 'builder' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
   >('dashboard');
 
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
@@ -179,11 +178,6 @@ export default function TradingWaveApp() {
     showToast(`Deployed "${strategyName}" to Paper Trading successfully!`);
   };
 
-  const handleCloneToBuilder = (strategyName: string) => {
-    setActiveTab('builder');
-    showToast(`Cloned "${strategyName}" into Strategy Builder.`);
-  };
-
   const handleAddLegFromChain = (strike: number, type: 'CALL' | 'PUT', action: 'BUY' | 'SELL') => {
     showToast(`Added ${action} ${strike} ${type} leg to Strategy Builder!`);
     setActiveTab('builder');
@@ -238,13 +232,6 @@ export default function TradingWaveApp() {
 
         {activeTab === 'optionchain' && (
           <OptionChainView onAddLeg={handleAddLegFromChain} />
-        )}
-
-        {activeTab === 'marketplace' && (
-          <MarketplaceView
-            onDeploy={handleDeployNew}
-            onClone={handleCloneToBuilder}
-          />
         )}
 
         {activeTab === 'brokers' && (
@@ -306,7 +293,7 @@ export default function TradingWaveApp() {
           <div className="flex items-center gap-6 text-slate-600 dark:text-slate-400">
             <button onClick={() => setActiveTab('pricing')} className="hover:text-slate-900 dark:hover:text-white transition">Pricing</button>
             <button onClick={() => setActiveTab('brokers')} className="hover:text-slate-900 dark:hover:text-white transition">38+ Brokers</button>
-            <button onClick={() => setActiveTab('marketplace')} className="hover:text-slate-900 dark:hover:text-white transition">Marketplace</button>
+            <button onClick={() => setActiveTab('backtest')} className="hover:text-slate-900 dark:hover:text-white transition">Backtest Studio</button>
             <span className="text-slate-300 dark:text-slate-600">|</span>
             <span>Zero-Eval DSL</span>
             <span>SEBI & FinTech Compliant</span>
