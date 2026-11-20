@@ -487,16 +487,24 @@ export default function TradingWaveApp() {
         {/* ========================================================= */}
         {activeTab === 'wizard' && (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-white">Options Strategy Wizard</h2>
-              <p className="text-xs text-slate-400 mt-0.5">Quickly construct multi-leg option strategies with visual payoff curves.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-white">Options Strategy Wizard & Payoff Visualizer</h2>
+                <p className="text-xs text-slate-400 mt-0.5">Real-time dynamic payoff curve, breakeven analysis, and multi-leg Greeks modeling.</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-slate-400">Strategy Preset:</span>
+                <span className="text-xs font-bold bg-[#FF6600]/20 text-[#FF6600] border border-[#FF6600]/30 px-3 py-1 rounded-lg">
+                  NIFTY ATM Short Straddle
+                </span>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {['Short Straddle', 'Short Strangle', 'Iron Condor', 'Calendar Spread'].map((preset) => (
                 <div key={preset} className="bg-[#131B2E] border border-[#1E293B] hover:border-[#FF6600] p-4 rounded-xl cursor-pointer transition-all shadow-sm">
                   <div className="font-bold text-white text-base">{preset}</div>
-                  <div className="text-xs text-slate-400 mt-1">Non-directional income with theta decay.</div>
+                  <div className="text-xs text-slate-400 mt-1">Multi-leg defined theta income setup.</div>
                   <button className="mt-4 w-full bg-[#1E293B] hover:bg-[#FF6600] hover:text-white text-xs font-semibold py-2 rounded-lg transition-colors">
                     Load Setup
                   </button>
@@ -504,14 +512,77 @@ export default function TradingWaveApp() {
               ))}
             </div>
 
-            {/* Payoff Simulation Box */}
-            <div className="bg-[#131B2E] border border-[#1E293B] p-5 rounded-xl">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-bold text-sm text-white">Payoff Curve & Risk Metrics (NIFTY Short Straddle)</span>
-                <span className="text-xs text-emerald-400 font-mono">Max Profit: ₹14,200 · Max Loss: Unlimited</span>
+            {/* Interactive Dynamic SVG Payoff Visualizer */}
+            <div className="bg-[#131B2E] border border-[#1E293B] p-5 rounded-xl space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#1E293B] pb-3">
+                <div>
+                  <span className="font-bold text-sm text-white">Interactive Expiry Payoff Curve (NIFTY 24,500 Strike)</span>
+                  <div className="text-xs text-slate-400">Total Premium Collected: ₹284.00 (₹14,200 / lot)</div>
+                </div>
+                <div className="flex items-center gap-4 text-xs font-mono">
+                  <div>Max Profit: <span className="font-bold text-emerald-400">+₹14,200</span></div>
+                  <div>Max Loss: <span className="font-bold text-red-400">Unlimited</span></div>
+                  <div>Lower BE: <span className="font-bold text-slate-200">24,216</span></div>
+                  <div>Upper BE: <span className="font-bold text-slate-200">24,784</span></div>
+                </div>
               </div>
-              <div className="h-44 bg-[#0B0F19] rounded-lg border border-[#1E293B] flex items-center justify-center text-slate-500 font-mono text-xs">
-                [ Interactive Payoff Canvas: Breakeven 24,216 — 24,784 ]
+
+              {/* SVG Payoff Curve */}
+              <div className="w-full h-56 bg-[#0B0F19] rounded-lg border border-[#1E293B] p-4 flex flex-col justify-between relative overflow-hidden">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 800 200">
+                  {/* Grid Lines */}
+                  <line x1="0" y1="100" x2="800" y2="100" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
+                  <line x1="400" y1="0" x2="400" y2="200" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
+                  
+                  {/* Breakeven Vertical Lines */}
+                  <line x1="250" y1="20" x2="250" y2="180" stroke="#F59E0B" strokeWidth="1" strokeDasharray="2 2" />
+                  <line x1="550" y1="20" x2="550" y2="180" stroke="#F59E0B" strokeWidth="1" strokeDasharray="2 2" />
+
+                  {/* Profit Fill Polygon */}
+                  <polygon points="250,100 400,30 550,100" fill="rgba(16, 185, 129, 0.15)" />
+
+                  {/* Payoff Polyline */}
+                  <polyline
+                    fill="none"
+                    stroke="#FF6600"
+                    strokeWidth="3"
+                    points="0,180 150,140 250,100 400,30 550,100 650,140 800,180"
+                  />
+
+                  {/* Spot Marker Dot */}
+                  <circle cx="400" cy="30" r="5" fill="#FF6600" stroke="#FFFFFF" strokeWidth="2" />
+                  <text x="410" y="25" fill="#F8FAFC" fontSize="11" fontFamily="monospace">Current Spot: 24,532 (Max Profit)</text>
+                  <text x="210" y="115" fill="#F59E0B" fontSize="10" fontFamily="monospace">BE: 24,216</text>
+                  <text x="560" y="115" fill="#F59E0B" fontSize="10" fontFamily="monospace">BE: 24,784</text>
+                </svg>
+
+                <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-1 border-t border-[#1E293B]">
+                  <span>23,800 (-3.0%)</span>
+                  <span>24,200 (-1.5%)</span>
+                  <span className="text-[#FF6600] font-bold">24,500 ATM</span>
+                  <span>24,800 (+1.5%)</span>
+                  <span>25,200 (+3.0%)</span>
+                </div>
+              </div>
+
+              {/* Combined Portfolio Greeks */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#1E293B]">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Net Delta (Δ)</div>
+                  <div className="text-base font-bold font-mono text-emerald-400 mt-0.5">+0.02 (Delta Neutral)</div>
+                </div>
+                <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#1E293B]">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Net Theta (Θ)</div>
+                  <div className="text-base font-bold font-mono text-emerald-400 mt-0.5">+₹1,450.00 / day</div>
+                </div>
+                <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#1E293B]">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Net Gamma (Γ)</div>
+                  <div className="text-base font-bold font-mono text-red-400 mt-0.5">-0.00145</div>
+                </div>
+                <div className="bg-[#0B0F19] p-3 rounded-lg border border-[#1E293B]">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Net Vega (ν)</div>
+                  <div className="text-base font-bold font-mono text-red-400 mt-0.5">-₹320.00 / 1% IV</div>
+                </div>
               </div>
             </div>
           </div>

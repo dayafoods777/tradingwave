@@ -5,6 +5,7 @@ import { SandboxBrokerAdapter } from '@tradingwave/broker-adapters';
 import { OptionChainGenerator } from '@tradingwave/market-data';
 import { DeployedBot, BotRunner } from '@tradingwave/execution-engine';
 import { BacktestEngine, BacktestConfig } from '@tradingwave/backtesting';
+import { MemoryDatabase } from '@tradingwave/database';
 
 export function buildServer(): FastifyInstance {
   const server = Fastify({ logger: false });
@@ -14,7 +15,9 @@ export function buildServer(): FastifyInstance {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
   });
 
-  // In-memory data store for the modular prototype
+  const db = new MemoryDatabase();
+  const currentTenantId = 'tenant_default';
+  const currentUserId = 'user_default';
   const strategies: Map<string, StrategyDefinition> = new Map();
   const deployedBots: Map<string, DeployedBot> = new Map();
   const sandboxBroker = new SandboxBrokerAdapter({ initialBalance: 1000000 });

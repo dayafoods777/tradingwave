@@ -78,6 +78,35 @@ describe('TradingWave DSL Evaluator', () => {
     expect(ConditionEvaluator.evaluate(crossNode, mockContext)).toBe(true);
   });
 
+  it('should calculate Bollinger Bands, MACD, and VWAP keywords correctly', () => {
+    const vwapNode: ASTNode = {
+      type: 'COMPARISON',
+      operator: '>',
+      left: { type: 'KEYWORD_CALL', keyword: 'VWAP' },
+      right: { type: 'LITERAL', dataType: 'NUMBER', value: 20000 }
+    };
+    expect(ConditionEvaluator.evaluate(vwapNode, mockContext)).toBe(true);
+
+    const bbNode: ASTNode = {
+      type: 'COMPARISON',
+      operator: '>',
+      left: { type: 'KEYWORD_CALL', keyword: 'BOLLINGER_UPPER', arguments: { period: 2 } },
+      right: { type: 'KEYWORD_CALL', keyword: 'BOLLINGER_LOWER', arguments: { period: 2 } }
+    };
+    expect(ConditionEvaluator.evaluate(bbNode, mockContext)).toBe(true);
+  });
+
+  it('should evaluate ZScore statistical keyword', () => {
+    const zNode: ASTNode = {
+      type: 'COMPARISON',
+      operator: '>=',
+      left: { type: 'KEYWORD_CALL', keyword: 'ZSCORE', arguments: { period: 2 } },
+      right: { type: 'LITERAL', dataType: 'NUMBER', value: 0 }
+    };
+    // Close 24500 is above SMA(2) of 24490, so ZScore > 0
+    expect(ConditionEvaluator.evaluate(zNode, mockContext)).toBe(true);
+  });
+
   it('should validate complete strategy definition with no errors', () => {
     const strategy: StrategyDefinition = {
       id: 'strat-101',

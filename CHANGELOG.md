@@ -2,6 +2,14 @@
 
 All notable changes to the TradingWave project will be documented in this file.
 
+## [0.3.0] - 2026-11-20
+### Added
+- Expanded `@tradingwave/dsl` with quantitative indicators: MACD (MACD, Signal, Hist), Bollinger Bands (Upper, Lower, Bandwidth, %B), VWAP, Stochastic Oscillator (%K, %D), Central Pivot Range (CPR: Pivot, TC, BC), and Scipy-equivalent ZScore statistical indicator.
+- Added direct Indian broker adapters in `@tradingwave/broker-adapters`: `ZerodhaKiteAdapter` (SHA-256 checksum generation, Kite Connect v3 orders, 24h token) and `DhanAdapter` (DhanHQ v2 API, 30-day token support).
+- Implemented `@tradingwave/database` with multi-tenant repository pattern, schema types, and strict tenant boundary isolation.
+- Enhanced `@tradingwave/web` Options Wizard with an interactive dynamic SVG Payoff Visualizer (Max Profit, Max Loss, Breakevens, Greeks breakdown).
+- Automated test suite expanded to 29/29 passing tests across 8 test suites.
+
 ## [0.2.0] - 2026-11-20
 ### Added
 - Monorepo configured with pnpm workspaces, `docker-compose.yml` (Postgres, TimescaleDB, Redis, Centrifugo), and TypeScript base.
