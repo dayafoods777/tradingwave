@@ -1,0 +1,2798 @@
+<!doctype html>
+<html lang="en">
+<head>
+    
+    <script>(function(){var t="light";try{t=localStorage.getItem("tradetron.theme")||t;}catch(e){}if(t==="dark")document.documentElement.classList.add("dark");})();</script>
+    
+    <script>window.getParameterByName=window.getParameterByName||function(name,url){if(!url)url=window.location.href;name=String(name).replace(/[\[\]]/g,"\\$&");var r=new RegExp("[?&]"+name+"(=([^&#]*)|&|#|$)").exec(url);return r?(r[2]?decodeURIComponent(r[2].replace(/\+/g," ")):""):null;};</script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="EBAVSjJ4gO4t8Huf0YBcytjT2x0rNLLg2PhjGROS">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://files.tradetron.tech/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://files.tradetron.tech/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://files.tradetron.tech/android-chrome-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://files.tradetron.tech/apple-touch-icon.png">
+    <script>window.APP_URL = "https://tradetron.tech/"; var APP_URL = window.APP_URL;</script>
+    <script>window.TT_FEATURES = Object.assign(window.TT_FEATURES || {}, {"executionQuality":false,"newsRisk":false,"pnlPopout":true});</script>
+    <script>
+window.__t = window.__t || function (s, r) {
+    var t = (window.TT_I18N && window.TT_I18N[s]) || s;
+    if (r) { Object.keys(r).forEach(function (k) { t = t.split(':' + k).join(r[k]); }); }
+    return t;
+};
+</script>
+    
+    <script>
+/* Tradetron first/last-touch capture (tt_acq, tt_lt). Self-contained: paste as-is.
+   Source of truth: tradetron/web resources/views/global/v1/partials/acquisition.blade.php */
+(function () {
+  'use strict';
+  var FIRST = 'tt_acq', LAST = 'tt_lt';
+  var FIELDS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+                'gclid', 'gbraid', 'wbraid', 'msclkid',
+                'fbclid', 'li_fat_id', 'ttclid', 'twclid'];
+  // Kept with the touch, never a signal: which list a link went to, not where the visitor came from.
+  var RIDERS = ['tt_seg'];
+  var NOT_A_TOUCH = ['accounts.google.com', 'accounts.youtube.com', 'appleid.apple.com',
+    'login.microsoftonline.com', 'login.live.com', 'razorpay.com', 'payu.in', 'paytm.com',
+    'paytmmoney.com', 'phonepe.com', 'stripe.com', 'paypal.com', 'zerodha.com',
+    'angelbroking.com', 'angelone.in', 'upstox.com', 'flattrade.in', 'zebuetrade.com',
+    'zebull.in', 'swastika.co.in', 'fyers.in', 'dhan.co', '5paisa.com'];
+  // AI assistants: engine => hosts (subdomains match) and bare utm_source tokens (AiEngine::ENGINES).
+  var AI = {
+    chatgpt: ['chatgpt.com', 'chat.openai.com', 'openai.com', 'chatgpt', 'openai'],
+    perplexity: ['perplexity.ai', 'perplexity'],
+    gemini: ['gemini.google.com', 'bard.google.com', 'aistudio.google.com', 'notebooklm.google.com', 'gemini', 'bard'],
+    copilot: ['copilot.microsoft.com', 'copilot.cloud.microsoft', 'copilot.com', 'copilot'],
+    claude: ['claude.ai', 'claude'],
+    meta_ai: ['meta.ai', 'metaai'],
+    deepseek: ['deepseek.com', 'deepseek'],
+    grok: ['grok.com', 'x.ai', 'grok'],
+    mistral: ['mistral.ai', 'mistral'],
+    kimi: ['kimi.com', 'kimi.moonshot.cn', 'kimi'],
+    qwen: ['chat.qwen.ai', 'qwen'],
+    you: ['you.com'],
+    phind: ['phind.com', 'phind'],
+    poe: ['poe.com', 'poe']
+  };
+  // Channel's rules before `ai`: any ad click id (an fbclid only with no medium or a generic paid one), these mediums
+  // and email sources credit the landing elsewhere.
+  var NOT_AI_MEDIUMS = ['paid_video', 'cpc', 'ppc', 'paid_search', 'paidsearch', 'sem', 'paid_social', 'paidsocial',
+    'social_paid', 'cpm', 'assisted', 'affiliate', 'affiliates', 'partner', 'email', 'e_mail', 'newsletter', 'mail'];
+  var PAID_GENERIC = ['paid', 'ads', 'ad', 'paid_ads', 'display', 'banner'];   // with an fbclid: paid_social
+  var NOT_AI_SOURCES = ['email', 'newsletter', 'mailchimp', 'sendgrid', 'zohocampaigns'];
+  try {
+    var host = String(window.location.hostname || '').toLowerCase();
+    var onSite = host === 'tradetron.tech' || host.slice(-15) === '.tradetron.tech';
+    var https = window.location.protocol === 'https:';
+
+    function under(h, d) { return h === d || h.slice(-(d.length + 1)) === '.' + d; }
+
+    function referrerHost() {
+      var r = document.referrer;
+      if (!r) { return ''; }
+      var h = String(new URL(r).hostname || '').toLowerCase().replace(/^www\./, '');
+      if (!h || h === host.replace(/^www\./, '') || under(h, 'tradetron.tech')) { return ''; }
+      for (var i = 0; i < NOT_A_TOUCH.length; i++) {
+        if (under(h, NOT_A_TOUCH[i])) { return ''; }
+      }
+      return h.slice(0, 255);
+    }
+
+    // "https://www.ChatGPT.com/c/1" or "chatgpt.com" -> "chatgpt.com" (Channel::host).
+    function bare(v) {
+      return String(v || '').toLowerCase().replace(/^\s+|\s+$/g, '').replace(/^[a-z][a-z0-9+.-]*:\/\//, '')
+        .replace(/[\/?#:].*$/, '').replace(/^www\./, '');
+    }
+
+    function engineOf(h) {
+      if (!h) { return ''; }
+      for (var e in AI) {
+        if (!AI.hasOwnProperty(e)) { continue; }
+        for (var i = 0; i < AI[e].length; i++) {
+          var d = AI[e][i];
+          if (h === d || (d.indexOf('.') > 0 && under(h, d))) { return e; }
+        }
+      }
+      return '';
+    }
+
+    // The engine when this landing is channel `ai` (see the header), else ''.
+    function aiEngine(t) {
+      var medium = String(t.utm_medium || '').toLowerCase().replace(/^\s+|\s+$/g, '').replace(/[\s-]+/g, '_');
+      var source = bare(t.utm_source);
+      var ids = ['gclid', 'gbraid', 'wbraid', 'msclkid', 'li_fat_id', 'ttclid', 'twclid'];
+      for (var i = 0; i < ids.length; i++) { if (t[ids[i]]) { return ''; } }
+      if ((t.fbclid && (!medium || PAID_GENERIC.indexOf(medium) >= 0)) || NOT_AI_MEDIUMS.indexOf(medium) >= 0 || NOT_AI_SOURCES.indexOf(source) >= 0) { return ''; }
+      return engineOf(source) || engineOf(bare(t.ref));
+    }
+
+    // Every value of a cookie name: a host-only and a domain cookie can coexist.
+    function read(name) {
+      var out = [], parts = document.cookie ? document.cookie.split('; ') : [];
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].indexOf(name + '=') === 0) { out.push(parts[i].slice(name.length + 1)); }
+      }
+      return out;
+    }
+
+    // True for a real signal, false for a direct-only touch. Unreadable counts
+    // as real: never clobber a value we do not understand.
+    function hasSignal(raw) {
+      var v;
+      try { v = JSON.parse(decodeURIComponent(raw)); } catch (e) { return true; }
+      if (!v || typeof v !== 'object') { return true; }
+      if (v.ref) { return true; }
+      for (var i = 0; i < FIELDS.length; i++) { if (v[FIELDS[i]]) { return true; } }
+      return false;
+    }
+
+    function write(name, obj, ms) { put(name, encodeURIComponent(JSON.stringify(obj)), ms); }
+
+    function put(name, value, ms) {
+      // Cookies cap around 4KB; the bounded fields cannot approach that, but
+      // refuse rather than emit a truncated, unparseable cookie.
+      if (value.length > 3500) { return; }
+      var tail = ';path=/;SameSite=Lax' + (https ? ';Secure' : '');
+      if (onSite) {
+        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';  // drop a host-only twin
+        tail += ';domain=.tradetron.tech';
+      }
+      document.cookie = name + '=' + value + ';expires=' + new Date(Date.now() + ms).toUTCString() + tail;
+    }
+
+    var qs = new URLSearchParams(window.location.search || '');
+    var touch = {};
+    for (var i = 0; i < FIELDS.length; i++) {
+      var v = qs.get(FIELDS[i]);
+      // Bound each value: this ends up in a cookie on every subsequent request
+      // and then in a DB column. 200 is the column width.
+      if (v) { touch[FIELDS[i]] = String(v).slice(0, 200); }
+    }
+    var ref = '';
+    try { ref = referrerHost(); } catch (e) { ref = ''; }
+    if (ref) { touch.ref = ref; }
+    var signal = Object.keys(touch).length > 0;
+    for (var k = 0; k < RIDERS.length; k++) {
+      var rv = qs.get(RIDERS[k]);
+      if (rv) { touch[RIDERS[k]] = String(rv).slice(0, 100); }   // user_acquisitions.seg is 100 wide
+    }
+
+    // GA4: an AI assistant landing, once per session, after gtag exists (see the header).
+    var engine = signal ? aiEngine(touch) : '';
+    if (engine) {
+      var lp = String(window.location.pathname || '').slice(0, 100);
+      var fire = function () {
+        try {
+          if (typeof window.gtag !== 'function') { return; }
+          try { if (window.sessionStorage.getItem('tt_ai_lp')) { return; } window.sessionStorage.setItem('tt_ai_lp', engine); } catch (e) { /* no storage: still once per page */ }
+          window.gtag('event', 'ai_referral_landing', { engine: engine, landing_path: lp });
+        } catch (e) { /* never break a page render for analytics */ }
+      };
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', fire); } else { fire(); }
+    }
+
+    // LAST TOUCH: every landing with a signal overwrites `tt_lt` (30 days), so a
+    // payment can be credited to the campaign that brought the user back. `at`
+    // is user_acquisitions.lt_at (011_last_touch.sql); it is not a signal.
+    touch.at = new Date().toISOString();
+    if (signal) { write(LAST, touch, 2592000000); }
+
+    // FIRST TOUCH (see the header for the direct-only exception).
+    var seen = read(FIRST);
+    for (var j = 0; j < seen.length; j++) {
+      if (hasSignal(seen[j])) {
+        // A host-only tt_acq from before Oct 2026 plus a domain one written on a
+        // subdomain: keep the value the server reads (the first one sent) and
+        // fold the pair into one domain cookie.
+        if (onSite && seen.length > 1 && hasSignal(seen[0])) { put(FIRST, seen[0], 15552000000); }
+        return;
+      }
+    }
+    if (seen.length && !signal) { return; }   // already recorded as direct; nothing better now
+
+    touch.lp = String(window.location.pathname || '').slice(0, 255);
+    // The full landing URL too (user_acquisitions.landing_url, 009_signup_source.sql).
+    touch.lu = String(window.location.href || '').split('#')[0].slice(0, 500);
+    write(FIRST, touch, 15552000000);         // 180d, matches `ref`
+  } catch (e) { /* never break a page render for analytics */ }
+})();
+</script>
+    <script>
+(function (w, d) {
+    function mask(el) {
+        if (el && el.setAttribute && !el.hasAttribute('data-hj-suppress')) {
+            el.setAttribute('data-clarity-mask', 'true');
+            el.setAttribute('data-hj-suppress', '');
+        }
+    }
+    var FIELDS = 'input,select,textarea,[contenteditable]';
+    var maskFields = function (node) {
+        if (!node || node.nodeType !== 1) { return; }
+        if (node.matches && node.matches(FIELDS)) { mask(node); }
+        if (node.firstElementChild && node.querySelectorAll) {
+            var found = node.querySelectorAll(FIELDS);
+            for (var i = 0; i < found.length; i++) { mask(found[i]); }
+        }
+    };
+    if (w.MutationObserver) {
+        new w.MutationObserver(function (records) {
+            for (var i = 0; i < records.length; i++) {
+                for (var j = 0; j < records[i].addedNodes.length; j++) { maskFields(records[i].addedNodes[j]); }
+            }
+        }).observe(d.documentElement, {childList: true, subtree: true});
+    }
+    d.addEventListener('DOMContentLoaded', function () { maskFields(d.body); });
+})(window, document);
+</script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4EPRVTMHD7"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    
+    
+    gtag('set', 'user_properties', {market_region: "IN"});
+    gtag('set', {market_region: "IN"});
+            gtag('config', 'G-4EPRVTMHD7', {content_group: "public-tools"});
+    
+    function pushToDataLayer(data) {
+        window.dataLayer.push(data);
+    }
+</script>
+
+
+<script>
+    window.ttTrack = (function (dev) {
+        var NAME = /^[a-z][a-z0-9]*(_[a-z0-9]+)*$/;
+        function complain(msg) {
+            try { if (dev && window.console && console.error) { console.error('[ttTrack] ' + msg); } } catch (e) {}
+        }
+        return function (name, params, opts) {
+            try {
+                if (typeof name !== 'string' || !NAME.test(name) || name.length > 40) {
+                    complain('event name must be snake_case, 40 characters at most: ' + String(name) + ' (not sent)');
+                    if (dev) { return false; }
+                }
+                var p = params || {};
+                if (typeof window.gtag === 'function') { window.gtag('event', name, p); }
+                var meta = opts && opts.meta;
+                if (meta) {
+                    // Spelt in two halves on purpose: pages assert that the registration event's name is nowhere in their HTML.
+                    if (String(meta).toLowerCase() === 'complete' + 'registration') {
+                        complain(String(meta) + ' is sent by the server; give the pixel a custom event name');
+                    } else if (typeof window.fbq === 'function') {
+                        window.fbq('trackCustom', String(meta), (opts && opts.metaParams) || p);
+                    }
+                }
+                return true;
+            } catch (e) { return false; }
+        };
+    })(false);
+</script>
+
+
+
+
+
+<!-- Google Tag Manager -->
+<script>
+    (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start': new Date().getTime(),
+            event: 'gtm.js'
+        });
+
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-TC7HNSD');
+</script>
+<!-- End Google Tag Manager -->
+
+
+<script>
+    window.ttPurchaseTrack = function (p) {
+        if (!p) { return; }
+        try { if (p.meta && window.ttMetaTrack) { window.ttMetaTrack(p.meta); } } catch (e) {}
+        try { if (p.ga4 && typeof window.gtag === 'function') { window.gtag('event', 'purchase', p.ga4); } } catch (e) {}
+        try {
+            var x = p.x;
+            if (x && /^[a-z0-9]{3,12}$/.test(x.pixel_id || '') && /^tw-[a-z0-9]{3,12}-[a-z0-9]{3,12}$/.test(x.event_id || '')) {
+                if (!window.twq) {
+                    !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+                    },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+                    a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+                    window.twq('config', x.pixel_id);
+                }
+                window.twq('event', x.event_id, x.params || {});
+            }
+        } catch (e) {}
+    };
+</script>
+
+
+
+
+<script>
+    (function (w, d, s, u) {
+        if (w.oaiq) return;
+        var q = function () { q.q.push(arguments); };
+        q.q = [];
+        w.oaiq = q;
+        var js = d.createElement(s);
+        js.async = true;
+        js.src = u;
+        var f = d.getElementsByTagName(s)[0];
+        f.parentNode.insertBefore(js, f);
+    })(window, document, 'script', 'https://bzrcdn.openai.com/sdk/oaiq.min.js');
+    oaiq('init', {pixelId: "DMWSTahtnpZWLfB2wUTZdN"});
+    oaiq('measure', 'page_viewed', {type: 'contents'});
+</script>
+
+<script>
+    window.HTTP_REFERER = "";
+    window.REMOTE_ADDR = "10.1.1.45";
+</script>
+
+
+
+    <!-- Facebook Pixel Code -->
+<script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '419560966923200');
+    fbq('init', '840796677854144');
+    fbq('track', 'PageView');
+    // Browser half of a Conversions API pair: same eventID as the server event, so Meta de-duplicates.
+    window.ttMetaTrack = function (m) {
+        try { if (m && m.pixel_id && m.event_id) { fbq('trackSingle', m.pixel_id, m.event, m.params || {}, {eventID: m.event_id}); } } catch (e) {}
+    };
+</script>
+<noscript>
+    <img height="1" width="1" alt=""
+         src="https://www.facebook.com/tr?id=419560966923200&ev=PageView&noscript=1"/>
+    <img height="1" width="1" alt=""
+         src="https://www.facebook.com/tr?id=840796677854144&ev=PageView&noscript=1"/>
+</noscript>
+<!-- End Facebook Pixel Code -->
+
+
+    <title>Multi-leg options strategy builder | Tradetron Advanced Wizard</title>
+    
+    
+        <meta name="description" content="Build multi-leg F&amp;O strategies with entry by weekday or days to expiry, range breakout, re-entry and tranching, then check the payoff and backtest.">
+        <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Tradetron","item":"https://tradetron.tech/"},{"@type":"ListItem","position":2,"name":"Advanced Wizard","item":"https://tradetron.tech/advanced-wizard"}]}</script>
+    
+    <link rel="canonical" href="https://tradetron.tech/advanced-wizard">
+    <meta property="og:site_name" content="Tradetron">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Multi-leg options strategy builder | Tradetron Advanced Wizard">
+    <meta property="og:description" content="Build multi-leg F&amp;O strategies with entry by weekday or days to expiry, range breakout, re-entry and tranching, then check the payoff and backtest.">
+    <meta property="og:url" content="https://tradetron.tech/advanced-wizard">
+    <meta property="og:image" content="https://tradetron.tech/images/og/tradetron-default.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Tradetron: build, backtest and run algo trading strategies">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://tradetron.tech/#organization","name":"Tradetron","url":"https://tradetron.tech/","logo":"https://tradetron.tech/css/atp-ai/img-logotype-dark.png","areaServed":[{"@type":"Country","name":"India","identifier":"IN"},{"@type":"Country","name":"United States","identifier":"US"}],"sameAs":["https://www.youtube.com/channel/UCvw85AMGH07-1J_VVEx0Txg","https://www.instagram.com/tradetron_in/","https://x.com/Tradetron1","https://www.linkedin.com/company/tradetron","https://www.facebook.com/tradetron","https://www.youtube.com/channel/UCgZmj7IGl1Vywv5IVh4GoKQ","https://www.instagram.com/tradetron.us/","https://x.com/Tradetron"]},{"@type":"WebSite","@id":"https://tradetron.tech/#website","name":"Tradetron","url":"https://tradetron.tech/","publisher":{"@id":"https://tradetron.tech/#organization"}}]}</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@400..700&display=swap">
+    
+    <link rel="stylesheet" href="https://tradetron.tech/css/atp-ai/guest.bundle.css?v=ed96112d365f">
+            <link rel="stylesheet" href="https://tradetron.tech/css/atp-ai/public-tools.css?v=4a2e1737c644">
+</head>
+<body  data-screen-label="Tradetron — Algo Strategy Marketplace">
+
+
+    <header class="h-nav h-nav--2row">
+  <!-- Row 1 — public / marketing -->
+  <div class="h-container h-nav__inner">
+    <button class="h-mobile-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="h-mobile-drawer">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="/" class="h-brand">
+      <span class="tt-brainfx" aria-hidden="true"><i></i><i></i><i></i></span>
+      <img class="tt-logo tt-logo--dark" src="/css/atp-ai/img-logotype-dark.png?v=mktpl3" width="1003" height="240" alt="Tradetron">
+      <img class="tt-logo tt-logo--light" src="/css/atp-ai/img-logotype-light.png?v=mktpl3" width="1003" height="240" alt="Tradetron">
+    </a>
+    <nav class="h-nav__links" aria-label="Public navigation">
+              
+        <div class="h-appnav__group">
+          <button class="h-appnav__trigger" type="button" aria-haspopup="true">Create <span class="h-appnav__caret">&#9662;</span></button>
+          <div class="h-appnav__menu h-appnav__menu--grid" role="menu">
+                                          <div class="h-appnav__menu-head">Build</div>
+                                                        <a href="/mcp" role="menuitem" class="h-navcard" data-ln-menu="using-ai" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 11.7 8 16 9.6 11.7 11.2 10 15.7 8.3 11.2 4 9.6 8.3 8z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Using AI</span>
+                    <span class="h-navcard__sub">Connect Claude, ChatGPT and other AI tools</span>
+                  </span>
+                </a>
+                                                        <a href="/strategy-builder" role="menuitem" class="h-navcard" data-ln-menu="strategy-builder" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="3.2" width="5.6" height="5.6" rx="1.4"/><rect x="11.2" y="3.2" width="5.6" height="5.6" rx="1.4"/><rect x="3.2" y="11.2" width="5.6" height="5.6" rx="1.4"/><rect x="11.2" y="11.2" width="5.6" height="5.6" rx="1.4"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Advanced Strategy Builder</span>
+                    <span class="h-navcard__sub">Full control — sets, legs and conditions</span>
+                  </span>
+                </a>
+                                                        <a href="/option-wizard" role="menuitem" class="h-navcard" data-ln-menu="option-wizard" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16 13.5 6.5"/><path d="M12.2 4.2 13 6l1.8.8-1.8.8-.8 1.8-.8-1.8L9.6 6.8l1.8-.8z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Option Wizard</span>
+                    <span class="h-navcard__sub">Guided option legs and strikes</span>
+                  </span>
+                </a>
+                                                        <a href="/advanced-wizard" role="menuitem" class="h-navcard" data-ln-menu="advanced-wizard" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16 13.5 6.5"/><path d="M12.2 4.2 13 6l1.8.8-1.8.8-.8 1.8-.8-1.8L9.6 6.8l1.8-.8z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Advanced Wizard</span>
+                    <span class="h-navcard__sub">Multi-leg builder with entry and exit rules</span>
+                  </span>
+                </a>
+                                                        <a href="/stock-bag" role="menuitem" class="h-navcard" data-ln-menu="stock-bag" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h10l-.9 9.1a1 1 0 0 1-1 .9H6.9a1 1 0 0 1-1-.9z"/><path d="M7.6 7V5.4a2.4 2.4 0 0 1 4.8 0V7"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">StockBag</span>
+                    <span class="h-navcard__sub">A weighted basket of equities</span>
+                  </span>
+                </a>
+                                                        <a href="/pinebridge" role="menuitem" class="h-navcard" data-ln-menu="pinebridge" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 6.8 3.6 10l3.6 3.2"/><path d="M12.8 6.8 16.4 10l-3.6 3.2"/><path d="M11.2 4.8 8.8 15.2"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Pine Script Strategy</span>
+                    <span class="h-navcard__sub">Bring a TradingView script across</span>
+                  </span>
+                </a>
+                                                        <a href="/scalping-trading" role="menuitem" class="h-navcard" data-ln-menu="scalper" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.2 5 11h4.4L8.8 16.8 15 8.8h-4.4z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Scalper</span>
+                    <span class="h-navcard__sub">Buys the dips and sells the rises on one contract</span>
+                  </span>
+                </a>
+                                                        <a href="/signal-bridge" role="menuitem" class="h-navcard" data-ln-menu="signal-bridge" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="1.4"/><path d="M7.2 12.8a4 4 0 0 1 0-5.6"/><path d="M12.8 7.2a4 4 0 0 1 0 5.6"/><path d="M4.8 15.2a7.4 7.4 0 0 1 0-10.4"/><path d="M15.2 4.8a7.4 7.4 0 0 1 0 10.4"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Signal Bridge</span>
+                    <span class="h-navcard__sub">Trade by sending Buy / Sell — from a button, a link or Excel</span>
+                  </span>
+                </a>
+                                                        <a href="/option-simulator" role="menuitem" class="h-navcard" data-ln-menu="simulator" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 10a7.2 7.2 0 1 0 7.2-7.2 7.8 7.8 0 0 0-5.4 2.2L2.8 6.8"/><path d="M2.8 2.8v4h4"/><path d="M8.6 7.6v4.8l4-2.4z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Strategy Simulator</span>
+                    <span class="h-navcard__sub">Replay a past day and trade its real option chain</span>
+                  </span>
+                </a>
+                                                        <div class="h-appnav__menu-head">Ready-made</div>
+                                                        <a href="/campaigns/nifty-range" role="menuitem" class="h-navcard" data-ln-menu="nifty-range" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.2 16 5.4v4.2c0 3.6-2.4 6.4-6 7.2-3.6-.8-6-3.6-6-7.2V5.4z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Pin the Range</span>
+                    <span class="h-navcard__sub">Ready-made NIFTY condor, one click to deploy</span>
+                  </span>
+                </a>
+                                                        <a href="/covered-calls" role="menuitem" class="h-navcard" data-ln-menu="covered-calls" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.2 16 5.4v4.2c0 3.6-2.4 6.4-6 7.2-3.6-.8-6-3.6-6-7.2V5.4z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Covered Calls</span>
+                    <span class="h-navcard__sub">Screen and write calls on holdings</span>
+                  </span>
+                </a>
+                                                        <a href="/cash-secured-puts" role="menuitem" class="h-navcard" data-ln-menu="cash-secured-puts" data-ln-menu-where="guest_create">
+                  <span class="h-navcard__ico" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.2 16 5.4v4.2c0 3.6-2.4 6.4-6 7.2-3.6-.8-6-3.6-6-7.2V5.4z"/></svg></span>
+                  <span class="h-navcard__txt">
+                    <span class="h-navcard__ttl">Cash Secured Puts</span>
+                    <span class="h-navcard__sub">Sell puts on stocks you would own</span>
+                  </span>
+                </a>
+                                    </div>
+        </div>
+        <script>
+    document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('[data-ln-menu]') : null;
+        if (!a || !window.gtag) { return; }
+        gtag('event', 'menu_click', { menu: a.getAttribute('data-ln-menu-where'), menu_item: a.getAttribute('data-ln-menu'), link_url: a.href });
+    });
+</script>
+            <a href="/pages/features">Features</a>
+      <a href="/strategies">Marketplace</a>
+      <a href="/pages/pricing">Pricing</a>
+      <a href="/pages/contact">Contact</a>
+    </nav>
+    <div class="h-nav__right">
+      <details class="h-region h-region--dd">
+    <summary title="India · NSE &amp; MCX" aria-label="Market region: India">🌐 IND <span class="h-region__car">▾</span></summary>
+    <div class="h-region__menu ">
+        <a href="https://tradetron.tech/set/cookie/IN" class="on">India · NSE &amp; MCX</a>
+        <a href="https://tradetron.tech/set/cookie/US" class="">USA</a>
+    </div>
+</details>
+      <details class="h-region h-region--dd">
+    <summary aria-label="Language"><span aria-hidden="true" lang="hi">अ/A</span> English <span class="h-region__car">▾</span></summary>
+    <div class="h-region__menu ">
+                    <a href="https://tradetron.tech/set/lang/en" lang="en" class="on">English</a>
+                    <a href="https://tradetron.tech/set/lang/hi" lang="hi" class="">हिन्दी</a>
+            </div>
+</details>
+      
+      <button class="h-toggle h-toggle--icon" data-theme-toggle aria-label="Toggle theme">
+        <svg class="h-toggle__ico h-toggle__ico--moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16.5 11.6A6.8 6.8 0 0 1 8.4 3.5a6.8 6.8 0 1 0 8.1 8.1z" />
+        </svg>
+        <svg class="h-toggle__ico h-toggle__ico--sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="10" cy="10" r="3.4" />
+          <path d="M10 2.4v1.8M10 15.8v1.8M2.4 10h1.8M15.8 10h1.8M4.6 4.6l1.3 1.3M14.1 14.1l1.3 1.3M15.4 4.6l-1.3 1.3M5.9 14.1l-1.3 1.3" />
+        </svg>
+        <span class="h-visually-hidden" data-theme-label>Night</span>
+      </button>
+              <a href="/login" class="h-micro hx-guest-header__signin">Sign in</a>
+        <a href="#" class="h-btn h-btn--ghost h-btn--sm" data-modal-open="demoModal">Book a demo</a>
+        <a href="/register" class="h-btn h-btn--primary h-btn--sm">Start free</a>
+                      </div>
+  </div>
+
+  
+  <!-- Mobile drawer (shown ≤720px) -->
+  <div class="h-mobile-drawer" id="h-mobile-drawer" aria-hidden="true">
+    <div class="h-mobile-drawer__inner">
+      <div class="h-mobile-drawer__head">
+        <a href="/" class="h-mobile-drawer__brand">
+          <img class="tt-logo tt-logo--dark" src="/css/atp-ai/img-logotype-dark.png?v=mktpl3" width="1003" height="240" alt="Tradetron" />
+          <img class="tt-logo tt-logo--light" src="/css/atp-ai/img-logotype-light.png?v=mktpl3" width="1003" height="240" alt="Tradetron" />
+        </a>
+        <button class="h-mobile-drawer__close" type="button" aria-label="Close menu">×</button>
+      </div>
+
+      
+      <div class="m-acc">
+  <div class="m-acc__card m-acc__welcome">
+    <span class="m-acc__name">Welcome to Tradetron</span>
+    <span class="m-acc__sub">Build, backtest and deploy algo strategies.</span>
+    <span class="m-acc__actions">
+              <a href="/register" class="h-btn h-btn--primary">Start free</a>
+        <a href="/login" class="h-btn h-btn--ghost">Sign in</a>
+          </span>
+  </div>
+
+      <div class="m-acc__group">Create</div>
+    <div class="m-acc__card">
+              <a class="m-acc__row" href="/mcp" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Using AI</span>
+    <span class="m-acc__sub">Connect Claude, ChatGPT and other AI tools</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/strategy-builder" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Advanced Strategy Builder</span>
+    <span class="m-acc__sub">Full control — sets, legs and conditions</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/option-wizard" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Option Wizard</span>
+    <span class="m-acc__sub">Guided option legs and strikes</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/advanced-wizard" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Advanced Wizard</span>
+    <span class="m-acc__sub">Multi-leg builder with entry and exit rules</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/stock-bag" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">StockBag</span>
+    <span class="m-acc__sub">A weighted basket of equities</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/pinebridge" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Pine Script Strategy</span>
+    <span class="m-acc__sub">Bring a TradingView script across</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/scalping-trading" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Scalper</span>
+    <span class="m-acc__sub">Buys the dips and sells the rises on one contract</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/signal-bridge" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Signal Bridge</span>
+    <span class="m-acc__sub">Trade by sending Buy / Sell — from a button, a link or Excel</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/option-simulator" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Strategy Simulator</span>
+    <span class="m-acc__sub">Replay a past day and trade its real option chain</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+          </div>
+      <div class="m-acc__group">Ready-made</div>
+    <div class="m-acc__card">
+              <a class="m-acc__row" href="/campaigns/nifty-range" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Pin the Range</span>
+    <span class="m-acc__sub">Ready-made NIFTY condor, one click to deploy</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/covered-calls" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Covered Calls</span>
+    <span class="m-acc__sub">Screen and write calls on holdings</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/cash-secured-puts" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Cash Secured Puts</span>
+    <span class="m-acc__sub">Sell puts on stocks you would own</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+          </div>
+      <div class="m-acc__group">Explore</div>
+    <div class="m-acc__card">
+              <a class="m-acc__row" href="/pages/features" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Features</span>
+    <span class="m-acc__sub">What Tradetron can do</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/strategies" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Marketplace</span>
+    <span class="m-acc__sub">Strategies from creators</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/strategy-templates" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Strategy templates</span>
+    <span class="m-acc__sub">Start from a ready template</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="/pages/pricing" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.6 2.6 21.4 11.4a2 2 0 0 1 0 2.8l-7.2 7.2a2 2 0 0 1-2.8 0L2.6 12.6A2 2 0 0 1 2 11.2V4a2 2 0 0 1 2-2h7.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Pricing</span>
+    <span class="m-acc__sub">Plans for every trader</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+          </div>
+      <div class="m-acc__group">Make it yours</div>
+    <div class="m-acc__card">
+              <button type="button" class="m-acc__row" data-theme-toggle>
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Appearance</span>
+    <span class="m-acc__sub">Day or Night</span>  </span>
+      <span class="m-acc__val"><span class="m-acc__val--light">Day</span><span class="m-acc__val--dark">Night</span></span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</button>
+              <form method="POST" action="https://tradetron.tech/theme/update" class="m-acc__form">
+<input type="hidden" name="_token" value="EBAVSjJ4gO4t8Huf0YBcytjT2x0rNLLg2PhjGROS" autocomplete="off"><input type="hidden" name="theme" value="classic">
+<input type="hidden" name="source" value="drawer">
+<button type="submit" class="m-acc__row">
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Theme</span>
+    <span class="m-acc__sub">Switch to the classic theme</span>  </span>
+      <span class="m-acc__val">New</span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</button>
+</form>
+              <a class="m-acc__row" href="https://tradetron.tech/set/cookie/US" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Market region</span>
+    <span class="m-acc__sub">Switch to USA</span>  </span>
+      <span class="m-acc__val">India</span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="https://tradetron.tech/set/lang/hi" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Language</span>
+    <span class="m-acc__sub">हिन्दी में देखें</span>  </span>
+      <span class="m-acc__val">English</span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+          </div>
+      <div class="m-acc__group">Help &amp; support</div>
+    <div class="m-acc__card">
+              <a class="m-acc__row" href="#" data-modal-open="demoModal">
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Book a demo</span>
+    <span class="m-acc__sub">A walk-through with our team</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="https://tradetron.tech/pages/contact" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Contact us</span>
+    <span class="m-acc__sub">Write to the support team</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="https://tradetron.tech/community?tab=help" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Helpdesk</span>
+    <span class="m-acc__sub">Guides and answers</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="https://tradetron.tech/community" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.45L3 21l2.05-5.4A8.5 8.5 0 1 1 21 11.5z"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Community</span>
+    <span class="m-acc__sub">Ask and answer on the forum</span>  </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+          </div>
+      <div class="m-acc__group">Legal</div>
+    <div class="m-acc__card">
+              <a class="m-acc__row" href="https://tradetron.tech/pages/privacy-policy" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Privacy policy</span>
+      </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+              <a class="m-acc__row" href="https://tradetron.tech/pages/terms-of-use" >
+  <svg class="m-acc__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+  <span class="m-acc__txt">
+    <span class="m-acc__title">Terms of use</span>
+      </span>
+    <svg class="m-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+</a>
+          </div>
+  </div>
+    </div>
+  </div>
+  <div class="h-mobile-backdrop" aria-hidden="true"></div>
+
+
+</header>
+    
+    
+<div class="pt-page" data-pt-tool="advanced-wizard" data-pt-page-type="public" >
+
+
+<!-- HERO -->
+<section class="h-container h-pagehero pt-hero">
+  <div>
+    <div class="h-pagehero__crumb">Advanced Wizard · Multi-leg F&amp;O</div>
+    <h1>A multi-leg options strategy builder with the rules option traders use</h1>
+  </div>
+  <div>
+          <p class="h-pagehero__lede">The Advanced Wizard builds multi-leg F&amp;O strategies with more control than the Option Wizard: entry by weekday or days to expiry, range breakouts, re-entry, moving the stop-loss to cost, and tranching.</p>
+          <p class="h-pagehero__lede">Check the payoff, save it, and backtest it, including a parameter sweep, before you deploy.</p>
+        <div class="h-pagehero__cta pt-cta">
+              <a href="https://tradetron.tech/go/advanced-wizard?to=signup" class="h-btn h-btn--primary" data-pt-cta="signup" rel="nofollow">Start free and build a strategy</a>
+        <a href="https://tradetron.tech/go/advanced-wizard?to=login" class="h-btn h-btn--ghost" data-pt-cta="login" rel="nofollow">Sign in</a>
+          </div>
+    <div class="h-truststrip">
+              <span>Multi-leg F&amp;O</span>
+              <span>Range breakout and re-entry</span>
+              <span>Parameter sweep backtests</span>
+          </div>
+  </div>
+</section>
+
+<!-- SAMPLE SCREEN -->
+<section class="h-container h-section--md" id="sample" aria-labelledby="pt-sample-title">
+  <span class="h-eyebrow">Sample screen</span>
+  <h2 class="h-h2 pt-h2" id="pt-sample-title">A sample multi-leg setup</h2>
+  <p class="h-body pt-lead">The entry rules and two legs of a sample strategy, with the per-leg options the Advanced Wizard adds.</p>
+  <div class="pt-sample" aria-label="Sample screen">
+    <div class="pt-sample__bar"><span>Advanced Wizard · Entry and positions</span><span class="pt-sample__badge">Sample</span></div>
+<div class="pt-sample__body">
+  <div class="pt-sample__chips">
+    <span class="pt-sample__chip pt-sample__chip--on">F&amp;O · Intraday</span>
+    <span class="pt-sample__chip">Start 09:30 · End 15:15</span>
+    <span class="pt-sample__chip">Entry based on: Days to expiry · 2</span>
+  </div>
+  <div class="pt-sample__table-wrap">
+    <table class="pt-sample__table">
+      <thead><tr><th>Leg</th><th>B/S</th><th>Strike</th><th>Expiry</th><th>Extras</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Sell</td><td>OTM 2 · CE</td><td>Current week</td><td>Range breakout 15 min · Move SL to cost</td></tr>
+        <tr><td>2</td><td>Sell</td><td>OTM 2 · PE</td><td>Current week</td><td>Re-entry up to 2</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pt-sample__chips">
+    <span class="pt-sample__chip">Exit: Stoploss MTM 1% of capital</span>
+    <span class="pt-sample__chip">Backtest · Parameter sweep</span>
+  </div>
+</div>
+  </div>
+  <p class="pt-note">Illustration only, not investment advice.</p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="h-container h-section--md" id="how-it-works">
+  <span class="h-eyebrow">How it works</span>
+  <h2 class="h-h2 pt-h2">How the Advanced Wizard works</h2>
+  <ol class="h-method__list pt-steps">
+          <li class="h-method__step">
+        <span class="h-method__num">[ 01 ]</span>
+        <div class="h-method__body">
+          <h3 class="h-h4">Set the entry</h3>
+          <p class="h-body">Name, intraday or positional, start and end time, and entry by weekday or by days to expiry.</p>
+        </div>
+      </li>
+          <li class="h-method__step">
+        <span class="h-method__num">[ 02 ]</span>
+        <div class="h-method__body">
+          <h3 class="h-h4">Add the legs</h3>
+          <p class="h-body">Add each leg with its strike (ATM, or up to 20 strikes in or out of the money) and expiry. Add range breakout, re-entry, move stop-loss to cost or tranching to any leg.</p>
+        </div>
+      </li>
+          <li class="h-method__step">
+        <span class="h-method__num">[ 03 ]</span>
+        <div class="h-method__body">
+          <h3 class="h-h4">Set the exits</h3>
+          <p class="h-body">Profit and loss limits as a percentage of capital or an amount, a trailing stop-loss, exit on expiry or after a number of days.</p>
+        </div>
+      </li>
+          <li class="h-method__step">
+        <span class="h-method__num">[ 04 ]</span>
+        <div class="h-method__body">
+          <h3 class="h-h4">Check the payoff and save</h3>
+          <p class="h-body">Look at the payoff, save, then backtest it, run a parameter sweep, or deploy.</p>
+        </div>
+      </li>
+      </ol>
+</section>
+
+<section class="h-container h-section--md pt-section">
+  <h2 class="h-h2 pt-h2">When to use it</h2>
+      <p class="h-body pt-para">Use the Advanced Wizard when the Option Wizard&#039;s questions are not enough but you still want a guided builder rather than writing conditions in the Strategy Builder.</p>
+    </section>
+
+
+<section class="h-container h-section--md" id="faq">
+  <span class="h-eyebrow">Questions</span>
+  <h2 class="h-h2 pt-h2">Common questions</h2>
+  <div class="h-acc pt-acc">
+          <details>
+        <summary>What can it trade?</summary>
+        <div class="h-acc__body">F&amp;O. Each strategy is a set of option and futures legs on one underlying.</div>
+      </details>
+          <details>
+        <summary>What is a parameter sweep?</summary>
+        <div class="h-acc__body">A backtest that runs the same strategy across a range of values for a setting, so you can see how sensitive it is to that setting.</div>
+      </details>
+          <details>
+        <summary>What is range breakout?</summary>
+        <div class="h-acc__body">A leg that enters only when the price breaks out of the range it made over a period you choose.</div>
+      </details>
+          <details>
+        <summary>How is it different from the Option Wizard?</summary>
+        <div class="h-acc__body">It adds entry by days to expiry, per-leg range breakout, re-entry, move stop-loss to cost and tranching, and parameter sweeps.</div>
+      </details>
+      </div>
+</section>
+
+<!-- READ NEXT: the how-to guides and related pages -->
+<section class="h-container h-section--md" id="read-next">
+  <span class="h-eyebrow">Read next</span>
+  <div class="h-features cols-3 pt-cards">
+          <a class="h-feature pt-card" href="/blog/a-comprehensive-guide-to-the-iron-condor-option-strategy" data-pt-cta="read_next">
+        <span class="h-feature__title">Iron condor strategy guide</span>
+        <span class="h-feature__body">A four-leg structure, explained</span>
+      </a>
+          <a class="h-feature pt-card" href="/blog/top-option-strategy-tester-a-comprehensive-tool-to-backtest-your-trades" data-pt-cta="read_next">
+        <span class="h-feature__title">Option strategy tester</span>
+        <span class="h-feature__body">How to backtest an options strategy</span>
+      </a>
+          <a class="h-feature pt-card" href="/tools/option-payoff-calculator" data-pt-cta="read_next">
+        <span class="h-feature__title">Option payoff calculator</span>
+        <span class="h-feature__body">Check a structure&#039;s payoff at expiry</span>
+      </a>
+              <a class="h-feature pt-card" href="/option-wizard" data-pt-cta="related_tool">
+        <span class="h-feature__title">Option Wizard</span>
+        <span class="h-feature__body">Guided option legs, strikes and exits</span>
+      </a>
+          <a class="h-feature pt-card" href="/strategy-builder" data-pt-cta="related_tool">
+        <span class="h-feature__title">Strategy Builder</span>
+        <span class="h-feature__body">Full control: sets, legs and conditions, no code</span>
+      </a>
+      </div>
+</section>
+
+<!-- CLOSE -->
+<section class="h-container h-cta">
+  <h2 class="h-h2" style="text-align:center">Build the multi-leg strategy with the rules you trade by</h2>
+  <div class="h-pagehero__cta" style="justify-content:center">
+          <a href="https://tradetron.tech/go/advanced-wizard?to=signup" class="h-btn h-btn--primary" data-pt-cta="signup" rel="nofollow">Start free and build a strategy</a>
+      <a href="https://tradetron.tech/go/advanced-wizard?to=google" class="h-btn h-btn--ghost" data-pt-cta="google" rel="nofollow">Continue with Google</a>
+      </div>
+  <p class="pt-note">Illustration only, not investment advice. Trading in securities and derivatives carries risk. Check how a strategy behaves in a backtest and in Live Offline before you trade it with money.</p>
+</section>
+
+</div>
+
+<footer class="h-footer">
+  <div class="h-container">
+    <div class="h-footer__grid">
+      <div class="h-footer__brand">
+        <span class="h-brand"><span class="tt-brainfx" aria-hidden="true"><i></i><i></i><i></i></span><img class="tt-logo tt-logo--dark" src="/css/atp-ai/img-logotype-dark.png?v=mktpl3" width="1003" height="240" alt="Tradetron"><img class="tt-logo tt-logo--light" src="/css/atp-ai/img-logotype-light.png?v=mktpl3" width="1003" height="240" alt="Tradetron"></span>
+        <p class="h-body hx-guest-footer__lede">A marketplace of trading algorithms, run live in their creators&#039; own accounts.</p>
+        <p class="h-micro hx-guest-footer__note">Funds held by you, in your own brokerage. Tradetron never custodies money.</p>
+
+        <!-- socials -->
+        
+        <div class="h-socials" aria-label="Tradetron on social media">
+                    <a href="https://t.me/tradetron_official" target="_blank" rel="noopener" aria-label="Telegram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+              </a>
+                    <a href="https://wa.me/918047189100" target="_blank" rel="noopener" aria-label="WhatsApp" onclick="if(window.matchMedia&amp;&amp;matchMedia('(hover: hover) and (pointer: fine)').matches){this.href='https://web.whatsapp.com/send?phone=918047189100'}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              </a>
+                    <a href="https://www.youtube.com/channel/UCvw85AMGH07-1J_VVEx0Txg" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.7-1.7C18.2 5 12 5 12 5s-6.2 0-7.9.5a2.5 2.5 0 0 0-1.7 1.7A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.7 1.7c1.7.5 7.9.5 7.9.5s6.2 0 7.9-.5a2.5 2.5 0 0 0 1.7-1.7A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15.5v-7l5.5 3.5L10 15.5z"/></svg>
+              </a>
+                    <a href="https://www.instagram.com/tradetron_in/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              </a>
+                    <a href="https://x.com/Tradetron1" target="_blank" rel="noopener" aria-label="X (Twitter)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2H21l-6.55 7.49L22 22h-6.32l-4.95-6.47L5 22H2.244l7.01-8.02L2 2h6.47l4.48 5.92L18.244 2zm-1.1 18h1.7L7.93 4H6.16l10.984 16z"/></svg>
+              </a>
+                    <a href="https://www.linkedin.com/company/tradetron" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.94 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM3 8.5h3.88V21H3V8.5zM9.4 8.5h3.72v1.7h.05c.52-.94 1.8-1.94 3.7-1.94 3.95 0 4.68 2.6 4.68 5.98V21h-3.88v-5.34c0-1.27-.02-2.91-1.77-2.91-1.78 0-2.05 1.39-2.05 2.82V21H9.4V8.5z"/></svg>
+              </a>
+                    <a href="https://www.facebook.com/tradetron" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 22v-8h2.7l.4-3.2H13V8.7c0-.9.3-1.5 1.6-1.5H16V4.3a23 23 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.2v2.4H6.6V14H9.3v8H13z"/></svg>
+              </a>
+                  </div>
+      </div>
+      <details class="h-footer__col">
+        <summary><h5>Product</h5></summary>
+        <ul>
+          <li><a href="/api">API</a></li>
+          <li><a href="/integrations">Integrations &amp; brokers</a></li>
+          
+          <li><a href="/affiliates">Affiliates</a></li>
+          
+          <li><a href="/strategy-templates">Strategy templates</a></li>
+          
+                    <li><a href="/keyword-documentation">Keyword docs</a></li>
+          
+          <li><a href="/import">Import a strategy</a></li>
+                    <!-- Root-relative, not a host. These three are marketing pages rather than
+               routes, and they used to name config('app.main_site_url') -- which defaults
+               to the production site and whose env override nobody sets, so every
+               environment's footer walked its visitors out to tradetron.tech. They are
+               served from public/ alongside this app now, and a path is the only form
+               that is correct in every environment including after the cutover. -->
+          
+          <li><a href="/universe/">What you can trade</a></li>
+          <li><a href="/fastbt/">Backtesting</a></li>
+          <li><a href="/mcp-tools/">All AI tools</a></li>
+          <li><a href="/tools">Trading calculators</a></li>
+          <li><a href="https://tradetron.instatus.com/" target="_blank" rel="noopener">Status</a></li>
+        </ul>
+      </details>
+      <details class="h-footer__col">
+        <summary><h5>Community</h5></summary>
+        <ul>
+          <!-- /blog is SuperBlog, proxied onto this path by Cloudflare rather than by
+               Laravel: no route, no public/blog directory. Root-relative is what is
+               correct after the cutover; until the same Cloudflare rule exists for this
+               host it 404s here. That rule is an ops task, not a code change. -->
+          
+          <li><a href="/blog">Blog</a></li>
+          
+                    
+          
+                    <li><a href="/top-creators">Top creators</a></li>
+                              <li><a href="https://tradetron.tech/community">QnA forum</a></li>
+                              <li><a href="/level-up-algo-webinar">Algo webinar (Fridays)</a></li>
+          
+                              
+                    <li><a href="/html-view/videos">Videos</a></li>
+          <li><a href="/html-view/jobs">Careers</a></li>
+                    
+                    <li><a href="https://game.tradetron.tech/?utm_source=tradetron&amp;utm_medium=footer&amp;utm_campaign=tt_game" target="_blank" rel="noopener" onclick="try{if(typeof window.gtag==='function'){window.gtag('event','footer_game_click',{link_url:this.href,region:'IN'})}}catch(e){}">TT - The Game</a></li>
+        </ul>
+      </details>
+      <details class="h-footer__col">
+        <summary><h5>Services</h5></summary>
+        <ul>
+          
+                              <li><a href="https://tradetron.tech/learn">TT Uni</a></li>
+          
+                    <li><a href="https://tradetron.tech/learn/live-sessions" data-ln-menu="live_sessions" data-ln-menu-where="footer">Live sessions</a></li>
+                              <!-- The paid TT Assistant service, as classic lists it under Services. /tt-assistant is
+               the AI connector site, a different product (UI feedback, 2 Oct 2026). -->
+          <li><a href="/services/assistant">TT Assistant</a></li>
+          
+          <li><a href="/tt-whitelabel">TT Whitelabel</a></li>
+                  </ul>
+      </details>
+      <!-- Support. The old theme carried a helpdesk link in its footer and the
+           email/phone on its contact page; this footer shipped with none of them, so
+           there was no route to a human from the new theme at all.
+           UAT F-20260828-uat-praveen-17. Values are the ones the old theme publishes.
+           The old footer's support-ticket link is deliberately not carried over. -->
+      <details class="h-footer__col">
+        <summary><h5>Support</h5></summary>
+        <ul>
+          <li><a href="https://tradetron.tech/community?tab=help">Helpdesk</a></li>
+          <li><a href="/pages/contact">Contact us</a></li>
+          
+          
+                    <li><a href="mailto:contact@tradetron.tech">contact@tradetron.tech</a></li>
+          
+          
+                                <li>Call / WhatsApp:
+              <a href="https://wa.me/918047189100" target="_blank" rel="noopener">+91 80 4718 9100</a>
+            </li>
+                  </ul>
+      </details>
+    </div>
+
+    <!-- get-the-app band — 3 equal cols -->
+    <div class="h-getapp">
+      <p class="h-getapp__desc">Push alerts the moment a strategy enters, exits or hits a stop-loss. Live P&amp;L, deploy from the marketplace, manage open positions — without opening a laptop.</p>
+      <a href="https://play.google.com/store/apps/details?id=com.tradetron" target="_blank" rel="noopener" class="h-getapp__card" aria-label="Get Tradetron on Google Play">
+        <span class="h-getapp__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12l-10.183 10.186c-.612-.453-.84-1.04-.84-1.93V3.744c0-.89.228-1.477.84-1.93zm10.43 10.04l3.91 3.91-12.86 7.36 8.95-11.27zm6.32-2.83l-3.13 1.79-2.4 2.4 2.4 2.4 3.13 1.79c.94-.54 1.59-1.5 1.59-2.86v-2.66c0-1.36-.65-2.32-1.59-2.86zM4.61.814L13.79 9.99 6.94 1.36 4.61.814z"/></svg>
+        </span>
+        <span class="h-getapp__txt">
+          <span class="h-getapp__lbl">GET IT ON</span>
+          <span class="h-getapp__store">Google Play</span>
+        </span>
+      </a>
+      <a href="https://apps.apple.com/in/app/tradetron/id1540269842" target="_blank" rel="noopener" class="h-getapp__card" aria-label="Download Tradetron on the App Store">
+        <span class="h-getapp__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.08l.01.01zM15.69 5c-.27 2.13-2.37 4.07-4.3 4.05-.27-2.34 1.93-4.39 4.3-4.05z"/></svg>
+        </span>
+        <span class="h-getapp__txt">
+          <span class="h-getapp__lbl">Download on the</span>
+          <span class="h-getapp__store">App Store</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="h-footer__legal">
+      
+      <span>Tradetron® · © 2018–2026 <span data-tt-company>Neutrino Trading Pvt Ltd</span> · <a href="/pages/privacy-policy">Privacy policy</a> · <a href="/pages/terms-of-use">Terms of use</a> &middot; <a href="/html-view/trademark">Trademark</a></span>
+              <span>Algo trading carries risk. Past performance does not guarantee future results.</span>
+        
+        <span>Tradetron for US markets: <a href="https://tradetron.us/">tradetron.us</a>, run by our affiliate Tradetron Inc. (Delaware).</span>
+          </div>
+  </div>
+</footer>
+
+
+<div class="h-modal" id="demoModal" role="dialog" aria-modal="true" aria-label="Book a live demo">
+  <div class="h-modal__card d-in">
+    <div class="h-modal__head">
+      <h3 class="h-h3" data-in-title>Book a live demo</h3>
+      <button class="h-modal__close" type="button" data-modal-close aria-label="Close">&times;</button>
+    </div>
+
+    
+    <form class="h-form d-form d-in__form" id="ttDemoInForm" method="post" action="https://tradetron.tech/api/demo/india/book" novalidate
+          data-cfg="{&quot;title&quot;:&quot;Build Algo Strategies with AI&quot;,&quot;zoomUrl&quot;:&quot;https:\/\/us06web.zoom.us\/j\/84580098949?pwd=SUIkcTKa3qMyhvkaeVKHRU8mjaSRMr.1&quot;,&quot;zoomDisplay&quot;:&quot;us06web.zoom.us\/j\/84580098949&quot;,&quot;tz&quot;:&quot;Asia\/Kolkata&quot;,&quot;start&quot;:&quot;16:00&quot;,&quot;durationMin&quot;:45,&quot;cutoff&quot;:&quot;15:50&quot;,&quot;days&quot;:[1,2,3,4],&quot;datesShown&quot;:7,&quot;blocked&quot;:[]}">
+      <input type="hidden" name="_token" value="EBAVSjJ4gO4t8Huf0YBcytjT2x0rNLLg2PhjGROS" autocomplete="off">      <input type="hidden" name="session_date" value="">
+      <input type="hidden" name="source_page" value="">
+
+      <div class="h-modal__body">
+        <p class="h-body hx-begin-cta__modalLede">A live walkthrough with our team. We&#039;ll build a strategy on screen and answer your questions. Sessions run Monday to Thursday — pick a day that suits you.</p>
+
+        <div class="h-field">
+          <span class="h-label">Pick a date</span>
+          <div class="d-in__dates" data-in-dates role="radiogroup" aria-label="Pick a date"></div>
+          <p class="d-form__err" data-err="session_date" hidden></p>
+        </div>
+
+        <div class="h-field">
+          <span class="h-label">Available time · ASIA/KOLKATA</span>
+          <div class="d-in__slot" aria-label="The only slot, selected">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span class="d-in__slotMain">
+              <strong>4:00 PM – 4:45 PM</strong>
+              <small><span data-in-long></span> · Zoom</small>
+            </span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          </div>
+        </div>
+
+        <div class="d-in__grid">
+          <div class="h-field">
+            <label class="h-label" for="demo_in_name">Name</label>
+            <input class="h-input" id="demo_in_name" name="name" type="text" autocomplete="name" required
+                   placeholder="Your name" value="">
+            <p class="d-form__err" data-err="name" hidden></p>
+          </div>
+          <div class="h-field">
+            <label class="h-label" for="demo_in_email">Email</label>
+            <input class="h-input" id="demo_in_email" name="email" type="email" autocomplete="email" required
+                   placeholder="you@email.com" value="">
+            <p class="d-form__err" data-err="email" hidden></p>
+          </div>
+        </div>
+
+        <div class="h-field">
+          <label class="h-label" for="demo_in_phone">Phone (WhatsApp)</label>
+          <input class="h-input" id="demo_in_phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required
+                 placeholder="+91 98765 43210" value="+91 ">
+          <p class="d-in__help">We&#039;ll send your joining link and a reminder here.</p>
+          <p class="d-form__err" data-err="phone" hidden></p>
+        </div>
+
+        
+        <div class="h-field d-form__altcha">
+          <altcha-widget challengeurl="https://tradetron.tech/altcha-challenge" ></altcha-widget>
+<div class="text-center">
+    <span class="text-danger show-error-text"
+      id="error_altcha"></span></div>
+          <p class="d-form__err" data-err="altcha" hidden></p>
+        </div>
+      </div>
+
+      <div class="h-modal__foot d-form__foot">
+        <p class="d-form__note" role="status" data-note hidden></p>
+        <button class="h-btn h-btn--ghost" type="button" data-modal-close>Cancel</button>
+        <button class="h-btn h-btn--primary" type="submit" data-send disabled>Confirm booking →</button>
+      </div>
+    </form>
+
+    
+    <div class="d-in__done" id="ttDemoInDone" hidden>
+      <div class="h-modal__body">
+        <div class="d-in__ok">
+          <span class="d-in__okBadge" aria-hidden="true">✓</span>
+          <div>
+            <strong class="d-in__okTitle">Your demo is booked</strong>
+            <span class="d-in__okSub">Confirmation sent to your email and WhatsApp.</span>
+          </div>
+        </div>
+        <div class="d-in__card">
+          <strong>Build Algo Strategies with AI — Live</strong>
+          <span class="d-in__row"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-in-long></span></span>
+          <span class="d-in__row"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>4:00 PM – 4:45 PM · Asia/Kolkata</span>
+          <span class="d-in__row"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg>Zoom — link below, also on WhatsApp</span>
+        </div>
+        <div class="h-field">
+          <span class="h-label">Your joining link</span>
+          <div class="d-in__link">
+            <span>us06web.zoom.us/j/84580098949</span>
+            <button type="button" class="d-in__copy" data-in-copy aria-label="Copy link">Copy</button>
+          </div>
+          <p class="d-in__help">Joins open 10 minutes before. You&#039;ll also see a Join button on your dashboard.</p>
+        </div>
+      </div>
+      <div class="h-modal__foot d-in__doneFoot">
+        <button class="h-btn h-btn--ghost" type="button" data-in-change>← Change date</button>
+        <details class="d-in__cal">
+          <summary class="h-btn h-btn--ghost">Add to calendar</summary>
+          <div class="d-in__calMenu">
+            <a href="#" target="_blank" rel="noopener" data-in-gcal>Google Calendar ↗</a>
+            <a href="#" data-in-ics>Download .ics</a>
+          </div>
+        </details>
+        <button class="h-btn h-btn--primary" type="button" data-modal-close>Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+    <script type="text/javascript">
+    window.ttDesk = {
+        uid: "",
+        sig: "",
+        lang: "en",
+        market: ""    };
+    document.addEventListener('ttdesk:unavailable', function (e) {
+        if (window.ttDesk.down) { return; }
+        var code = (e && e.detail && e.detail.code) || '';
+        window.ttDesk.down = code || 'unavailable';
+        var market = "IN";
+        // GA4 through the site's helper (global.v1.partials.tt-track), looked up when the event fires.
+        function track(name) { (window.ttTrack || function () {})(name, { channel: 'web', market: market, code: code }); }
+        var t = document.getElementById('tt-desk-fallback');
+        if (t) {
+            track('desk_fallback_us');
+            Array.prototype.forEach.call(t.content.querySelectorAll('script'), function (old) {
+                var s = document.createElement('script');
+                if (old.src) { s.src = old.src; s.async = true; } else { s.text = old.textContent; }
+                document.head.appendChild(s);
+            });
+            return;
+        }
+        track('desk_unavailable');
+        // Cookie's ask button is the way in on this page: its hand-off takes the visitor to the contact page.
+        if (document.getElementById('askFab') || document.getElementById('tt-desk-contact')) { return; }
+        var a = document.createElement('a');
+        a.id = 'tt-desk-contact';
+        a.href = '/pages/contact';
+        a.textContent = "Contact us";
+        a.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:2147482000;padding:12px 18px;border-radius:999px;'
+            + 'background:#111;color:#fff;font:600 14px/1 system-ui,sans-serif;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.2)';
+        a.addEventListener('click', function () { track('desk_contact_click'); });
+        document.body.appendChild(a);
+    });
+</script>
+
+<script type="text/javascript">window.ttCobrowse = {"v":1,"page":{"route":"public-tools.advanced-wizard","kind":"view","reason":null},"block":[".rr-block","[data-private=\"block\"]","[data-cobrowse=\"block\"]","iframe","frame","object","embed","#tt-desk","#tt-cb-bar","#tt-cb-pointer",".razorpay-container",".razorpay-backdrop","#walletSummaryModal","#pricingBasicModal","#dynamicContentForModal","#bt-buy-body","[data-account-switcher]",".h-acct",".m-acc__id",".h-profile__trigger",".tt-m-avatar","#askPop","#brokerTokenRegenModal",".b-info__body",".dm__tokenrow",".dm__row--link",".pb-token__val"],"mask":[".rr-mask","[data-private]","[data-cobrowse=\"mask\"]","[data-clarity-mask=\"true\"]","[data-hj-suppress]","[contenteditable]",".fr-element","option","datalist",".h-appnav__who",".h-profile__av",".a-side__id","#uxBellList .ux-bell__item.is-personal",".header__nav--profile .dropdown-toggle span",".dm__credits","#ttWalletBar","#askLog"],"recorder":{"src":"https://cdn.jsdelivr.net/npm/@rrweb/record@2.1.7/umd/record.min.js","integrity":"sha384-IpxzJjdtg6YdkOPtTQCrD+rvnylSZAVqNCrgLDEjBav6r5bDRY+SfA3OExSLSojq"}};</script>
+<script src="https://tradetron.tech/js/desk-cobrowse.js?v=1793898729" defer></script>
+<script src="https://sudo.tradetron.tech/js/desk-widget.js?v=21b48ab7e732" defer
+    data-mode="live"
+    data-api="https://sudo.tradetron.tech/desk/w"
+    data-lang="en"
+        data-launcher="auto"></script>
+<div class="tt-ask-root">
+
+<button class="h-fab" id="askFab" type="button" aria-expanded="false" aria-label="Talk to Cookie — Tradetron&#039;s AI assistant">
+    <span class="h-fab__icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.45L3 21l2.05-5.4A8.5 8.5 0 1 1 21 11.5z"/>
+        </svg>
+    </span>
+    <span class="h-fab__label">Talk to Cookie &nbsp;&rarr;</span>
+    <span class="h-fab__dot" aria-hidden="true"></span>
+    
+    <span class="h-fab__x" aria-hidden="true">&times;</span>
+</button>
+
+<div class="h-askPop" id="askPop" role="dialog" aria-modal="false" aria-label="Cookie">
+    <div class="h-askPop__head">
+        <div>
+            <span class="h-eyebrow ink">Cookie</span>
+            <p class="h-micro" style="margin-top:4px">Tradetron&#039;s AI assistant — pricing, brokers, strategies, anything.</p>
+        </div>
+        <button class="h-askPop__close" id="askPopClose" aria-label="Close">×</button>
+    </div>
+    
+        <div class="h-ask__log" id="askLog" aria-live="polite">
+        <div class="h-ask__msg h-ask__msg--bot">Hi! Ask me anything about Tradetron — building a strategy, brokers, pricing, or how to get started.</div>
+    </div>
+    <div class="h-ask__chips">
+        <button class="h-ask__chip" data-ask-q="How do I test a strategy before trading it live?">Test a strategy?</button>
+        <button class="h-ask__chip" data-ask-q="Which brokers does Tradetron support?">Brokers?</button>
+        <button class="h-ask__chip" data-ask-q="How do I deploy a strategy?">Go live?</button>
+        
+                <a class="h-ask__chip" href="https://tradetron.tech/youtube-strategy" target="_top" data-yt-chip
+           style="display:inline-flex;align-items:center;text-decoration:none">Paste a YouTube link</a>
+            </div>
+    
+        <form class="h-ask__form" id="askForm">
+                <textarea class="h-ask__input" id="askInput" rows="1" placeholder="Type your question…" autocomplete="off" aria-label="Cookie" style="resize:none;overflow-y:auto;max-height:120px;"></textarea>
+        <button class="h-btn h-btn--primary" type="submit">Ask&nbsp;→</button>
+    </form>
+    
+    <p class="h-ask__disclaimer" id="askDisclaimer">AI can make mistakes. Consider checking important information.</p>
+    <div class="h-askPop__handoff">
+        
+        <button type="button" class="h-micro" id="askNewChat" style="background:none;border:0;cursor:pointer;padding:0;margin-right:auto;opacity:.75;white-space:nowrap">New chat</button>
+        <button type="button" class="h-askPop__handoff-btn" id="askHandoff">Speak with a human &nbsp;→</button>
+        
+        <span class="h-micro" id="askHumanClosed" hidden style="opacity:.75;font-size:.75rem;text-align:right;margin-left:8px"></span>
+    </div>
+</div>
+
+
+<div class="h-askReport" id="askReport" role="dialog" aria-modal="true" aria-labelledby="askReportTitle" hidden>
+  <div class="h-askReport__panel">
+    <h3 id="askReportTitle">Report this answer</h3>
+    <p>How good was it?</p>
+    <div class="h-askReport__stars" id="askStars" role="radiogroup" aria-label="Rating out of 5"></div>
+    <label for="askReportText">What was wrong, or what were you expecting?</label>
+    <textarea id="askReportText" rows="4" placeholder="Optional, but it is what makes the report actionable."></textarea>
+    <p class="h-askReport__note">We store the question and the answer with your report so the team can audit it.</p>
+    <div class="h-askReport__actions">
+      <button type="button" class="h-askReport__cancel" id="askReportCancel">Cancel</button>
+      <button type="button" class="h-askReport__send" id="askReportSend">Send report</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<style>
+.h-ask__disclaimer{ margin:6px 14px 0; font-size:11px; line-height:1.45; color:#8a93a3;
+  text-align:center; opacity:.85 }
+.h-ask__fb{ display:flex; align-items:center; gap:6px; margin-top:8px; padding-top:7px;
+  border-top:1px solid rgba(127,140,160,.18) }
+.h-ask__fb button{ background:none; border:0; padding:3px 6px; cursor:pointer; border-radius:6px;
+  font-size:13px; line-height:1; color:#7c869a; transition:background .12s, color .12s }
+.h-ask__fb button:hover{ background:rgba(127,140,160,.14); color:#3d465c }
+.h-ask__fb button[aria-pressed="true"]{ background:rgba(79,86,214,.22); color:#4f56d6;
+  box-shadow:inset 0 0 0 1.5px #4f56d6 }
+.h-ask__fb--voted button[aria-pressed="false"]{ opacity:.45; filter:grayscale(1) }
+.h-ask__fb--voted button[aria-pressed="false"]:hover{ opacity:1; filter:none }
+.h-ask__fb .h-ask__fb-report{ font-size:11px; margin-left:auto; text-decoration:underline }
+.h-ask__fb .h-ask__fb-thanks{ font-size:11px; color:#7c869a; margin-left:auto }
+.h-askReport[hidden]{ display:none }
+.h-askReport{ position:fixed; inset:0; z-index:2147483000; background:rgba(16,18,28,.55);
+  display:flex; align-items:center; justify-content:center; padding:18px }
+.h-askReport__panel{ background:#fff; color:#1d2233; border-radius:14px; padding:20px;
+  width:min(420px,100%); box-shadow:0 18px 50px rgba(16,18,28,.35); font-size:14px }
+.h-askReport__panel h3{ margin:0 0 4px; font-size:16px }
+.h-askReport__panel p{ margin:0 0 8px; color:#5b6478; font-size:13px }
+.h-askReport__panel label{ display:block; margin:12px 0 5px; font-size:12px; color:#5b6478 }
+.h-askReport__panel textarea{ width:100%; border:1px solid #d8dce6; border-radius:8px;
+  padding:9px; font:13px/1.5 inherit; resize:vertical; color:#1d2233; background:#fff }
+.h-askReport__stars{ display:flex; gap:4px; margin-bottom:4px }
+.h-askReport__stars button{ background:none; border:0; cursor:pointer; font-size:24px;
+  line-height:1; padding:0 2px; color:#d3d7e0 }
+.h-askReport__stars button.on{ color:#f0a83a }
+.h-askReport__note{ font-size:11px; color:#8a93a3; margin:10px 0 0 }
+.h-askReport__actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:14px }
+.h-askReport__actions button{ border-radius:8px; padding:8px 14px; font-size:13px;
+  font-weight:600; cursor:pointer; border:0 }
+.h-askReport__cancel{ background:#eef0f5; color:#3d465c }
+.h-askReport__send{ background:#4f56d6; color:#fff }
+.h-askReport__send:disabled{ opacity:.5; cursor:default }
+</style>
+
+
+<script>
+window.ttLoggedIn = false;
+window.ttCsrfToken = "EBAVSjJ4gO4t8Huf0YBcytjT2x0rNLLg2PhjGROS";
+// When "Speak with a human" is offered (App\Support\AskHumanHours, ASK_HUMAN_HOURS_GATE): the hours and the holidays of
+// the next two weeks; the widget checks the visitor's clock itself, so a cached page stays right.
+window.ttAskHuman = {"gate":true,"days":[1,2,3,4,5,6],"from":"08:45","to":"01:35","holidays":["2026-11-24","2026-11-26"],"lang":"en","email":"support@tradetron.tech","words":{"footer":"Team is offline. Back :when","note":"Our support team is offline right now. A person will be back :when. You can keep asking me, or email :email and the team will reply when they are back.","today":"today at :time IST","tomorrow":"tomorrow at :time IST","on_day":"on :day at :time IST","later":"as soon as the team is back"}};
+</script>
+
+<script>
+(function () {
+    var log = document.getElementById("askLog"),
+        form = document.getElementById("askForm"),
+        input = document.getElementById("askInput");
+    if (!log || !form) return;
+    var fab = document.getElementById("askFab"),
+        pop = document.getElementById("askPop"),
+        popClose = document.getElementById("askPopClose"),
+        handoff = document.getElementById("askHandoff");
+
+    // ----- ALTCHA proof-of-work (abuse gate on /ai/guest/chat) -----
+    // We mount a hidden <altcha-widget> when the chat opens; it auto-solves
+    // a server-side challenge and emits a single-use token. The token rides
+    // along on every /ai/guest/chat POST and the widget re-arms (reset + a fresh
+    // verify() — reset alone never re-solves) after each proof-spending call
+    // so the next message has a fresh proof. Headless bots that don't run
+    // this JS get rejected at the controller with 403 — even if they discover
+    // the URL by reading the page source.
+    var altchaWidget = null;
+
+    function loadAltchaScript() {
+        // De-dupe — guest/user layouts already inject the script; only the
+        // marketing layout doesn't, so this is a safety net for that path.
+        if (window.customElements && window.customElements.get('altcha-widget')) return;
+        if (document.querySelector('script[src*="altcha@2"]')) return;
+        var s = document.createElement('script');
+        s.type = 'module'; s.async = true; s.defer = true;
+        s.src = 'https://cdn.jsdelivr.net/npm/altcha@2/dist/altcha.min.js';
+        document.head.appendChild(s);
+    }
+
+    function armAltcha() {
+        if (isLoggedIn) return;                       // /ai/chat uses session auth; ALTCHA isn't on that path
+        if (altchaWidget || !pop) return;
+        if (!('customElements' in window)) return;   // very old browser; server still gates via 403
+        loadAltchaScript();
+        altchaWidget = document.createElement('altcha-widget');
+        altchaWidget.setAttribute('challengeurl', '/altcha-challenge');
+        altchaWidget.setAttribute('auto', 'onload');
+        altchaWidget.style.cssText = 'position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
+        pop.appendChild(altchaWidget);
+    }
+
+    function altchaToken() {
+        if (!altchaWidget) return '';
+        try {
+            if (typeof altchaWidget.getState === 'function' &&
+                altchaWidget.getState() !== 'verified') return '';
+        } catch (e) { /* getState may be unavailable mid-init */ }
+        var inp = altchaWidget.querySelector('input[name="altcha"]');
+        return inp && inp.value ? inp.value : '';
+    }
+
+    function resetAltcha() {
+        if (!altchaWidget) return;
+        try {
+            if (typeof altchaWidget.reset === 'function') altchaWidget.reset();
+        } catch (e) {}
+        // reset() only clears the solved proof, and auto="onload" fires once at mount,
+        // so nothing re-solves on its own — the widget would sit at "expired" with an
+        // empty token and the next /ai/guest/chat would post altcha:"" into the 403. Kick a
+        // fresh solve so a new proof is ready before the user's next message.
+        try {
+            if (typeof altchaWidget.verify === 'function') {
+                var p = altchaWidget.verify();
+                if (p && typeof p.catch === 'function') p.catch(function () {});
+            }
+        } catch (e) {}
+    }
+
+    // Tear the widget down completely so it stops firing background
+    // challenge requests once the chat is closed. ALTCHA's auto="onload"
+    // attribute means a mounted widget can re-solve on token expiry; an
+    // in-flight postAsk that returns after close would also trigger a
+    // reset(). Removing the element from DOM stops both.
+    function disarmAltcha() {
+        if (!altchaWidget) return;
+        try {
+            if (altchaWidget.parentNode) altchaWidget.parentNode.removeChild(altchaWidget);
+        } catch (e) {}
+        altchaWidget = null;
+    }
+
+    // Wait up to maxMs for the PoW to finish before sending a query. PoW
+    // typically completes in <500ms, but if the user clicks a chip the
+    // instant after opening the widget we don't want to burn a 403.
+    function waitForAltcha(maxMs) {
+        var start = +new Date();
+        return new Promise(function (resolve) {
+            (function poll() {
+                if (altchaToken() || (+new Date() - start) >= maxMs) { resolve(); return; }
+                setTimeout(poll, 80);
+            })();
+        });
+    }
+
+    // ----- Page context (sent to backend; also used for opener selection) -----
+    function getPageContext() {
+        var path = window.location.pathname || "/";
+        var seg = path.split("/").filter(Boolean);
+        var file = seg.length ? seg[seg.length - 1] : "index.html";
+        if (!/\.html?$/i.test(file)) file = file || "index.html";
+        return { page: path, file: file.toLowerCase(), title: document.title || "" };
+    }
+
+    // US region (25 Oct 2026): no Indian market, broker count or India-only tool in the openers.
+    var ttUs = false;
+    var openers = {
+        "index.html": "You're on our home page — happy to walk you through how Tradetron works, what's free vs paid, or how to get a strategy live.",
+        "pricing":    "Looking at pricing? I can break down what each plan includes or compare paid tiers.",
+        "brokers":    ttUs ? "Wondering about broker support? Ask me about your US broker and how to connect it."
+                           : "Wondering about broker support? We connect to 100+ brokers — ask me about your specific broker, or about India/US/crypto coverage.",
+        "marketplace":ttUs ? "Browsing the marketplace — I can help you find strategies by type (intraday, options, stocks and ETFs), risk profile, or returns."
+                           : "Browsing the marketplace — I can help you find strategies by type (intraday, options, equity, F&O), risk profile, or returns.",
+        "paper-trading":"Want to see a strategy's signals first? Deploy it in Live Offline — Tradetron runs it on live prices and shows you each signal; it places no order, and you may place the trade yourself at your broker. Ask me how.",
+        "live-offline":"Want to see a strategy's signals first? Deploy it in Live Offline — Tradetron runs it on live prices and shows you each signal; it places no order, and you may place the trade yourself at your broker. Ask me how."
+    };
+    // /cookie, her launch page (14 Oct 2026): the same promise as the page, for guests and signed-in users
+    // alike. Building or changing a strategy is her paid questionnaire; everything here is free (fair use).
+    var cookieOpener = "Hi, I'm Cookie. Ask me anything about Tradetron, and sign in so I can read your own account "
+        + "and explain why a strategy isn't behaving. To have me build or change a strategy, that's my paid "
+        // The US build service is tradetron.us/cookie/q ($, US markets); India's is the questionnaire site.
+        + (ttUs ? "<a href=\"/cookie/q\">build service</a>." : "<a href=\"https://questionnaire.tradetron.tech/\">questionnaire</a>.");
+    var fallbackOpener = "Looking around Tradetron — happy to answer anything about the platform, brokers, pricing, or how to get started.";
+    // The chat does not build or edit strategies (WEB_CHAT_REFUSE_AGENT is on), so the
+    // opener says what it does and names where building happens. Create with Claude is
+    // off the Create menu, so it is not offered here either (Praveen, 2026-09-24).
+    var loggedInOpener = "I can answer anything about Tradetron — pricing, brokers, keywords, how features work — and look up your own account: plan, wallet, deployed strategies. I can backtest a saved strategy, deploy it in Live Offline, or work out why one isn't behaving.";
+    var buildPointer = ttUs
+        ? "<br><br>To <strong>build a strategy</strong>, use the "
+            + "<a href=\"/strategies/create\">Advanced Strategy Builder</a>, "
+            + "<a href=\"/wizard/create\">Option Wizard</a> or "
+            + "<a href=\"/stock-bag/create\">Stock Bag</a> — or connect the AI you "
+            + "already use from the <a href=\"/mcp\">Using AI page</a>."
+        : "<br><br>To <strong>build a strategy</strong>, use the "
+            + "<a href=\"/strategies/create\">Advanced Strategy Builder</a>, "
+            + "<a href=\"/wizard/create\">Option Wizard</a>, "
+            + "<a href=\"/stock-bag/create\">Stock Bag</a> or "
+            + "<a href=\"/campaigns/nifty-range\">Pin the Range</a> — or connect the AI you "
+            + "already use from the <a href=\"/tt-assistant\">TT Assistant page</a>.";
+    var suffix = "<br><br>How can I be of help today?";
+    function openerFor(file) {
+        // Logged-in users hit the full MCP agent — page-aware marketing
+        // openers ("looking at pricing?") don't fit once they're inside the
+        // app, so use a single in-app opener regardless of which page they're on.
+        if (file.replace(/\.html?$/i, "") === "cookie") { return cookieOpener + suffix; }
+        if (isLoggedIn) { return loggedInOpener + buildPointer + suffix; }
+        // Allow lookup by either "pricing.html" or "pricing" segment
+        var key = file.replace(/\.html?$/i, "");
+        return (openers[file] || openers[key] || fallbackOpener) + suffix;
+    }
+
+    // ----- Backend selection -----
+    // One engine, one voice (Cookie), two doors (11 Oct 2026):
+    // Logged-in visitors → /ai/chat[/stream] (MCP web-chat engine, the user's
+    //   own account). Stateful (Laravel session holds the conversation id),
+    //   session auth is the abuse gate, so no ALTCHA.
+    // Guests → /ai/guest/chat: the same engine on its guest profile (knowledge,
+    //   plans, brokers; account things get the log-in line). Stateful too, so
+    //   the transcript restores on open; ALTCHA + throttle:15/min gate abuse.
+    //   The old anonymous /api/ask proxy (nameless web-ask Q&A) is gone: route retired 11 Oct 2026.
+    var isLoggedIn = window.ttLoggedIn === true;
+    var CHAT_HISTORY_URL = isLoggedIn ? "/ai/chat/history" : "/ai/guest/chat/history";
+    var CHAT_RESET_URL   = isLoggedIn ? "/ai/chat/reset"   : "/ai/guest/chat/reset";
+
+    // ----- Composer state: submit button + chip-row collapse + attach -----
+    // While a stream/request is in flight the submit button is disabled to
+    // prevent stacking turns. The starter-question chips collapse whenever
+    // the user has typed something, attached an image, OR a request is
+    // running — they're noise once the user knows what they want to ask.
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var chipsEl   = document.querySelector(".tt-ask-root .h-ask__chips");
+    var attachBtn = document.getElementById("askAttach");
+    var fileInput = document.getElementById("askFile");
+    var thumbsEl  = document.getElementById("askThumbs");
+    var inFlight  = false;
+    // Attached-image queue; only ever populated on the logged-in path
+    // (/ai/guest/chat doesn't accept images). Stays [] for anon users.
+    var pendingImages = [];
+    function syncComposerState() {
+        if (submitBtn) submitBtn.disabled = inFlight;
+        if (attachBtn) attachBtn.disabled = inFlight;
+        if (chipsEl) {
+            var typed = !!(input && input.value && input.value.trim().length > 0);
+            chipsEl.classList.toggle("is-collapsed", inFlight || typed || pendingImages.length > 0);
+        }
+    }
+    function setBusy(on) { inFlight = !!on; syncComposerState(); }
+
+    // ----- Image attach: limits mirror MCP (≤4 images, ≤5 MB, png/jpeg/webp/gif).
+    // MCP is the source of truth; this client-side gate just spares the user a 422.
+    var MAX_IMAGES = 4;
+    var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+    function readAsBase64(file) {
+        return new Promise(function (resolve, reject) {
+            var r = new FileReader();
+            r.onload = function () {
+                // strip "data:<type>;base64," prefix — MCP wants raw base64
+                var s = String(r.result || "");
+                var c = s.indexOf(",");
+                resolve(c === -1 ? s : s.slice(c + 1));
+            };
+            r.onerror = reject;
+            r.readAsDataURL(file);
+        });
+    }
+    function addImageFile(file) {
+        if (pendingImages.length >= MAX_IMAGES) {
+            add("You can attach up to " + MAX_IMAGES + " images per message.", "bot");
+            return;
+        }
+        if (file.size > MAX_IMAGE_BYTES) {
+            add("Image too large (" + (file.size / 1024 / 1024).toFixed(1) + " MB). Max 5 MB.", "bot");
+            return;
+        }
+        readAsBase64(file).then(function (b64) {
+            pendingImages.push({
+                media_type:  file.type,
+                data_base64: b64,
+                preview_url: URL.createObjectURL(file),
+                file:        file
+            });
+            renderThumbs();
+            syncComposerState();
+        });
+    }
+    function removeImage(idx) {
+        var img = pendingImages[idx];
+        if (img && img.preview_url) { try { URL.revokeObjectURL(img.preview_url); } catch (e) {} }
+        pendingImages.splice(idx, 1);
+        renderThumbs();
+        syncComposerState();
+    }
+    function clearImages() {
+        pendingImages.forEach(function (img) {
+            if (img.preview_url) { try { URL.revokeObjectURL(img.preview_url); } catch (e) {} }
+        });
+        pendingImages = [];
+        renderThumbs();
+        syncComposerState();
+    }
+    function renderThumbs() {
+        if (!thumbsEl) return;
+        thumbsEl.innerHTML = "";
+        pendingImages.forEach(function (img, i) {
+            var d = document.createElement("div"); d.className = "h-ask__thumb";
+            var im = document.createElement("img");
+            im.src = img.preview_url; im.alt = "attachment";
+            var x = document.createElement("button");
+            x.type = "button"; x.className = "h-ask__thumb-x"; x.textContent = "×";
+            x.setAttribute("aria-label", "Remove image");
+            x.addEventListener("click", function () { removeImage(i); });
+            d.appendChild(im); d.appendChild(x);
+            thumbsEl.appendChild(d);
+        });
+    }
+
+    // ----- Logged-in path: POST /ai/chat with CSRF + JSON body -----
+    // images optional; only sent on the logged-in path (/ai/guest/chat
+    // doesn't accept them). Each image is { media_type, data_base64 } — the
+    // shape MCP's /web/chat[/stream] expects, forwarded as-is by Laravel.
+    function postLoggedInChat(message, images) {
+        var body = { message: message };
+        if (images && images.length) { body.images = images; }
+        return fetch("/ai/chat", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-TOKEN": window.ttCsrfToken || "",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify(body)
+        });
+    }
+
+    // Render an MCP reply payload (quota / normal / empty) the same way for
+    // both the streaming and buffered logged-in paths. `bubble` is the
+    // "Thinking…" placeholder; replace it with the real reply.
+    function renderLoggedInReply(body, bubble, meta) {
+        bubble.remove();
+        setBusy(false);
+        body = body || {};
+        // The streaming path learns the turn id from its first `meta` event;
+        // the buffered path gets it on the response body. Either way it is what
+        // binds a rating to this turn's trace in the support console.
+        var requestId = (meta && meta.request_id) || body.request_id || "";
+        if (body.quota_exhausted) {
+            var qBubble = add(body.reply || "You're out of AI tokens.", "bot");
+            qBubble.classList.add("h-ask__msg--quota");
+            appendQuotaCta(qBubble, body.buy_url || "/ai-tokens", body.upgrade_url || "/user/pricing");
+            refreshWalletBar();
+            return;
+        }
+        // Silent hand-off (MCP WA_BOT_SILENT_HANDOFF; owner, 27 Oct 2026: "just handover and stay quiet"): the live chat
+        // opens and this reply shows no bubble. A reply without `silent` renders as before.
+        if (body.handoff && body.silent) {
+            try { if (typeof gtag === "function") { gtag("event", "ask_handoff_silent", { channel: "web", logged_in: isLoggedIn ? 1 : 0 }); } } catch (x) {}
+            doHumanHandoff("silent");
+            return;
+        }
+        var reply = body.reply || body.error;
+        if (reply) {
+            var replyBubble = add(reply, "bot");
+            // Wrapped: this runs inside the stream's promise chain, whose catch
+            // re-sends the message on the buffered path. A throw in either
+            // decoration must not turn into a second, billed turn.
+            try {
+                // handoff=true: the user asked for a human. The live chat the
+                // support team staffs is Tradetron Desk's room on this page, so
+                // the backend only says "this one needs a human" and we open it
+                // here, seeded with the transcript. The CTA stays as the manual
+                // retry, and is the way to the contact page where there is no room.
+                // Ported from master (#5149); uat-design never had it, so on UAT
+                // the reply said "the live chat window is opening" and nothing opened.
+                if (body.handoff) {
+                    if (humanOnNow()) { appendHandoffCta(replyBubble); }
+                    doHumanHandoff("reply");
+                }
+                attachFeedback(replyBubble, {
+                    request_id: requestId,
+                    question: lastUserQ,
+                    answer: reply
+                });
+            } catch (e) {}
+            // Tokens were debited on the MCP side during the turn —
+            // re-pull the snapshot so the WalletBar reflects the new
+            // remaining balance.
+            refreshWalletBar();
+            return;
+        }
+        add("Sorry — I couldn't reach the assistant just now. Please try again in a moment, or hit 'Speak with a human' below.", "bot");
+    }
+
+    // The login behind this page has lapsed: tell the visitor, with the way back.
+    function renderSignedOut(bubble) {
+        bubble.remove();
+        setBusy(false);
+        var back = "/login?redirect=" + encodeURIComponent(location.pathname + location.search);
+        add("You've been signed out of Tradetron. Please <a href=\"" + back + "\">log in again</a> and ask me once more.", "bot");
+        try { if (typeof gtag === "function") { gtag("event", "ask_signed_out", { channel: "web", status_path: "buffered" }); } } catch (x) {}
+    }
+
+    // ----- Logged-in STREAMING path: POST /ai/chat/stream, consume SSE -----
+    // Keeps the connection alive through long strategy-build turns (the
+    // buffered path got killed by the php-fpm/nginx read timeout ->
+    // "couldn't reach the assistant"). Shows live progress; falls back to
+    // buffered on any failure.
+    //
+    // What the bubble shows (Cookie plan D3, 12 Oct 2026):
+    //   - a knowledge answer (T1) types into the bubble as the server's `delta`
+    //     events arrive (MCP WEB_CHAT_STREAM_T1); a `replace` swaps the bubble's
+    //     text when Cookie's gate held or changed the reply;
+    //   - an account / build turn (T2/T3) stays buffered: the bubble shows the
+    //     step running now (`progress` phase "tool", e.g. "Checking your
+    //     deployments…") in place of "Working on it…", never the model's
+    //     interim text (progress "delta"/"text"), which `done` would replace;
+    //   - `done` (or `error`) is the reply, rendered as before.
+    function streamLoggedInChat(message, bubble, images) {
+        setBusy(true);
+        if (!window.fetch || !window.ReadableStream || !window.TextDecoder) {
+            return bufferedLoggedInChat(message, bubble, images);
+        }
+        var body = { message: message };
+        if (images && images.length) { body.images = images; }
+        return fetch("/ai/chat/stream", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/event-stream",
+                "X-CSRF-TOKEN": window.ttCsrfToken || "",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify(body)
+        }).then(function (resp) {
+            // A lapsed login: the auth middleware answers the stream with a
+            // redirect to the login page (fetch follows it, so ok + HTML) or an
+            // error page. Neither is an SSE stream; hand over to the buffered
+            // path, whose 401 says "signed out" plainly.
+            var ctype = (resp.headers && resp.headers.get("Content-Type")) || "";
+            if (!resp.ok || !resp.body || resp.redirected || ctype.indexOf("text/event-stream") === -1) {
+                throw new Error("stream unavailable");
+            }
+            var reader = resp.body.getReader(), decoder = new TextDecoder(), buf = "", done = false;
+            // displayedText is what the bubble currently shows. pendingText is
+            // the backlog of chars the server has delivered but the typewriter
+            // hasn't drained yet — drained on a fixed-interval timer so the
+            // bubble types at a steady human pace even when the server flushes
+            // 60-char batches (or TCP coalesces multiple small ones).
+            var displayedText = "";
+            var pendingText   = "";
+            var statusText    = "";
+            var typeTimer     = null;
+            // The server's FIRST SSE event is `meta` carrying this turn's
+            // request_id. It is what a thumbs rating is filed under, so support
+            // can open the trace behind a complaint instead of guessing which
+            // turn it was about.
+            var turnRequestId = "";
+            // 2 chars / 15ms ≈ 130 cps — fast enough to keep up with most
+            // turns, slow enough to feel like typing. Tune CHARS_PER_TICK to
+            // taste; raise it for very long replies if the backlog grows.
+            var TICK_MS = 15, CHARS_PER_TICK = 2;
+
+            // True once the answer itself (T1 `delta` / `replace`) owns the
+            // bubble; step labels stop painting from then on.
+            function answering() { return !!(displayedText || pendingText); }
+            function paintBubble() {
+                // Sticky-bottom auto-scroll: only follow the cursor if the
+                // user is already within ~40px of the bottom — otherwise
+                // they've scrolled up to re-read and we shouldn't yank them.
+                var stick = (log.scrollHeight - log.scrollTop - log.clientHeight) < 40;
+                if (answering()) {
+                    // The answer, not a status: drop the italic typing style
+                    // and render the same markdown `done` will.
+                    bubble.classList.remove("h-ask__msg--typing");
+                    bubble.innerHTML = md(displayedText);
+                } else {
+                    bubble.textContent = statusText;
+                }
+                if (stick) { log.scrollTop = log.scrollHeight; }
+            }
+            function showStatus(text) {
+                if (!text || answering()) return;
+                statusText = text;
+                paintBubble();
+            }
+            function startTypewriter() {
+                if (typeTimer) return;
+                typeTimer = setInterval(function () {
+                    if (pendingText.length === 0) {
+                        clearInterval(typeTimer); typeTimer = null;
+                        return;
+                    }
+                    var take = Math.min(CHARS_PER_TICK, pendingText.length);
+                    displayedText += pendingText.slice(0, take);
+                    pendingText    = pendingText.slice(take);
+                    paintBubble();
+                }, TICK_MS);
+            }
+            function stopTypewriter() {
+                if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+                pendingText = "";
+            }
+            function finish(payload) {
+                if (done) return; done = true;
+                // The done event carries the full formatted markdown — drop
+                // any un-typed backlog; renderLoggedInReply will swap the
+                // live bubble for a fresh markdown-rendered one.
+                stopTypewriter();
+                renderLoggedInReply(payload || {}, bubble, { request_id: turnRequestId });
+            }
+            function handleEvent(block) {
+                var ev = "message", data = "";
+                block.split("\n").forEach(function (line) {
+                    if (line.indexOf("event:") === 0) ev = line.slice(6).trim();
+                    else if (line.indexOf("data:") === 0) data += line.slice(5).trim();
+                });
+                if (!data) return;
+                var p; try { p = JSON.parse(data); } catch (e) { return; }
+
+                if (ev === "meta") {
+                    // One branch, on purpose. master splits this into an early
+                    // return that only sets window.__ttAskRequestId followed by a
+                    // branch that sets turnRequestId — and since meta always
+                    // carries an id, the second never runs and a streamed reply
+                    // gets no rating bar.
+                    turnRequestId = p.request_id || "";
+                    // Live-inspectable in devtools while a turn is stuck, and
+                    // quotable in a support report.
+                    if (turnRequestId) { try { window.__ttAskRequestId = turnRequestId; } catch (e) {} }
+                    return;
+                }
+                if (ev === "status" && p.text) {
+                    // Pre-stream placeholder ("Working on it…").
+                    showStatus(p.text);
+                    return;
+                }
+                if (ev === "progress") {
+                    if (p.phase === "tool" && p.tools && p.tools.length) {
+                        // The step running now ("Checking your deployments…").
+                        showStatus(String(p.tools[p.tools.length - 1]));
+                    } else if (p.phase === "text" && p.text && p.text.indexOf("✅") === 0) {
+                        // The server's own "Strategy created — <link>" line.
+                        showStatus(p.text);
+                    }
+                    // progress "delta" and other "text" are the agent loop's
+                    // interim words (T2/T3): buffered until `done`, not shown.
+                    return;
+                }
+                if (ev === "delta" && p.text) {
+                    // A knowledge answer as it is written — queue the chunk,
+                    // let the typewriter drain it.
+                    pendingText += p.text;
+                    startTypewriter();
+                    return;
+                }
+                if (ev === "replace" && typeof p.text === "string") {
+                    // Cookie's gate held or changed what was streamed: the
+                    // bubble shows the reply that actually goes out.
+                    stopTypewriter();
+                    displayedText = p.text;
+                    paintBubble();
+                    return;
+                }
+                if (ev === "done" || ev === "error") { finish(p); }
+            }
+            function pump() {
+                return reader.read().then(function (r) {
+                    if (r.done) { if (!done) finish(null); return; }
+                    buf += decoder.decode(r.value, { stream: true });
+                    var idx;
+                    while ((idx = buf.indexOf("\n\n")) !== -1) {
+                        var block = buf.slice(0, idx); buf = buf.slice(idx + 2);
+                        if (block.trim() !== "" && block.indexOf(":") !== 0) handleEvent(block);
+                    }
+                    return pump();
+                });
+            }
+            return pump();
+        }).catch(function () { bufferedLoggedInChat(message, bubble, images); });
+    }
+
+    // Buffered fallback (original /ai/chat behaviour) — used when streaming
+    // is unavailable or fails. Renders quota_exhausted + WalletBar exactly
+    // like the streaming path via renderLoggedInReply(). Forwards images
+    // through unchanged — MCP accepts them on both /web/chat and /web/chat/stream.
+    function bufferedLoggedInChat(message, bubble, images) {
+        return postLoggedInChat(message, images)
+            .then(function (r) {
+                // 401 (auth) / 419 (CSRF): the page was opened logged in but the
+                // login has since lapsed (timed out, or logged out in another tab).
+                // Say so, instead of "couldn't reach the assistant", which support
+                // read as Cookie being down.
+                if (r.status === 401 || r.status === 419) { return { __signedOut: true }; }
+                return r.json().then(function (j) { return j; }, function () { return null; });
+            })
+            .then(function (body) {
+                if (body && body.__signedOut) { renderSignedOut(bubble); return; }
+                renderLoggedInReply(body, bubble);
+            })
+            .catch(function () { renderLoggedInReply(null, bubble); });
+    }
+
+    // ----- AI-token WalletBar (logged-in only) -----
+    // Fetches /ai/tokens which wraps AiTokenLedger::snapshot() — plan name,
+    // monthly_quota, monthly_used, purchased_balance, remaining, unlimited.
+    // Refreshes on chat open AND after every assistant reply, so the pill
+    // visibly ticks down once MCP starts debiting via /internal-api/ai/usage-record.
+    var walletBar    = document.getElementById("ttWalletBar"),
+        wbPlanEl     = document.getElementById("ttWbPlan"),
+        wbMeterEl    = document.getElementById("ttWbMeter"),
+        wbBoughtEl   = document.getElementById("ttWbBought"),
+        wbBuyEl      = document.getElementById("ttWbBuy"),
+        wbUpgradeEl  = document.getElementById("ttWbUpgrade");
+    var lastSnapshot = null;
+
+    function fmtTokens(n) {
+        if (n < 0) return "∞";
+        if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "M";
+        if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, "") + "k";
+        return String(n);
+    }
+
+    function renderWalletBar(snap) {
+        if (!walletBar || !snap) return;
+        lastSnapshot = snap;
+        wbPlanEl.textContent = snap.plan || snap.name || "Free";
+
+        if (snap.unlimited || snap.monthly_quota < 0) {
+            wbMeterEl.textContent = "Unlimited";
+        } else {
+            wbMeterEl.textContent = fmtTokens(snap.monthly_used) + " / " + fmtTokens(snap.monthly_quota);
+        }
+
+        if (snap.purchased_balance > 0) {
+            wbBoughtEl.style.display = "";
+            // The leading "·" separator is rendered by CSS (::before on
+            // .tt-wb__bought) so the markup hides cleanly when there's
+            // no bought balance — no dangling dot.
+            wbBoughtEl.textContent = "+" + fmtTokens(snap.purchased_balance) + " bought";
+        } else {
+            wbBoughtEl.style.display = "none";
+        }
+
+        // Visual state — low / out — only meaningful when enforcement is on,
+        // otherwise the user isn't actually being blocked and a red bar is
+        // alarming. With enforce=false we still show the meter, just neutral.
+        walletBar.classList.remove("tt-wb--low", "tt-wb--out");
+        if (snap.enforced && !snap.unlimited && snap.monthly_quota > 0) {
+            var pct = (snap.monthly_quota - snap.monthly_used) / snap.monthly_quota;
+            if (pct <= 0 && snap.purchased_balance <= 0) {
+                walletBar.classList.add("tt-wb--out");
+            } else if (pct <= 0.1 && snap.purchased_balance <= 0) {
+                walletBar.classList.add("tt-wb--low");
+            }
+        }
+
+        if (snap.buy_url)     wbBuyEl.setAttribute("href", snap.buy_url);
+        if (snap.upgrade_url) wbUpgradeEl.setAttribute("href", snap.upgrade_url);
+        walletBar.style.display = "";
+    }
+
+    function refreshWalletBar() {
+        if (!isLoggedIn) return;
+        fetch("/ai/tokens", {
+            method: "GET",
+            credentials: "same-origin",
+            headers: { "Accept": "application/json", "X-Requested-With": "XMLHttpRequest" }
+        })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (j) {
+                // Soft-launch gate: server returns data.enabled=false for
+                // anyone outside AI_TOKENS_TESTING_USERS — keep the pill
+                // hidden in that case so non-cohort users see the FAB as
+                // it was before this feature shipped.
+                if (!j || !j.ok || !j.data || j.data.enabled === false) {
+                    if (walletBar) walletBar.style.display = "none";
+                    return;
+                }
+                renderWalletBar(j.data);
+            })
+            .catch(function () { /* silent — pill just doesn't show */ });
+    }
+
+    // ----- Guest path: POST /ai/guest/chat (ALTCHA-gated, same engine as Cookie) -----
+    // We wait briefly for the ALTCHA proof to finish before POSTing (the server
+    // rejects a missing or invalid token with 403), then re-arm so the next
+    // message has a fresh proof by the time the visitor types.
+    function postGuestChat(message) {
+        return waitForAltcha(3000).then(function () {
+            var payload = { message: message, altcha: altchaToken() };
+            return fetch("/ai/guest/chat", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "Content-Type": "application/json", "Accept": "application/json",
+                           "X-Requested-With": "XMLHttpRequest" },
+                body: JSON.stringify(payload)
+            }).then(function (r) {
+                if (payload.altcha) resetAltcha();
+                return r;
+            });
+        });
+    }
+
+    // ----- Rendering helpers -----
+    function esc(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+    function md(t) {
+        t = esc(t);
+        t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+        t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, "<a href=\"$2\" target=\"_blank\" rel=\"noopener\">$1</a>");
+        t = t.replace(/(^|[\s(])(https?:\/\/[^\s)]+)/g, "$1<a href=\"$2\" target=\"_blank\" rel=\"noopener\">$2</a>");
+        return t.replace(/\n/g, "<br>");
+    }
+    // Conversation log captured here so we can hand the full context to the
+    // human agent on handoff (lastUserQ alone is rarely enough — it's often
+    // a "yes" or a follow-up clarification).
+    var transcript = [];   // [{ role: "user"|"bot", text: "..." }]
+    var firstUserQ = "";
+
+    function add(text, who) {
+        var d = document.createElement("div");
+        d.className = "h-ask__msg h-ask__msg--" + who;
+        if (who === "bot") {
+            d.innerHTML = /<br>|<strong>|<a /.test(text) ? text : md(text);
+        } else {
+            d.textContent = text;
+        }
+        log.appendChild(d);
+        log.scrollTop = log.scrollHeight;
+        if (who === "user" || who === "bot") {
+            transcript.push({ role: who, text: text });
+            if (who === "user" && !firstUserQ) { firstUserQ = text; }
+        }
+        return d;
+    }
+
+    // ----- Answer feedback: thumbs, and a star-rating report (F-244) -----
+    // Every assistant reply gets a footer. The rating is keyed on the turn's
+    // request_id — the trace id the answering service mints — so a thumbs-down
+    // in the support console joins back to the exact run that produced the
+    // answer: which retrieval tier served it, from which KB entry. Without
+    // that key a rating says an answer was bad but not which one.
+    var FEEDBACK_URL = isLoggedIn ? "/ai/feedback" : "/api/ask/feedback";
+
+    function postFeedback(payload) {
+        var ctx = getPageContext();
+        payload.page = ctx.page;
+        var headers = { "Content-Type": "application/json", "Accept": "application/json" };
+        if (isLoggedIn) {
+            headers["X-CSRF-TOKEN"] = window.ttCsrfToken || "";
+            headers["X-Requested-With"] = "XMLHttpRequest";
+        }
+        return fetch(FEEDBACK_URL, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: headers,
+            body: JSON.stringify(payload)
+        }).catch(function () { /* a lost rating must never surface as an error */ });
+    }
+
+    // meta = { request_id, doc_id, kb_version, question, answer }
+    function attachFeedback(bubble, meta) {
+        if (!bubble || !meta || !meta.request_id) { return; }
+        var bar = document.createElement("div");
+        bar.className = "h-ask__fb";
+
+        var up = document.createElement("button");
+        up.type = "button"; up.innerHTML = "&#128077;";
+        up.title = "This was helpful"; up.setAttribute("aria-label", "This answer was helpful");
+        up.setAttribute("aria-pressed", "false");
+
+        var down = document.createElement("button");
+        down.type = "button"; down.innerHTML = "&#128078;";
+        down.title = "This wasn't helpful"; down.setAttribute("aria-label", "This answer was not helpful");
+        down.setAttribute("aria-pressed", "false");
+
+        var report = document.createElement("button");
+        report.type = "button"; report.className = "h-ask__fb-report"; report.textContent = "Report";
+        report.title = "Rate this answer and tell us what was wrong";
+
+        function vote(which, btn, other) {
+            // Switching up <-> down is allowed and the server replaces the previous
+            // vote, so a change of mind counts once. Re-clicking the current vote
+            // is a no-op: the server can replace a vote but not clear one, so
+            // un-highlighting it would show "no vote" while the old one stands.
+            if (btn.getAttribute("aria-pressed") === "true") { return; }
+            btn.setAttribute("aria-pressed", "true");
+            other.setAttribute("aria-pressed", "false");
+            bar.classList.add("h-ask__fb--voted");
+            postFeedback({
+                kind: "vote", vote: which,
+                request_id: meta.request_id, conversation_id: meta.conversation_id || "",
+                doc_id: meta.doc_id || "", kb_version: meta.kb_version || "",
+                question: meta.question || "", answer: meta.answer || ""
+            });
+            if (!bar.querySelector(".h-ask__fb-thanks")) {
+                // A bare thumbs-down tells us something is wrong but not what.
+                // Offer the one follow-up that makes it actionable.
+                report.textContent = which === "down" ? "Tell us what was wrong" : "Report";
+            }
+        }
+        up.addEventListener("click", function () { vote("up", up, down); });
+        down.addEventListener("click", function () { vote("down", down, up); });
+        report.addEventListener("click", function () { openReport(meta, bar); });
+
+        bar.appendChild(up); bar.appendChild(down); bar.appendChild(report);
+        bubble.appendChild(bar);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    // ----- Report dialog -----
+    var reportEl = document.getElementById("askReport"),
+        starsEl = document.getElementById("askStars"),
+        reportText = document.getElementById("askReportText"),
+        reportSend = document.getElementById("askReportSend"),
+        reportCancel = document.getElementById("askReportCancel");
+    var reportMeta = null, reportBar = null, reportRating = 0;
+
+    function paintStars() {
+        if (!starsEl) { return; }
+        Array.prototype.forEach.call(starsEl.children, function (b, i) {
+            b.classList.toggle("on", i < reportRating);
+            b.setAttribute("aria-checked", (i + 1) === reportRating ? "true" : "false");
+        });
+    }
+    if (starsEl) {
+        for (var si = 1; si <= 5; si++) {
+            (function (n) {
+                var b = document.createElement("button");
+                b.type = "button"; b.innerHTML = "&#9733;";
+                b.setAttribute("role", "radio");
+                b.setAttribute("aria-label", n + " out of 5");
+                b.addEventListener("click", function () { reportRating = n; paintStars(); });
+                starsEl.appendChild(b);
+            })(si);
+        }
+    }
+    function openReport(meta, bar) {
+        reportMeta = meta; reportBar = bar; reportRating = 0;
+        if (reportText) { reportText.value = ""; }
+        paintStars();
+        if (reportEl) { reportEl.hidden = false; }
+        if (reportText) { reportText.focus(); }
+    }
+    function closeReport() {
+        if (reportEl) { reportEl.hidden = true; }
+        reportMeta = null; reportBar = null;
+    }
+    if (reportCancel) { reportCancel.addEventListener("click", closeReport); }
+    if (reportEl) {
+        reportEl.addEventListener("click", function (e) { if (e.target === reportEl) { closeReport(); } });
+    }
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && reportEl && !reportEl.hidden) { closeReport(); }
+    });
+    if (reportSend) {
+        reportSend.addEventListener("click", function () {
+            if (!reportMeta) { closeReport(); return; }
+            var comment = reportText ? reportText.value.trim() : "";
+            if (!reportRating && !comment) {
+                // Nothing to send; a rating or a comment has to be present.
+                if (reportText) { reportText.focus(); }
+                return;
+            }
+            reportSend.disabled = true;
+            var bar = reportBar, meta = reportMeta;
+            postFeedback({
+                kind: "report", rating: reportRating || null, comment: comment,
+                request_id: meta.request_id, conversation_id: meta.conversation_id || "",
+                doc_id: meta.doc_id || "", kb_version: meta.kb_version || "",
+                question: meta.question || "", answer: meta.answer || ""
+            }).then(function () {
+                reportSend.disabled = false;
+                closeReport();
+                if (bar) {
+                    var existing = bar.querySelector(".h-ask__fb-report");
+                    if (existing) { existing.remove(); }
+                    if (!bar.querySelector(".h-ask__fb-thanks")) {
+                        var t = document.createElement("span");
+                        t.className = "h-ask__fb-thanks";
+                        t.textContent = "Thanks — the team will review this.";
+                        bar.appendChild(t);
+                    }
+                }
+            });
+        });
+    }
+
+    // User message bubble that can carry image thumbs alongside text. The
+    // thumbs sit ABOVE the text inside the bubble so the message reads
+    // top-down. Falls back to plain add() when there are no images.
+    // Images the customer sent Cookie on this page, for the hand-off: the Desk room uploads the ones
+    // not yet handed over as the customer's own photos (Amisha, 18-11-26: two screenshots sent to
+    // Cookie never reached the team, who saw only the words).
+    var sentImages = [];
+    var handedImages = 0;
+    function addUserBubble(text, images) {
+        if (!images || !images.length) { return add(text, "user"); }
+        var bubble = add(text || "", "user");
+        images.forEach(function (img) { if (img.file) { sentImages.push(img.file); } });
+        if (transcript.length) {
+            var last = transcript[transcript.length - 1];
+            last.text = (last.text ? last.text + " " : "") + "[" + images.length + (images.length === 1 ? " image" : " images") + " attached]";
+        }
+        // Inline-style the thumb strip so it doesn't depend on the SASS
+        // bundle being recompiled (.h-ask__thumb*/.h-ask__thumbs live in
+        // ai.css → public/css/v1/app.css and only rebuild on `npm run dev`).
+        // Slightly bigger here than the pending-strip thumbs (72px vs 44px)
+        // — the user is reviewing what they sent, so detail matters more.
+        var strip = document.createElement("div");
+        strip.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;margin:0 0 " + (text ? "6px" : "0") + ";padding:0;";
+        images.forEach(function (img) {
+            var t = document.createElement("div");
+            t.style.cssText = "width:72px;height:72px;border-radius:8px;overflow:hidden;flex:0 0 72px;background:rgba(255,255,255,.15);";
+            var im = document.createElement("img");
+            im.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;";
+            // Use the base64 data URI here, NOT preview_url — by the time
+            // this bubble renders, submitComposer() has already revoked all
+            // pending blob URLs in clearImages(), so preview_url is dead.
+            // The base64 form is durable for the lifetime of the bubble.
+            im.src = "data:" + img.media_type + ";base64," + img.data_base64;
+            im.alt = "attachment";
+            t.appendChild(im); strip.appendChild(t);
+        });
+        bubble.insertBefore(strip, bubble.firstChild);
+        log.scrollTop = log.scrollHeight;
+        return bubble;
+    }
+
+    // Plain-text rendering of the transcript the Desk room gives the team on a hand-off.
+    // Capped at 3500 chars — older turns drop.
+    function buildTranscriptText() {
+        var lines = transcript.map(function (m) {
+            return (m.role === "user" ? "You" : "Bot") + ": " + m.text.replace(/<[^>]+>/g, "");
+        });
+        var out = lines.join("\n\n");
+        if (out.length > 3500) { out = "…(earlier turns omitted)…\n\n" + out.slice(-3400); }
+        return out;
+    }
+
+    // Append a "Buy tokens / Upgrade plan" CTA pair inside a quota-exhausted
+    // bot bubble. Same shape as appendHandoffCta but two buttons opening in
+    // new tabs so the chat stays in place.
+    function appendQuotaCta(bubbleEl, buyUrl, upgradeUrl) {
+        if (!bubbleEl || bubbleEl.querySelector(".h-ask__cta-btn")) return;
+        var wrap = document.createElement("div");
+        wrap.className = "h-ask__msg-cta";
+        var buy = document.createElement("a");
+        buy.className = "h-ask__cta-btn";
+        buy.target = "_blank"; buy.rel = "noopener";
+        buy.href = buyUrl || "/ai-tokens";
+        buy.textContent = "Buy tokens →";
+        wrap.appendChild(buy);
+        var up = document.createElement("a");
+        up.className = "h-ask__cta-btn";
+        up.style.marginLeft = "6px";
+        up.target = "_blank"; up.rel = "noopener";
+        up.href = upgradeUrl || "/user/pricing";
+        up.textContent = "Upgrade plan →";
+        wrap.appendChild(up);
+        bubbleEl.appendChild(wrap);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    // Append a "Connect with a human →" CTA inside a bot message bubble.
+    // Used when the backend returns escalate=true — the AI itself is telling
+    // the visitor "would you like a human?", so we give them a one-click path
+    // without forcing the popup closed.
+    function appendHandoffCta(bubbleEl) {
+        if (!bubbleEl || bubbleEl.querySelector(".h-ask__cta-btn")) return;
+        var wrap = document.createElement("div");
+        wrap.className = "h-ask__msg-cta";
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "h-ask__cta-btn";
+        btn.textContent = "Connect with a human →";
+        btn.addEventListener("click", function () { doHumanHandoff("cta"); });
+        wrap.appendChild(btn);
+        bubbleEl.appendChild(wrap);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    var lastUserQ = "";
+
+    function ask(q, images) {
+        images = images || [];
+        // Render the user bubble. For image-only turns the text portion can
+        // be empty — addUserBubble paints just the thumbs.
+        addUserBubble(q, images);
+        lastUserQ = q;
+
+        // Logged-in users get the full MCP agent — skip the canned-answer
+        // fast path (the agent does its own intent routing) and don't render
+        // an escalate CTA (MCP doesn't return that flag; the footer "Speak
+        // with a human" button is always there as the escape hatch).
+        if (isLoggedIn) {
+            var typingL = add("Thinking…", "bot");
+            typingL.classList.add("h-ask__msg--typing");
+            // ChatController requires a non-empty `message`; when the user
+            // attached only images, send a single space so server-side
+            // validation passes — Anthropic ignores whitespace-only text
+            // and renders the images alone.
+            var msg = q && q.length ? q : " ";
+            streamLoggedInChat(msg, typingL, images);
+            return;
+        }
+
+        // Guest path — the same engine as Cookie, ALTCHA-gated; the reply shape
+        // ({reply, handoff, request_id}) is the logged-in one, so it renders the
+        // same way, hand-off to a person included.
+        var typing = add("Typing…", "bot");
+        typing.classList.add("h-ask__msg--typing");
+        setBusy(true);
+        postGuestChat(q)
+            .then(function (r) {
+                return r.json().then(
+                    function (j) { return { ok: r.ok, status: r.status, body: j }; },
+                    function () { return { ok: r.ok, status: r.status, body: null }; }
+                );
+            })
+            .then(function (res) {
+                if (res.body && (res.body.reply || res.body.error)) {
+                    renderLoggedInReply(res.body, typing, null);
+                    return;
+                }
+                typing.remove();
+                setBusy(false);
+                add("I'm having trouble reaching the assistant right now — please try again in a moment, or hit 'Speak with a human' below.", "bot");
+            })
+            .catch(function () {
+                typing.remove();
+                setBusy(false);
+                add("I'm having trouble reaching the assistant right now — please try again in a moment, or hit 'Speak with a human' below.", "bot");
+            });
+    }
+
+    function resetInputHeight() { input.style.height = "auto"; }
+    // Send-allowed = text OR ≥1 image attached. Snapshot pendingImages
+    // BEFORE clearImages() so the bubble + request both see the same set.
+    function submitComposer() {
+        var q = input.value.trim();
+        var imgs = pendingImages.slice();
+        if (!q && imgs.length === 0) return;
+        input.value = "";
+        resetInputHeight();
+        if (imgs.length) clearImages();
+        ask(q, imgs);
+    }
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        submitComposer();
+    });
+    // Multi-line: Enter sends, Shift+Enter inserts a newline. A <textarea>
+    // doesn't submit a form on Enter (unlike <input>), so wire it explicitly.
+    input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            submitComposer();
+        }
+    });
+    // Auto-grow the textarea up to the CSS max-height as more lines are typed.
+    input.addEventListener("input", function () {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 120) + "px";
+        // Collapse the starter-chip row the moment the user starts typing;
+        // expand it back when the textarea is emptied (and no request is
+        // running).
+        syncComposerState();
+    });
+
+    // ----- Image attach wiring (logged-in only — markup gated server-side) -----
+    if (attachBtn && fileInput) {
+        attachBtn.addEventListener("click", function () {
+            if (!inFlight) fileInput.click();
+        });
+        fileInput.addEventListener("change", function (e) {
+            Array.prototype.forEach.call(e.target.files || [], function (f) {
+                if (f && f.type && f.type.indexOf("image/") === 0) addImageFile(f);
+            });
+            // Reset so picking the same file again still triggers `change`.
+            fileInput.value = "";
+        });
+        // Paste an image from the OS clipboard into the textarea — handy for
+        // screenshots. Skipped while a turn is in flight so we don't queue
+        // images that can't be sent yet.
+        input.addEventListener("paste", function (e) {
+            if (inFlight) return;
+            var items = (e.clipboardData && e.clipboardData.items) || [];
+            Array.prototype.forEach.call(items, function (it) {
+                if (it.kind === "file" && it.type && it.type.indexOf("image/") === 0) {
+                    var f = it.getAsFile();
+                    if (f) addImageFile(f);
+                }
+            });
+        });
+    }
+
+    document.querySelectorAll("[data-ask-q]").forEach(function (b) {
+        b.addEventListener("click", function () { ask(b.getAttribute("data-ask-q")); });
+    });
+
+    // ----- Open / close + first-open page context -----
+    var hasOpenedOnce = false;
+    function showOpener() {
+        var ctx = getPageContext();
+        log.innerHTML = "";
+        add(openerFor(ctx.file), "bot");
+    }
+    // On first open, restore what this conversation already showed (the server
+    // keeps it; the page did not): the user comes back from copying a strategy
+    // name and finds the chat where they left it. Nothing stored → the opener.
+    function applyOpenerOnFirstOpen() {
+        if (hasOpenedOnce) return;
+        hasOpenedOnce = true;
+        fetch(CHAT_HISTORY_URL, { credentials: "same-origin",
+                                  headers: { "Accept": "application/json", "X-Requested-With": "XMLHttpRequest" } })
+            .then(function (r) { return r.ok ? r.json() : { messages: [] }; })
+            .then(function (j) {
+                var msgs = (j && j.messages) || [];
+                if (!msgs.length) { showOpener(); return; }
+                log.innerHTML = "";
+                msgs.forEach(function (m) {
+                    if (!m || !m.text) return;
+                    if (m.role === "user") { add(m.text, "user"); lastUserQ = m.text; }
+                    else { add(m.text, "bot"); }
+                });
+            })
+            .catch(showOpener);
+    }
+    // New chat: a fresh thread on the server (the old one expires on its own)
+    // and a clean pane with the opener.
+    var newChat = document.getElementById("askNewChat");
+    if (newChat) {
+        newChat.addEventListener("click", function () {
+            fetch(CHAT_RESET_URL, { method: "POST", credentials: "same-origin",
+                                    headers: { "Accept": "application/json", "X-Requested-With": "XMLHttpRequest",
+                                               "X-CSRF-TOKEN": window.ttCsrfToken || "" } })
+                .catch(function () {})
+                .then(function () {
+                    transcript.length = 0; firstUserQ = ""; lastUserQ = "";
+                    showOpener();
+                    if (input) { input.focus(); }
+                });
+        });
+    }
+    if (fab && pop) {
+        // ----- one window on US pages (DeskWidget::usCookieRoom) -----
+        // The button opens the Desk room itself and Cookie answers there (Sudo's UsCookieChat): no Ask panel, no "Speak
+        // with a human" step. draft = text put in the room's composer, not sent (ttCookiePrefill, ?cookie_q). Before the
+        // room's script is ready the click waits for it (ttdesk:ready, 4 s); a room Sudo refused (ttDeskUsFallback) or a
+        // script that never came opens this panel as before.
+        var ttUsRoom = false;
+        var usRoomWaiting = false;
+        function usRoomGa(name, source) {
+            try { if (typeof gtag === "function") { gtag("event", name, { channel: "web", market: "US", source: source || "button", logged_in: isLoggedIn ? 1 : 0 }); } } catch (x) {}
+        }
+        function openUsRoom(draft, source) {
+            if (!ttUsRoom || window.ttDeskUsFallback) { return false; }
+            if (window.TradetronDesk) {
+                fab.style.display = "none";
+                usRoomGa("ask_us_room_open", source);
+                window.TradetronDesk.open({ draft: draft || "", source: "us_" + (source || "button") });
+                return true;
+            }
+            if (usRoomWaiting) { return true; }
+            usRoomWaiting = true;
+            var done = false;
+            function go(ready) {
+                if (done) { return; }
+                done = true; usRoomWaiting = false;
+                document.removeEventListener("ttdesk:ready", onReady);
+                document.removeEventListener("ttdesk:unavailable", onGone);
+                if (ready && openUsRoom(draft, source)) { return; }
+                usRoomGa("ask_us_room_fallback", source);
+                ttUsRoom = false;
+                if (draft && window.ttCookiePrefill) { window.ttCookiePrefill(draft); } else { open(); }
+            }
+            function onReady() { go(true); }
+            function onGone() { go(false); }
+            document.addEventListener("ttdesk:ready", onReady);
+            document.addEventListener("ttdesk:unavailable", onGone);
+            setTimeout(function () { go(!!window.TradetronDesk); }, 4000);
+            return true;
+        }
+        function open() {
+            if (openUsRoom("", "button")) { return; }
+            // Kick off PoW the moment the chat opens so a token is ready
+            // by the time the visitor types or taps a chip.
+            armAltcha();
+            applyOpenerOnFirstOpen();
+            // Pull the AI-token snapshot so the WalletBar is up to date the
+            // moment the chat surface appears. No-op for anonymous visitors.
+            refreshWalletBar();
+            syncHumanOption();
+            pop.classList.add("is-open");
+            // The button stays put and turns into a round close — a second, more findable
+            // way out than the small x in the header (F-20260831-uat-walk-10).
+            fab.classList.add("is-close");
+            fab.setAttribute("aria-label", "Close Cookie");
+            fab.setAttribute("aria-expanded", "true");
+            setTimeout(function () { input && input.focus(); }, 80);
+        }
+        function close() {
+            pop.classList.remove("is-open");
+            fab.classList.remove("is-close");
+            fab.setAttribute("aria-label", "Talk to Cookie — Tradetron's AI assistant");
+            fab.setAttribute("aria-expanded", "false");
+            fab.style.display = "";
+            // Stop the ALTCHA widget from firing background challenge
+            // requests while the chat isn't even visible. Re-mounts cleanly
+            // on the next open().
+            disarmAltcha();
+        }
+        fab.addEventListener("click", function () {
+            if (pop.classList.contains("is-open")) { close(); } else { open(); }
+        });
+        if (popClose) popClose.addEventListener("click", close);
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && pop.classList.contains("is-open")) close();
+        });
+        // A page can open the chat: any [data-cookie-open] control (tradetron.tech/cookie), and
+        // #talk in the URL opens it on load (links from the launch film and the campaign).
+        document.addEventListener("click", function (e) {
+            var t = e.target && e.target.closest ? e.target.closest("[data-cookie-open]") : null;
+            if (!t) return;
+            e.preventDefault();
+            if (!pop.classList.contains("is-open")) open();
+        });
+        if (location.hash === "#talk") { open(); }
+
+        // A page can also hand the chat a message to send (30 Oct 2026): window.ttCookiePrefill(text),
+        // or ?cookie_q=<text> on any page (what the sign-in return lands on). The chat opens with the text in the box,
+        // NOT sent: the person reads it and presses Ask. Capped at 500 characters, control characters dropped, and the
+        // parameter is taken out of the address so a reload does not fill the box again.
+        window.ttCookiePrefill = function (text) {
+            text = String(text == null ? "" : text).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, 500);
+            if (!text || !input) return false;
+            if (openUsRoom(text, "prefill")) return true;
+            if (!pop.classList.contains("is-open")) open();
+            input.value = text;
+            input.style.height = "auto";
+            input.style.height = Math.min(input.scrollHeight, 120) + "px";
+            syncComposerState();
+            setTimeout(function () {
+                input.focus();
+                try { input.setSelectionRange(text.length, text.length); } catch (x) {}
+            }, 100);
+            return true;
+        };
+        try {
+            var prefillQs = new URLSearchParams(location.search);
+            if (prefillQs.has("cookie_q")) {
+                window.ttCookiePrefill(prefillQs.get("cookie_q"));
+                prefillQs.delete("cookie_q");
+                var prefillRest = prefillQs.toString();
+                history.replaceState(history.state, "", location.pathname + (prefillRest ? "?" + prefillRest : "") + location.hash);
+            }
+        } catch (x) {}
+    }
+
+    // The "Paste a YouTube link" chip (rendered only where App\Support\YoutubeStrategyPage::chipFor allows).
+    var ytChip = document.querySelector(".tt-ask-root [data-yt-chip]");
+    if (ytChip) {
+        ytChip.addEventListener("click", function () {
+            try { if (typeof window.gtag === "function") { window.gtag("event", "yt_chip_click", { placement: "ask_fab", signed_in: isLoggedIn }); } } catch (x) {}
+        });
+    }
+
+    // ----- Support hours: "Speak with a human" only while a person is on (App\Support\AskHumanHours) -----
+    // Same rule as AskHumanHours::isOpen: a window opens at `from` IST on an allowed weekday that is not a holiday and
+    // runs to `to` (the next day when `to` is at or before `from`); yesterday's window counts.
+    var AH = window.ttAskHuman || { gate: false };
+    function ahMin(hhmm) { var p = String(hhmm || "0:0").split(":"); return (+p[0]) * 60 + (+p[1] || 0); }
+    function ahIst(ms) { // the IST wall clock of an instant: {ymd, dow (1 = Monday), min}
+        var d = new Date(ms + 330 * 60000);
+        var ymd = d.getUTCFullYear() + "-" + ("0" + (d.getUTCMonth() + 1)).slice(-2) + "-" + ("0" + d.getUTCDate()).slice(-2);
+        return { ymd: ymd, dow: d.getUTCDay() || 7, min: d.getUTCHours() * 60 + d.getUTCMinutes(), ms: ms };
+    }
+    function ahOpensOn(dayMs) { var c = ahIst(dayMs); return (AH.days || []).indexOf(c.dow) >= 0 && (AH.holidays || []).indexOf(c.ymd) < 0; }
+    function humanOnNow(ms) {
+        if (!AH.gate) { return true; }
+        ms = ms || Date.now();
+        var now = ahIst(ms), from = ahMin(AH.from), to = ahMin(AH.to);
+        var len = (to <= from ? to + 1440 : to) - from;
+        for (var back = 0; back <= 1; back++) {
+            if (!ahOpensOn(ms - back * 86400000)) { continue; }
+            var since = now.min + back * 1440 - from;
+            if (since >= 0 && since < len) { return true; }
+        }
+        return false;
+    }
+    function humanBackLabel(ms) { // when the next window opens, in words: "today at 08:45 IST", "on Monday at ..."
+        ms = ms || Date.now();
+        var now = ahIst(ms), from = ahMin(AH.from), w = AH.words || {};
+        var time = AH.from || "08:45";
+        for (var ahead = 0; ahead <= 14; ahead++) {
+            var dayMs = ms + ahead * 86400000;
+            if (!ahOpensOn(dayMs) || (ahead === 0 && now.min >= from)) { continue; }
+            if (ahead === 0) { return String(w.today || "today at :time IST").replace(":time", time); }
+            if (ahead === 1) { return String(w.tomorrow || "tomorrow at :time IST").replace(":time", time); }
+            var day = "";
+            try { day = new Intl.DateTimeFormat(AH.lang === "hi" ? "hi-IN" : "en-IN", { weekday: "long", timeZone: "Asia/Kolkata" }).format(new Date(dayMs)); }
+            catch (x) { day = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][ahIst(dayMs).dow - 1]; }
+            return String(w.on_day || "on :day at :time IST").replace(":day", day).replace(":time", time);
+        }
+        return String(w.later || "as soon as the team is back");
+    }
+    var humanClosedEl = document.getElementById("askHumanClosed");
+    function syncHumanOption() {
+        var on = humanOnNow();
+        if (handoff) { handoff.hidden = !on; }
+        if (humanClosedEl) {
+            humanClosedEl.hidden = on;
+            humanClosedEl.textContent = on ? "" : String((AH.words || {}).footer || "Team is offline. Back :when").replace(":when", humanBackLabel());
+        }
+        return on;
+    }
+    var closedNoteEl = null;
+    function showHumanClosedNote(source) {
+        // Cookie keeps the conversation; the note says when a person is back and that email reaches the team (Desk).
+        var w = AH.words || {};
+        var text = String(w.note || "Our support team is offline right now. A person will be back :when. You can keep asking me, or email :email and the team will reply when they are back.")
+            .replace(":when", humanBackLabel()).replace(":email", AH.email || "support@tradetron.tech");
+        try { if (typeof gtag === "function") { gtag("event", "ask_human_closed_hours", { channel: "web", source: source || "button", logged_in: isLoggedIn ? 1 : 0 }); } } catch (x) {}
+        if (pop && !pop.classList.contains("is-open") && fab) { fab.click(); }
+        // Pressed again with the note still the last thing in the chat: no second copy.
+        if (closedNoteEl && closedNoteEl.parentNode === log && log.lastElementChild === closedNoteEl) { log.scrollTop = log.scrollHeight; return; }
+        closedNoteEl = add(text, "bot");
+    }
+    syncHumanOption();
+    setInterval(syncHumanOption, 60000);
+
+    // ----- hand-off to a person -----
+    // Reused by (a) the "Speak with a human" footer button, (b) the inline CTA appended
+    // to bot bubbles, (c) a reply the backend flagged handoff. Tradetron Desk's room
+    // (partials/desk, App\Support\DeskWidget) takes the question as the customer's own
+    // message and the transcript for the team, so nobody types it twice; the room shows
+    // who is coming. Without the room (not on this page, or Sudo refused the session:
+    // 'ttdesk:unavailable') the visitor goes to the contact page. GA4: ask_handoff.
+    var CONTACT_URL = "/pages/contact";
+    var handoffFired = false;
+    function deskUp() {
+        return !!window.TradetronDesk && !(window.ttDesk && window.ttDesk.down);
+    }
+    function trackHandoff(channel, source) {
+        try {
+            if (typeof window.gtag === "function") {
+                window.gtag("event", "ask_handoff", { channel: channel, source: source || "button", logged_in: isLoggedIn ? 1 : 0 });
+            }
+        } catch (e) {}
+    }
+    function toContactPage(source) {
+        trackHandoff("contact_page", source);
+        // A new tab keeps Cookie's conversation (and the framed widget on mcp.tradetron.tech) where it is.
+        var w = null;
+        try { w = window.open(CONTACT_URL, "_blank"); } catch (e) {}
+        if (w) { try { w.opener = null; } catch (e) {} } else { window.location.href = CONTACT_URL; }
+    }
+    function doHumanHandoff(source) {
+        if (handoffFired) return;     // don't double-open
+        // Outside support hours nobody is there to take it: Cookie stays, and says when a person is back.
+        if (!syncHumanOption()) { showHumanClosedNote(typeof source === "string" ? source : "button"); return; }
+        // A US page whose room Sudo refused (partials/desk-us-fallback): the US support line, English or Spanish.
+        if (window.ttDeskUsFallback && window.ttDeskUsFallbackLine) {
+            trackHandoff("us_line", source);
+            try { if (typeof gtag === "function") { gtag("event", "desk_fallback_us_line", { channel: "web", market: "US", lang: window.ttDeskUsFallbackLang || "en" }); } } catch (x) {}
+            alert(window.ttDeskUsFallbackLine);
+            return;
+        }
+        if (!deskUp()) {
+            // A silent hand-off shows no reply bubble: give it one with the way to the contact page.
+            if (source === "silent") {
+                appendHandoffCta(add("Our team's chat isn't available right now. The contact page reaches the same people.", "bot"));
+                return;
+            }
+            // A reply that asks for a person leaves its CTA in the bubble; only a click leaves the page.
+            if (source !== "reply") { toContactPage(source); }
+            return;
+        }
+        handoffFired = true;
+        var ctx = getPageContext();
+        if (pop) { pop.classList.remove("is-open"); }
+        if (fab) {
+            fab.classList.remove("is-close");
+            // A handoff from a reply closes the popover without going through
+            // close(), so undo open()'s labels here too.
+            fab.setAttribute("aria-label", "Talk to Cookie — Tradetron's AI assistant");
+            fab.setAttribute("aria-expanded", "false");
+            fab.style.display = "none";
+        }
+        trackHandoff("desk", source);
+        var files = sentImages.slice(handedImages).slice(-4);
+        handedImages = sentImages.length;
+        window.TradetronDesk.open({ question: lastUserQ || firstUserQ || "", transcript: buildTranscriptText(), page: ctx.page, human: true, files: files });
+    }
+    if (handoff) { handoff.addEventListener("click", function () { doHumanHandoff("button"); }); }
+    // The Desk room closed (partials/desk): Cookie's button comes back and "Speak with a human" works again.
+    document.addEventListener("ttdesk:desk_close", function () {
+        if (fab) { fab.style.display = ""; }
+        handoffFired = false;
+    });
+    // Sudo refused the session while a hand-off was opening the room: bring Cookie back with the way to the
+    // contact page, so the visitor is never left with neither chat on screen.
+    document.addEventListener("ttdesk:unavailable", function () {
+        if (!handoffFired) return;
+        handoffFired = false;
+        if (fab) { fab.style.display = ""; }
+        if (pop && !pop.classList.contains("is-open") && fab) { fab.click(); }
+        var b = add("Our team's chat isn't available right now. The contact page reaches the same people.", "bot");
+        appendHandoffCta(b);
+    });
+})();
+</script>
+
+
+    <script src="https://tradetron.tech/js/atp-ai/home.js?v=5e26519b5c7e"></script>
+<script src="https://tradetron.tech/js/atp-ai/theme.js?v=9305d2b42550"></script>
+<script src="https://tradetron.tech/js/centrifuge.js?v=1795022413"></script>
+<script src="https://tradetron.tech/js/atp-ai/include.js?v=08d1e70fed58"></script>
+<script src="https://tradetron.tech/js/atp-ai/ux-enhance.js?v=b3f1a5af960a"></script>
+    <script src="https://tradetron.tech/js/atp-ai/public-tools.js?v=e26dbb6a32cd" defer></script>
+<script async defer type="module" src="https://cdn.jsdelivr.net/npm/altcha@2/dist/altcha.min.js"></script>
+<script src="https://tradetron.tech/js/atp-ai/demo-india.js?v=3ebee6ee2deb"></script>
+<script src="https://tradetron.tech/js/atp-ai/web-vitals.min.js?v=d890744312ca" defer></script>
+<script src="https://tradetron.tech/js/atp-ai/web-vitals-report.js?v=07389f73c15f" defer></script>
+<div class="tt-lang-nudge" id="tt-lang-nudge" role="region" aria-label="Language" lang="hi">
+    <span class="tt-lang-nudge__text">Tradetron अब हिन्दी में भी उपलब्ध है</span>
+    <a class="tt-lang-nudge__yes" data-nudge-action="hindi" href="https://tradetron.tech/set/lang/hi?via=nudge">हिन्दी में देखें</a>
+    <a class="tt-lang-nudge__no" data-nudge-action="english" href="https://tradetron.tech/set/lang/en?via=nudge" lang="en">Continue in English</a>
+    <button type="button" class="tt-lang-nudge__x" data-nudge-action="close" aria-label="Close" lang="en">&times;</button>
+</div>
+<style>
+    .tt-lang-nudge{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:1050;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+        max-width:calc(100% - 32px);padding:10px 14px;border-radius:12px;background:#111827;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25);
+        font:500 14px/1.4 'Noto Sans Devanagari','Poppins',system-ui,sans-serif}
+    .tt-lang-nudge a{white-space:nowrap;text-decoration:none;border-radius:8px;padding:6px 12px;font-weight:600}
+    .tt-lang-nudge__yes{background:#f59e0b;color:#111827}
+    .tt-lang-nudge__yes:hover{color:#111827;background:#fbbf24}
+    .tt-lang-nudge__no{color:#d1d5db;border:1px solid rgba(255,255,255,.25)}
+    .tt-lang-nudge__no:hover{color:#fff}
+    .tt-lang-nudge{padding-right:52px}
+    .tt-lang-nudge__x{position:absolute;top:50%;right:4px;transform:translateY(-50%);width:44px;height:44px;margin:0;border:0;border-radius:50%;background:none;color:#d1d5db;font:400 24px/1 system-ui,sans-serif;cursor:pointer}
+    .tt-lang-nudge__x:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .tt-lang-nudge__x:focus-visible,.tt-lang-nudge a:focus-visible{outline:2px solid #fbbf24;outline-offset:2px}
+    @media (max-width:480px){.tt-lang-nudge__x{top:4px;transform:none}}
+    .tt-lang-nudge[hidden]{display:none}
+</style>
+<script>
+(function () {
+    var bar = document.getElementById('tt-lang-nudge');
+    if (!bar) { return; }
+    function track(action) {
+        try { if (typeof window.gtag === 'function') { window.gtag('event', 'language_nudge', { action: action }); } } catch (e) {}
+    }
+    track('shown');
+    bar.addEventListener('click', function (e) {
+        var el = e.target && e.target.closest ? e.target.closest('[data-nudge-action]') : null;
+        if (!el) { return; }
+        var action = el.getAttribute('data-nudge-action');
+        track(action);
+        if (action === 'close') { bar.hidden = true; }
+    });
+})();
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600&display=swap&text=Tradetron+%E0%A4%85%E0%A4%AC+%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80+%E0%A4%AE%E0%A5%87%E0%A4%82+%E0%A4%AD%E0%A5%80+%E0%A4%89%E0%A4%AA%E0%A4%B2%E0%A4%AC%E0%A5%8D%E0%A4%A7+%E0%A4%B9%E0%A5%88+%E0%A4%A6%E0%A5%87%E0%A4%96%E0%A5%87%E0%A4%82">
+</body>
+</html>

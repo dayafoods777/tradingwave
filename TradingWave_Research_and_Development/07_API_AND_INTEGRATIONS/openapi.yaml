@@ -1,0 +1,40 @@
+openapi: 3.1.0
+info:
+  title: TradingWave Algorithmic Trading API
+  version: 1.0.0
+  description: Comprehensive REST API for TradingWave algo trading platform.
+paths:
+  /api/v1/auth/login:
+    post:
+      summary: Authenticate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Login successful
+  /api/v1/strategies:
+    get:
+      summary: List user strategies
+      responses:
+        '200': { description: Success }
+    post:
+      summary: Create new strategy
+      responses:
+        '201': { description: Strategy created }
+  /api/v1/deployments:
+    post:
+      summary: Deploy strategy (Paper or Live Auto)
+      responses:
+        '201': { description: Strategy deployed }
+  /api/v1/webhooks/tradingview:
+    post:
+      summary: Ingest TradingView PineBridge webhook alert
+      responses:
+        '200': { description: Signal processed }

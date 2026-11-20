@@ -1,0 +1,24 @@
+# TradingWave Environment Variables Example
+NODE_ENV=development
+PORT=4000
+API_BASE_URL=http://localhost:4000
+WEB_BASE_URL=http://localhost:3000
+
+# Database
+DATABASE_URL=postgresql://twave_user:twave_password@localhost:5432/tradingwave
+TIMESCALE_URL=postgresql://twave_user:twave_password@localhost:5432/tradingwave_ts
+
+# Redis & Queues
+REDIS_URL=redis://localhost:6379
+
+# JWT & Encryption
+JWT_SECRET=super_secret_jwt_key_at_least_32_characters_long
+ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+# Centrifugo Realtime Server
+CENTRIFUGO_API_KEY=centrifugo_secret_api_key
+CENTRIFUGO_API_ENDPOINT=http://localhost:8000/api
+CENTRIFUGO_WS_ENDPOINT=ws://localhost:8000/connection/websocket
+
+# Safety Failsafe
+ALLOW_LIVE_TRADING=false
