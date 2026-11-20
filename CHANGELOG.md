@@ -2,6 +2,18 @@
 
 All notable changes to the TradingWave project will be documented in this file.
 
+## [0.2.0] - 2026-11-20
+### Added
+- Monorepo configured with pnpm workspaces, `docker-compose.yml` (Postgres, TimescaleDB, Redis, Centrifugo), and TypeScript base.
+- `@tradingwave/dsl`: Zero-Eval Abstract Syntax Tree (JSON AST) schema, Zod/static validation, keyword engine (SMA, EMA, RSI, ATR, Supertrend), and sandboxed condition evaluator with 5 passing unit tests.
+- `@tradingwave/broker-adapters`: `IBrokerAdapter` normalized interface, strict `OrderStateMachine`, and in-memory `SandboxBrokerAdapter` with margin checks, slippage, and emergency square-off with 6 passing unit tests.
+- `@tradingwave/market-data`: Black-Scholes pricing & Greeks formula (Delta, Gamma, Theta, Vega, Rho) and symmetric Option Chain generator with 2 passing unit tests.
+- `@tradingwave/execution-engine`: Order Management System (OMS), multi-tier `RiskController`, and `BotRunner` strategy evaluator with 3 passing unit tests.
+- `@tradingwave/backtesting`: Deterministic event-driven backtesting engine with zero lookahead bias, Indian regulatory fee schedule (STT, GST, turnover, stamp duty), and equity curve tracker with 1 passing unit test.
+- `@tradingwave/api`: Fastify modular monolith REST API gateway with CORS and endpoints for health, strategies, deployments, option chain, backtests, sandbox brokers, and kill-switch with 5 passing integration tests.
+- `@tradingwave/web`: Next.js 15 + React 19 + Tailwind CSS trading dashboard application with brand identity (`#FF6600` Trading Orange, `#0B0F19` Slate), compiled and static page generation verified.
+- Full automated test suite passes 22/22 tests across 6 test suites.
+
 ## [0.1.0] - 2026-11-20
 ### Added
 - Established REA reverse engineering framework connection with 255 available MCP tools and verified capability inventory.

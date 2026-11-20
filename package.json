@@ -1,0 +1,29 @@
+{
+  "name": "tradingwave-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TradingWave — Institutional & Retail Algorithmic Trading Platform",
+  "scripts": {
+    "build": "pnpm --recursive run build",
+    "test": "pnpm --recursive run test",
+    "lint": "pnpm --recursive run lint",
+    "dev": "pnpm --filter @tradingwave/api run dev",
+    "dev:web": "pnpm --filter @tradingwave/web run dev"
+  },
+  "keywords": [
+    "algorithmic-trading",
+    "options-trading",
+    "tradetron",
+    "fastify",
+    "nextjs",
+    "timescaledb"
+  ],
+  "author": "TradingWave Architect",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.5.2",
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}
+

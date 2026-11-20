@@ -1,0 +1,26 @@
+{
+  "name": "@tradingwave/api",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "node --watch src/index.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tradingwave/dsl": "workspace:*",
+    "@tradingwave/broker-adapters": "workspace:*",
+    "@tradingwave/market-data": "workspace:*",
+    "@tradingwave/execution-engine": "workspace:*",
+    "@tradingwave/backtesting": "workspace:*",
+    "fastify": "^5.2.1",
+    "@fastify/cors": "^10.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}
+
