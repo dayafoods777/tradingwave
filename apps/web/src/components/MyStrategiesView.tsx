@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import DeployModal, { DeployConfig } from './DeployModal';
 import {
   LayoutGrid,
   Plus,
@@ -181,7 +182,7 @@ export const TRADETRON_STRATEGIES: StrategyItem[] = [
 interface MyStrategiesViewProps {
   onCreateNew: () => void;
   onEditStrategy: (strategyName: string) => void;
-  onDeployStrategy: (strategyName: string) => void;
+  onDeployStrategy: (strategyName: string, deployConfig?: any) => void;
   onBacktestStrategy: (strategyName: string) => void;
   onNavigateTab?: (tab: any) => void;
   strategies?: StrategyItem[];
@@ -206,6 +207,9 @@ export default function MyStrategiesView({
   const [selectedVisibility, setSelectedVisibility] = useState<string>('All');
   const [selectedExchange, setSelectedExchange] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'NEWEST' | 'OLDEST' | 'NAME' | 'CAPITAL_ASC' | 'CAPITAL_DESC'>('NEWEST');
+
+  // Deploy Modal State
+  const [deployModalStrategy, setDeployModalStrategy] = useState<StrategyItem | null>(null);
 
   // API Modal State
   const [apiModalStrategy, setApiModalStrategy] = useState<StrategyItem | null>(null);
@@ -680,7 +684,7 @@ export default function MyStrategiesView({
 
                     {/* Deploy Button */}
                     <button
-                      onClick={() => onDeployStrategy(strat.name)}
+                      onClick={() => setDeployModalStrategy(strat)}
                       className="px-5 py-1.5 rounded-xl bg-[#5B45E0] hover:bg-[#4E38D0] text-white text-xs font-bold shadow-md shadow-indigo-500/20 active:scale-95 transition flex items-center gap-1.5"
                     >
                       <span>Deploy</span>
@@ -785,6 +789,21 @@ export default function MyStrategiesView({
           </div>
         </div>
       )}
+
+      {/* 6. TRADETRON DEPLOY MODAL */}
+      <DeployModal
+        isOpen={!!deployModalStrategy}
+        strategy={deployModalStrategy}
+        onClose={() => setDeployModalStrategy(null)}
+        onDeploy={(config) => {
+          onDeployStrategy(config.strategyName, config);
+          setDeployModalStrategy(null);
+        }}
+        onAddBroker={() => {
+          setDeployModalStrategy(null);
+          onNavigateTab?.('brokers');
+        }}
+      />
     </div>
   );
 }

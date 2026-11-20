@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import DeployModal, { DeployConfig } from './DeployModal';
 import {
   Sparkles,
   Plus,
@@ -164,7 +165,7 @@ const READY_STRATEGIES_CATALOG: ReadyStrategyItem[] = [
 ];
 
 interface ReadyStrategiesViewProps {
-  onDeploy: (strategyName: string) => void;
+  onDeploy: (strategyName: string, deployConfig?: any) => void;
   onEdit: (strategyName: string) => void;
   onBacktest: (strategyName: string) => void;
   onNavigateTab: (tab: any) => void;
@@ -178,6 +179,7 @@ export default function ReadyStrategiesView({
 }: ReadyStrategiesViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [deployModalStrategy, setDeployModalStrategy] = useState<ReadyStrategyItem | null>(null);
 
   const categories = [
     'ALL',
@@ -384,7 +386,7 @@ export default function ReadyStrategiesView({
             {/* Action Buttons */}
             <div className="pt-2 flex items-center gap-2">
               <button
-                onClick={() => onDeploy(strat.name)}
+                onClick={() => setDeployModalStrategy(strat)}
                 className="flex-1 py-2.5 rounded-xl bg-[#5B45E0] hover:bg-[#4E38D0] text-white text-xs font-bold shadow-md shadow-indigo-500/20 active:scale-95 transition flex items-center justify-center gap-1.5"
               >
                 <Play className="w-3.5 h-3.5 fill-white" />
@@ -412,6 +414,21 @@ export default function ReadyStrategiesView({
           </div>
         ))}
       </div>
+
+      {/* TRADETRON DEPLOY MODAL */}
+      <DeployModal
+        isOpen={!!deployModalStrategy}
+        strategy={deployModalStrategy}
+        onClose={() => setDeployModalStrategy(null)}
+        onDeploy={(config) => {
+          onDeploy(config.strategyName, config);
+          setDeployModalStrategy(null);
+        }}
+        onAddBroker={() => {
+          setDeployModalStrategy(null);
+          onNavigateTab('brokers');
+        }}
+      />
     </div>
   );
 }

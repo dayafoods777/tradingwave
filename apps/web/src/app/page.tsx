@@ -147,24 +147,58 @@ export default function TradingWaveApp() {
     }
   };
 
-  const handleDeployNew = (strategyName: string) => {
+  const handleDeployNew = (strategyName: string, deployConfig?: any) => {
+    const execType = deployConfig?.executionType || 'Paper Trading';
+    const mode =
+      execType === 'Live Auto' || execType === 'Live Auto One Click'
+        ? 'LIVE_AUTO'
+        : execType === 'Live Offline'
+        ? 'LIVE_OFFLINE'
+        : 'PAPER';
+
+    const broker =
+      deployConfig?.broker && deployConfig.broker !== 'Select broker'
+        ? deployConfig.broker
+        : mode === 'PAPER'
+        ? 'TT Paper Trading'
+        : connectedBrokers.length > 0
+        ? connectedBrokers[0]
+        : 'TT Paper Trading';
+
+    const multNum = deployConfig?.multiplier ? parseFloat(deployConfig.multiplier) || 1 : 1;
+    const capNum = deployConfig?.capitalRecommended
+      ? parseInt(deployConfig.capitalRecommended.replace(/[^0-9]/g, '')) || 100000
+      : 100000;
+
     const newBot: BotDeployment = {
       id: `bot_${Date.now()}`,
       name: strategyName,
-      underlying: strategyName.includes('BANKNIFTY') ? 'BANKNIFTY' : 'NIFTY 50',
+      underlying: strategyName.includes('BANKNIFTY')
+        ? 'BANKNIFTY'
+        : strategyName.includes('BTC')
+        ? 'BTCUSD'
+        : strategyName.includes('CRUDE')
+        ? 'CRUDEOIL'
+        : 'NIFTY 50',
       status: 'ACTIVE',
-      mode: 'PAPER',
-      broker: connectedBrokers.length > 0 ? connectedBrokers[0] : 'Paper Sandbox',
-      multiplier: 1,
+      mode,
+      broker,
+      multiplier: multNum,
       dailyPnl: 0,
-      capital: 100000,
+      capital: capNum,
       legs: ['SELL 1x ATM CE', 'SELL 1x ATM PE'],
       lastCheck: 'Just now',
-      frequency: 'Continuous'
+      frequency: 'Continuous',
+      sid: String(Math.floor(10000000 + Math.random() * 90000000)),
+      author: 'algobulls',
+      statusLabel: 'Live-Entered',
+      openPositionsCount: 0,
+      totalPositionsCount: 1,
+      runCount: deployConfig?.stopLooping ? parseInt(deployConfig.stopLooping) || 5 : 5
     };
     setDeployedBots(prev => [newBot, ...prev]);
     setActiveTab('dashboard');
-    showToast(`Deployed "${strategyName}" to Paper Trading successfully!`);
+    showToast(`Deployed "${strategyName}" in ${execType} mode successfully!`);
   };
 
   const handleAddLegFromChain = (strike: number, type: 'CALL' | 'PUT', action: 'BUY' | 'SELL') => {
@@ -217,7 +251,7 @@ export default function TradingWaveApp() {
               setEditingStrategyName(name);
               setActiveTab('builder');
             }}
-            onDeployStrategy={name => handleDeployNew(name)}
+            onDeployStrategy={(name, config) => handleDeployNew(name, config)}
             onBacktestStrategy={_name => setActiveTab('backtest')}
             onNavigateTab={tab => setActiveTab(tab as any)}
           />
@@ -225,7 +259,7 @@ export default function TradingWaveApp() {
 
         {activeTab === 'readystrategies' && (
           <ReadyStrategiesView
-            onDeploy={name => handleDeployNew(name)}
+            onDeploy={(name, config) => handleDeployNew(name, config)}
             onEdit={_name => setActiveTab('builder')}
             onBacktest={_name => setActiveTab('backtest')}
             onNavigateTab={tab => setActiveTab(tab as any)}
