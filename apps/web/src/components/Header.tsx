@@ -51,22 +51,20 @@ export default function Header({
         {/* Left: Logo & Slogan */}
         <div className="flex items-center gap-6">
           <div
-            className="flex items-center gap-3 cursor-pointer select-none group"
+            className="flex items-center cursor-pointer select-none group"
             onClick={() => setActiveTab('dashboard')}
           >
-            {/* Visual Logo Container with Trade Bindas Identity */}
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF6600] to-[#E65C00] flex items-center justify-center font-black text-2xl text-white shadow-lg shadow-orange-500/20 group-hover:scale-105 transition transform">
-              W
-            </div>
-            <div>
-              <div className="flex items-center gap-1 leading-none">
-                <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">Trading</span>
-                <span className="font-extrabold text-xl tracking-tight text-[#FF6600]">Wave</span>
-              </div>
-              <div className="text-[9.5px] tracking-[0.2em] text-slate-500 dark:text-slate-400 font-bold uppercase mt-0.5">
-                Trade Bindas
-              </div>
-            </div>
+            {/* Authentic TradingWave Trade Bindas Logo with Dual-Theme Adaptation */}
+            <img
+              src="/logo-dark.png"
+              alt="TradingWave — Trade Bindas"
+              className="h-9 sm:h-10 w-auto object-contain hidden dark:block transition transform group-hover:scale-105"
+            />
+            <img
+              src="/logo-light.png"
+              alt="TradingWave — Trade Bindas"
+              className="h-9 sm:h-10 w-auto object-contain block dark:hidden transition transform group-hover:scale-105"
+            />
           </div>
 
           {/* Tradetron Mega Menu: "Create" Dropdown */}

@@ -288,13 +288,19 @@ export default function TradingWaveApp() {
       <footer className="border-t border-slate-200 dark:border-[#1E293B] bg-slate-100 dark:bg-[#0E1526] text-slate-600 dark:text-slate-400 text-xs py-8 px-6 mt-12 transition-colors">
         <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#FF6600] to-[#E65C00] flex items-center justify-center font-black text-sm text-white">
-              W
-            </div>
-            <div>
-              <span className="font-bold text-slate-900 dark:text-white text-sm">TradingWave</span>
-              <span className="text-[10px] text-slate-500 ml-2 font-mono">TRADE BINDAS · High-Performance Algo SaaS</span>
-            </div>
+            <img
+              src="/logo-dark.png"
+              alt="TradingWave — Trade Bindas"
+              className="h-7 w-auto object-contain hidden dark:block"
+            />
+            <img
+              src="/logo-light.png"
+              alt="TradingWave — Trade Bindas"
+              className="h-7 w-auto object-contain block dark:hidden"
+            />
+            <span className="text-[10px] text-slate-500 ml-1 font-mono hidden md:inline">
+              High-Performance Algo SaaS
+            </span>
           </div>
 
           <div className="flex items-center gap-6 text-slate-600 dark:text-slate-400">

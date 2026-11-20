@@ -4,6 +4,10 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'TradingWave — Trade Bindas | Algo Trading Platform',
   description: 'Independent, enterprise-grade algorithmic trading SaaS and no-code strategy automation.',
+  icons: {
+    icon: '/logo-icon.png',
+    apple: '/logo-icon.png',
+  },
 };
 
 export default function RootLayout({
