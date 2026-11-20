@@ -81,9 +81,9 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl w-full max-w-4xl max-h-[88vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 transition-colors animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl w-full max-w-4xl max-h-[88vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 transition-colors animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#1E293B] bg-slate-50 dark:bg-[#0E1526]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0B1220]">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-sm">
               <Terminal className="w-5 h-5" />
@@ -127,7 +127,7 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
         </div>
 
         {/* Filters and Search Strip */}
-        <div className="px-6 py-2.5 bg-slate-100/80 dark:bg-[#10172A] border-b border-slate-200 dark:border-[#1E293B] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="px-6 py-2.5 bg-slate-100/80 dark:bg-[#10172A] border-b border-slate-200 dark:border-[#334155] flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {['ALL', 'ORDER', 'BROKER', 'RISK', 'CHECK', 'POSITION', 'FEED'].map(type => (
               <button
@@ -135,8 +135,8 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
                 onClick={() => setFilterType(type)}
                 className={`px-2.5 py-1 rounded-md font-mono font-bold transition text-[11px] ${
                   filterType === type
-                    ? 'bg-[#FF6600] text-white shadow-sm'
-                    : 'bg-white dark:bg-[#1E293B] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60'
+                    ? 'bg-[#FF6B00] text-white shadow-sm'
+                    : 'bg-white dark:bg-[#334155] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60'
                 }`}
               >
                 {type}
@@ -151,7 +151,7 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
               placeholder="Search logs..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-700/80 rounded-lg pl-8 pr-3 py-1 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-700/80 rounded-lg pl-8 pr-3 py-1 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#FF6B00]"
             />
           </div>
         </div>
@@ -159,7 +159,7 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
         {/* Log Viewer Body */}
         <div
           ref={scrollRef}
-          className="p-4 bg-slate-950 dark:bg-[#070A12] flex-1 overflow-y-auto font-mono text-xs space-y-1.5 border-b border-slate-200 dark:border-[#1E293B] min-h-[320px]"
+          className="p-4 bg-slate-950 dark:bg-[#070A12] flex-1 overflow-y-auto font-mono text-xs space-y-1.5 border-b border-slate-200 dark:border-[#334155] min-h-[320px]"
         >
           {filteredLogs.length === 0 ? (
             <div className="h-48 flex items-center justify-center text-slate-500 font-sans text-xs">
@@ -174,7 +174,7 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
                 <span className="text-slate-500 shrink-0 select-none text-[11px]">{log.time}</span>
                 <span
                   className={`px-1.5 py-0.2 rounded text-[10px] font-bold shrink-0 select-none ${
-                    log.type === 'ORDER' ? 'bg-orange-500/20 text-[#FF6600]' :
+                    log.type === 'ORDER' ? 'bg-orange-500/20 text-[#FF6B00]' :
                     log.type === 'BROKER' ? 'bg-emerald-500/20 text-emerald-400' :
                     log.type === 'RISK' ? 'bg-blue-500/20 text-blue-400' :
                     log.type === 'POSITION' ? 'bg-purple-500/20 text-purple-400' :
@@ -194,7 +194,7 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-3 bg-slate-50 dark:bg-[#0E1526] text-xs text-slate-600 dark:text-slate-400">
+        <div className="flex items-center justify-between px-6 py-3 bg-slate-50 dark:bg-[#0B1220] text-xs text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>Continuous Execution Engine · 1-sec Resolution · Zero-eval Sandbox Active</span>

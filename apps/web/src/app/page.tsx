@@ -207,7 +207,7 @@ export default function TradingWaveApp() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-[#FF6600] selection:text-white transition-colors duration-200">
+    <div className="min-h-screen flex flex-col font-sans selection:bg-[#FF6B00] selection:text-white transition-colors duration-200">
       {/* 1. Tradetron Navigation Header */}
       <Header
         activeTab={activeTab}
@@ -220,8 +220,8 @@ export default function TradingWaveApp() {
 
       {/* 2. Global Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white dark:bg-[#131B2E] border border-slate-300 dark:border-[#FF6600] text-slate-900 dark:text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200 transition-colors">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#FF6600] animate-pulse"></span>
+        <div className="fixed bottom-6 right-6 z-50 bg-white dark:bg-[#1F2937] border border-slate-300 dark:border-[#FF6B00] text-slate-900 dark:text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200 transition-colors">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B00] animate-pulse"></span>
           <span className="text-xs font-semibold">{toastMessage}</span>
         </div>
       )}
@@ -337,7 +337,7 @@ export default function TradingWaveApp() {
       />
 
       {/* 5. Tradetron-Style Clean Footer */}
-      <footer className="border-t border-slate-200 dark:border-[#1E293B] bg-slate-100 dark:bg-[#0E1526] text-slate-600 dark:text-slate-400 text-xs py-8 px-6 mt-12 transition-colors">
+      <footer className="border-t border-slate-200 dark:border-[#334155] bg-slate-100 dark:bg-[#0B1220] text-slate-600 dark:text-slate-400 text-xs py-8 px-6 mt-12 transition-colors">
         <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img

@@ -284,9 +284,9 @@ export default function DashboardView({
   return (
     <div className="space-y-6 pb-12">
       {/* 1. TOP TICKER STRIP (Tradetron Live Continuous Scrolling Ticker) */}
-      <div className="bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs font-mono transition-colors overflow-hidden relative">
+      <div className="bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs font-mono transition-colors overflow-hidden relative">
         {/* Market Status Badge (Pinned Left) */}
-        <div className="flex items-center gap-2 shrink-0 z-10 bg-slate-50 dark:bg-[#0E1526] pr-4 shadow-[12px_0_16px_-4px_rgba(248,250,252,0.95)] dark:shadow-[12px_0_16px_-4px_rgba(14,21,38,0.95)]">
+        <div className="flex items-center gap-2 shrink-0 z-10 bg-slate-50 dark:bg-[#0B1220] pr-4 shadow-[12px_0_16px_-4px_rgba(248,250,252,0.95)] dark:shadow-[12px_0_16px_-4px_rgba(14,21,38,0.95)]">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] tracking-wide">
             <span className="w-2 h-2 rounded-full bg-slate-400"></span>
             CLOSED
@@ -320,7 +320,7 @@ export default function DashboardView({
         </div>
 
         {/* Lists dropdown button (Pinned Right) */}
-        <div className="shrink-0 z-10 bg-slate-50 dark:bg-[#0E1526] pl-3 shadow-[-12px_0_16px_-4px_rgba(248,250,252,0.95)] dark:shadow-[-12px_0_16px_-4px_rgba(14,21,38,0.95)]">
+        <div className="shrink-0 z-10 bg-slate-50 dark:bg-[#0B1220] pl-3 shadow-[-12px_0_16px_-4px_rgba(248,250,252,0.95)] dark:shadow-[-12px_0_16px_-4px_rgba(14,21,38,0.95)]">
           <button className="px-3 py-1 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-sans font-semibold flex items-center gap-1.5 transition">
             <span>Lists</span>
             <ChevronDown className="w-3 h-3 text-slate-400" />
@@ -373,7 +373,7 @@ export default function DashboardView({
           </button>
           <div className="flex items-center gap-2 text-xs">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">SHOWING</span>
-            <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#131B2E] text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1F2937] text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
               <span>Today</span>
               <ChevronDown className="w-3 h-3 text-slate-400" />
             </button>
@@ -384,7 +384,7 @@ export default function DashboardView({
       {/* 4. THREE TOP METRIC CARDS (Exact match to screenshot) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Card 1: DEPLOYED CAPITAL */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
             <CreditCard className="w-4 h-4 text-slate-400" />
             <span>DEPLOYED CAPITAL</span>
@@ -400,7 +400,7 @@ export default function DashboardView({
         </div>
 
         {/* Card 2: P&L (With subtle rounded highlight border) */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border-2 border-indigo-100 dark:border-indigo-950/60 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border-2 border-indigo-100 dark:border-indigo-950/60 shadow-sm flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
@@ -433,7 +433,7 @@ export default function DashboardView({
         </div>
 
         {/* Card 3: OPEN POSITIONS */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
             <Layers className="w-4 h-4 text-slate-400" />
             <span>OPEN POSITIONS</span>
@@ -450,7 +450,7 @@ export default function DashboardView({
       </div>
 
       {/* 5. DEPLOYED STRATEGIES TABLE SECTION */}
-      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
+      <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
         {/* Table Controls Header */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Left: Title & Filter Pills */}
@@ -459,7 +459,7 @@ export default function DashboardView({
               Deployed <span className="text-[#5B45E0] dark:text-[#818CF8]">strategies</span>
             </h2>
 
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#0E1526] p-1 rounded-xl">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#0B1220] p-1 rounded-xl">
               {(['All', 'Deployed', 'Archived', 'Shared'] as const).map(pill => (
                 <button
                   key={pill}
@@ -484,7 +484,7 @@ export default function DashboardView({
                 placeholder="Filter name / broker / status..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#5B45E0]"
+                className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#5B45E0]"
               />
             </div>
 
@@ -507,7 +507,7 @@ export default function DashboardView({
         {/* Table Header & Rows */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-[#0E1526] text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-200 dark:border-slate-800">
+            <thead className="bg-slate-50 dark:bg-[#0B1220] text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="py-3 px-4 w-12 text-center">#</th>
                 <th className="py-3 px-4">STRATEGY</th>
@@ -676,7 +676,7 @@ export default function DashboardView({
                 onClick={() => setConsoleTab(tab.id as any)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition text-left ${
                   isActive
-                    ? 'bg-slate-100 dark:bg-[#1E293B] text-[#5B45E0] dark:text-[#818CF8] font-bold border-l-4 border-[#5B45E0] dark:border-[#818CF8]'
+                    ? 'bg-slate-100 dark:bg-[#334155] text-[#5B45E0] dark:text-[#818CF8] font-bold border-l-4 border-[#5B45E0] dark:border-[#818CF8]'
                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -688,14 +688,14 @@ export default function DashboardView({
         </div>
 
         {/* Right Console Detail Panel */}
-        <div className="md:col-span-9 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-6 min-h-[260px] flex flex-col justify-between">
+        <div className="md:col-span-9 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-6 min-h-[260px] flex flex-col justify-between">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-slate-900 dark:text-white capitalize">
                 {consoleTab.replace('_', ' ')}
               </h3>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-2 py-0.5 rounded bg-slate-100 dark:bg-[#0E1526]">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-2 py-0.5 rounded bg-slate-100 dark:bg-[#0B1220]">
                 {consoleTab === 'tally_orders' ? 'BROKER RECONCILE' : 'LIVE FEED'}
               </span>
             </div>
@@ -803,11 +803,11 @@ export default function DashboardView({
 
             {consoleTab === 'notifications' && (
               <div className="space-y-2 text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] flex items-center justify-between">
                   <span className="text-slate-700 dark:text-slate-300">Strategy &quot;TradingWave Nifty OHOL 3M&quot; heartbeat check passed.</span>
                   <span className="text-slate-400 font-mono text-[11px]">Just now</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] flex items-center justify-between">
                   <span className="text-slate-700 dark:text-slate-300">Centrifugo WebSocket stream connection active.</span>
                   <span className="text-slate-400 font-mono text-[11px]">1 min ago</span>
                 </div>
@@ -845,7 +845,7 @@ export default function DashboardView({
             right: `${menuCoords.right}px`,
             zIndex: 99999
           }}
-          className="bot-action-menu w-48 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl py-2 text-left animate-in fade-in zoom-in-95 duration-100 text-xs font-sans"
+          className="bot-action-menu w-48 bg-white dark:bg-[#334155] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl py-2 text-left animate-in fade-in zoom-in-95 duration-100 text-xs font-sans"
           onClick={e => e.stopPropagation()}
         >
           {/* STATUS */}
@@ -968,7 +968,7 @@ export default function DashboardView({
       {activeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
           <div
-            className="bg-white dark:bg-[#131B2E] w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white"
+            className="bg-white dark:bg-[#1F2937] w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white"
             onClick={e => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -993,27 +993,27 @@ export default function DashboardView({
             <div className="p-6">
               {activeModal.type === 'statistics' && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Win Rate</span>
                     <span className="text-lg font-black text-emerald-600 font-mono">68.4%</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Sharpe Ratio</span>
                     <span className="text-lg font-black text-slate-900 dark:text-white font-mono">2.14</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Max Drawdown</span>
                     <span className="text-lg font-black text-red-600 font-mono">-4.2%</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Profit Factor</span>
                     <span className="text-lg font-black text-slate-900 dark:text-white font-mono">1.88</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Total Trades</span>
                     <span className="text-lg font-black text-slate-900 dark:text-white font-mono">126</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Avg Win / Loss</span>
                     <span className="text-lg font-black text-slate-900 dark:text-white font-mono">1.85x</span>
                   </div>
@@ -1022,7 +1022,7 @@ export default function DashboardView({
 
               {activeModal.type === 'payoff' && (
                 <div className="space-y-4 text-center">
-                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center">
+                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center">
                     <TrendingUp className="w-12 h-12 text-[#5B45E0] mb-2" />
                     <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                       Delta-Neutral Expiry Payoff Curve
@@ -1043,7 +1043,7 @@ export default function DashboardView({
                     <span className="text-slate-500">Current MTM:</span>
                     <span className="font-bold text-red-600">- ₹ {(Math.abs(activeModal.bot.dailyPnl) / 100000).toFixed(2)} L</span>
                   </div>
-                  <div className="h-32 bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-400 font-mono">
+                  <div className="h-32 bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-400 font-mono">
                     [Intraday 1-Second MTM Curve Active]
                   </div>
                 </div>
@@ -1051,19 +1051,19 @@ export default function DashboardView({
 
               {activeModal.type === 'runtime_data' && (
                 <div className="space-y-2 text-xs font-mono">
-                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B1220] flex justify-between">
                     <span className="text-slate-500">Engine Frequency:</span>
                     <span className="font-bold">{activeModal.bot.frequency}</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B1220] flex justify-between">
                     <span className="text-slate-500">Last Engine Check:</span>
                     <span className="font-bold">{activeModal.bot.lastCheck}</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B1220] flex justify-between">
                     <span className="text-slate-500">Execution Mode:</span>
                     <span className="font-bold text-[#5B45E0]">{activeModal.bot.mode}</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0E1526] flex justify-between">
+                  <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B1220] flex justify-between">
                     <span className="text-slate-500">Open Positions:</span>
                     <span className="font-bold">{activeModal.bot.openPositionsCount ?? 0}</span>
                   </div>
@@ -1091,7 +1091,7 @@ export default function DashboardView({
                     value={notes[activeModal.bot.id] || ''}
                     onChange={e => setNotes({ ...notes, [activeModal.bot.id]: e.target.value })}
                     placeholder="Enter any custom reminders, adjustment rules, or observations..."
-                    className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
                   />
                   <div className="flex justify-end">
                     <button
@@ -1109,7 +1109,7 @@ export default function DashboardView({
 
               {activeModal.type === 'full_detail' && (
                 <div className="space-y-2 text-xs font-sans">
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] space-y-1.5">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] space-y-1.5">
                     <div className="font-bold text-sm text-slate-900 dark:text-white">{activeModal.bot.name}</div>
                     <div className="text-slate-500 text-[11px]">Underlying: {activeModal.bot.underlying} | Broker: {activeModal.bot.broker}</div>
                     <div className="text-slate-500 text-[11px]">Capital: ₹ {(activeModal.bot.capital / 100000).toFixed(2)} L | Multiplier: {activeModal.bot.multiplier}x</div>
@@ -1119,7 +1119,7 @@ export default function DashboardView({
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-3 bg-slate-50 dark:bg-[#0E1526] border-t border-slate-100 dark:border-slate-800 flex justify-end">
+            <div className="px-6 py-3 bg-slate-50 dark:bg-[#0B1220] border-t border-slate-100 dark:border-slate-800 flex justify-end">
               <button
                 onClick={() => setActiveModal(null)}
                 className="px-4 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"

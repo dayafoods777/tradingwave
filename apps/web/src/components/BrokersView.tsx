@@ -76,22 +76,22 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#131B2E] dark:via-[#15233E] dark:to-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#1F2937] dark:via-[#15233E] dark:to-[#1F2937] border border-slate-200 dark:border-[#334155] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">Broker Adapters</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-[#FF6B00]">Broker Adapters</span>
           <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{ALL_BROKERS_BASE.length} Supported Indian & Global Brokers</h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
             Execute orders directly into your personal broker trading account with zero latency markup. TradingWave provides standardized order reconciliation, automatic token refresh, and universal pre-trade risk checks.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm">
+          <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] text-center shadow-sm">
             <div className={`text-lg font-bold ${connectedBrokers.length > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`}>
               {connectedBrokers.length} Active
             </div>
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Connected</div>
           </div>
-          <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm">
+          <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] text-center shadow-sm">
             <div className="text-lg font-bold text-slate-900 dark:text-white">{ALL_BROKERS_BASE.length} Total</div>
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Available</div>
           </div>
@@ -107,7 +107,7 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
             placeholder="Search brokers (Zerodha, Dhan, Angel One, Groww)..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-xl pl-9 pr-3 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#FF6600]"
+            className="w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-xl pl-9 pr-3 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#FF6B00]"
           />
         </div>
 
@@ -116,7 +116,7 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${category === cat ? 'bg-[#FF6600] text-white shadow-sm' : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${category === cat ? 'bg-[#FF6B00] text-white shadow-sm' : 'bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
             >
               {cat}
@@ -130,7 +130,7 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
         {filtered.map(broker => (
           <div
             key={broker.name}
-            className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col justify-between hover:border-[#FF6600]/40 transition shadow-sm dark:shadow-md"
+            className="p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] flex flex-col justify-between hover:border-[#FF6B00]/40 transition shadow-sm dark:shadow-md"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -155,7 +155,7 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
 
               <div className="mt-2 flex flex-wrap gap-1">
                 {broker.segments.map(s => (
-                  <span key={s} className="text-[9px] px-1.5 py-0.5 rounded bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-slate-600 dark:text-slate-400 font-mono">
+                  <span key={s} className="text-[9px] px-1.5 py-0.5 rounded bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] text-slate-600 dark:text-slate-400 font-mono">
                     {s}
                   </span>
                 ))}
@@ -167,7 +167,7 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
                 onClick={() => onConfigure(broker.name)}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${broker.status === 'CONNECTED'
                   ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white hover:bg-slate-200'
-                  : 'bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
+                  : 'bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
                   }`}
               >
                 <Key className="w-3.5 h-3.5" />

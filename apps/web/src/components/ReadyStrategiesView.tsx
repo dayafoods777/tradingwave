@@ -201,7 +201,7 @@ export default function ReadyStrategiesView({
   return (
     <div className="space-y-6">
       {/* 1. TOP BANNER - Exact Tradetron Signature Header */}
-      <div className="relative p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#F8F7FF] via-white to-white dark:from-[#131B2E] dark:via-[#131B2E] dark:to-[#0E1526] border-2 border-[#5B45E0] dark:border-[#6366F1] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      <div className="relative p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#F8F7FF] via-white to-white dark:from-[#1F2937] dark:via-[#1F2937] dark:to-[#0B1220] border-2 border-[#5B45E0] dark:border-[#6366F1] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           {/* Eyebrow */}
           <div className="flex items-center gap-1.5 text-[#5B45E0] dark:text-[#818CF8] font-bold text-[11px] tracking-widest uppercase mb-1">
@@ -225,7 +225,7 @@ export default function ReadyStrategiesView({
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => onNavigateTab('builder')}
-            className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0E1526] text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold shadow-sm transition flex items-center gap-1.5"
+            className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold shadow-sm transition flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>Custom Strategy</span>
@@ -234,7 +234,7 @@ export default function ReadyStrategiesView({
       </div>
 
       {/* 2. SUB-NAVIGATION TABS STRIP (Ready Strategies after My Strategies - SS1) */}
-      <div className="flex items-center gap-8 border-b border-slate-200 dark:border-[#1E293B] text-sm font-semibold">
+      <div className="flex items-center gap-8 border-b border-slate-200 dark:border-[#334155] text-sm font-semibold">
         <button
           onClick={() => onNavigateTab('dashboard')}
           className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
@@ -261,7 +261,7 @@ export default function ReadyStrategiesView({
       </div>
 
       {/* 3. METRIC COUNTERS STRIP */}
-      <div className="rounded-2xl border border-slate-200 dark:border-[#1E293B] bg-white dark:bg-[#131B2E] overflow-hidden shadow-sm grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-[#1E293B] transition-colors">
+      <div className="rounded-2xl border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1F2937] overflow-hidden shadow-sm grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-[#334155] transition-colors">
         <div className="p-4 sm:p-5">
           <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
             Ready Setups
@@ -300,7 +300,7 @@ export default function ReadyStrategiesView({
       </div>
 
       {/* 4. SEARCH & CATEGORY FILTER BAR */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 transition-colors">
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 transition-colors">
         <div className="relative w-full md:w-96">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -308,7 +308,7 @@ export default function ReadyStrategiesView({
             placeholder="Search ready strategy name, index, or rules..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#5B45E0]"
+            className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#5B45E0]"
           />
         </div>
 
@@ -320,7 +320,7 @@ export default function ReadyStrategiesView({
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
                 selectedCategory === cat
                   ? 'bg-[#5B45E0] text-white shadow-sm'
-                  : 'bg-slate-100 dark:bg-[#0E1526] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  : 'bg-slate-100 dark:bg-[#0B1220] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {cat === 'ALL' ? 'All Setups' : cat}
@@ -334,7 +334,7 @@ export default function ReadyStrategiesView({
         {filteredStrategies.map(strat => (
           <div
             key={strat.id}
-            className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] hover:border-[#5B45E0]/60 transition-all flex flex-col justify-between shadow-sm hover:shadow-lg space-y-4"
+            className="p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] hover:border-[#5B45E0]/60 transition-all flex flex-col justify-between shadow-sm hover:shadow-lg space-y-4"
           >
             <div>
               {/* Badges */}
@@ -343,7 +343,7 @@ export default function ReadyStrategiesView({
                   <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-[#F0EDFF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8]">
                     {strat.underlying}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#0E1526] text-slate-600 dark:text-slate-400 font-mono uppercase">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#0B1220] text-slate-600 dark:text-slate-400 font-mono uppercase">
                     {strat.segment}
                   </span>
                 </div>
@@ -361,7 +361,7 @@ export default function ReadyStrategiesView({
               </p>
 
               {/* Quantitative Rules Box */}
-              <div className="mt-3.5 p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-100 dark:border-[#1E293B] space-y-2 text-[11px] font-mono">
+              <div className="mt-3.5 p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-100 dark:border-[#334155] space-y-2 text-[11px] font-mono">
                 <div>
                   <span className="text-[9px] uppercase font-sans font-bold text-slate-400 block">Entry Condition</span>
                   <span className="text-slate-800 dark:text-slate-200 font-medium">{strat.entryRule}</span>
@@ -377,7 +377,7 @@ export default function ReadyStrategiesView({
               </div>
 
               {/* Capital & Frequency */}
-              <div className="mt-3 flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-[#1E293B]">
+              <div className="mt-3 flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-[#334155]">
                 <span className="text-slate-500 dark:text-slate-400">Min Capital:</span>
                 <span className="font-black text-slate-900 dark:text-white font-mono">{strat.minCapitalDisplay}</span>
               </div>

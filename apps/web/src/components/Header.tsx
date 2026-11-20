@@ -106,7 +106,7 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 dark:border-[#1E293B] bg-white/95 dark:bg-[#0E1526]/95 backdrop-blur-md text-slate-800 dark:text-slate-100 transition-colors">
+    <header className="sticky top-0 z-50 border-b border-slate-200 dark:border-[#334155] bg-white/95 dark:bg-[#0B1220]/95 backdrop-blur-md text-slate-800 dark:text-slate-100 transition-colors">
       {/* Clean Single Row Tradetron Header (SS1 Parity) */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Left: Brand Logo + Navigation Links */}
@@ -136,7 +136,7 @@ export default function Header({
               className={`px-3.5 py-1.5 rounded-xl text-sm font-semibold transition ${
                 activeTab === 'dashboard'
                   ? 'bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] shadow-sm'
-                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
               }`}
             >
               Dashboard
@@ -152,8 +152,8 @@ export default function Header({
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
                   createMenuOpen || ['builder', 'usingai', 'wizard'].includes(activeTab)
-                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#131B2E]'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
                 }`}
               >
                 <span>Create</span>
@@ -161,10 +161,10 @@ export default function Header({
               </button>
 
               {createMenuOpen && (
-                <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => handleSelectTab('usingai')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Sparkles className="w-4 h-4" />
@@ -181,7 +181,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('builder')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <LayoutGrid className="w-4 h-4" />
@@ -198,7 +198,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('wizard')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Wand2 className="w-4 h-4" />
@@ -215,7 +215,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('builder')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <LineChart className="w-4 h-4" />
@@ -243,8 +243,8 @@ export default function Header({
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
                   strategiesMenuOpen || ['mystrategies', 'readystrategies', 'optionchain'].includes(activeTab)
-                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#131B2E]'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
                 }`}
               >
                 <span>Strategies</span>
@@ -252,10 +252,10 @@ export default function Header({
               </button>
 
               {strategiesMenuOpen && (
-                <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => handleSelectTab('dashboard')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <TrendingUp className="w-4 h-4" />
@@ -272,7 +272,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('mystrategies')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <LayoutGrid className="w-4 h-4" />
@@ -289,7 +289,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('readystrategies')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Sparkles className="w-4 h-4" />
@@ -306,7 +306,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('optionchain')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Layers className="w-4 h-4" />
@@ -330,7 +330,7 @@ export default function Header({
               className={`px-3 py-1.5 rounded-xl text-sm font-semibold transition ${
                 activeTab === 'backtest'
                   ? 'bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] shadow-sm'
-                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
               }`}
             >
               Reports
@@ -346,8 +346,8 @@ export default function Header({
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
                   creatorHubOpen
-                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#131B2E]'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
                 }`}
               >
                 <span>Creator Hub</span>
@@ -355,24 +355,24 @@ export default function Header({
               </button>
 
               {creatorHubOpen && (
-                <div className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => handleSelectTab('builder')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
                   >
                     <Sliders className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
                     <span>Strategy Studio</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('backtest')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
                   >
                     <LineChart className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
                     <span>Backtest Studio &amp; Reports</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('mystrategies')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
                   >
                     <LayoutGrid className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
                     <span>Monetize &amp; Templates</span>
@@ -391,8 +391,8 @@ export default function Header({
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
                   servicesMenuOpen || ['brokers', 'pricing'].includes(activeTab)
-                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#131B2E]'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
                 }`}
               >
                 <span>Services</span>
@@ -400,17 +400,17 @@ export default function Header({
               </button>
 
               {servicesMenuOpen && (
-                <div className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => handleSelectTab('brokers')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
                   >
                     <Key className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
                     <span>Brokers &amp; APIs ({ALL_BROKERS_BASE.length})</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('pricing')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
                   >
                     <CreditCard className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
                     <span>Plans &amp; Pricing</span>
@@ -452,7 +452,7 @@ export default function Header({
             </button>
 
             {notificationsOpen && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl shadow-2xl z-50 p-3 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl shadow-2xl z-50 p-3 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                   <span className="font-bold text-xs text-slate-900 dark:text-white">Notifications (18)</span>
                   <span className="text-[10px] text-[#5B45E0] dark:text-[#818CF8] font-semibold cursor-pointer">Mark all as read</span>
@@ -493,7 +493,7 @@ export default function Header({
             </button>
 
             {searchOpen && (
-              <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-2.5 shadow-2xl z-50">
+              <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2.5 shadow-2xl z-50">
                 <div className="relative">
                   <input
                     type="text"
@@ -501,7 +501,7 @@ export default function Header({
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder="Search strategy, stock, broker..."
                     autoFocus
-                    className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white outline-none focus:border-[#5B45E0]"
+                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white outline-none focus:border-[#5B45E0]"
                   />
                   {searchQuery && (
                     <button
@@ -532,14 +532,14 @@ export default function Header({
             </button>
 
             {marketMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-1.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-1.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <button
                   onClick={() => {
                     setMarket('IND');
                     closeAllMenus();
                   }}
                   className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
-                    market === 'IND' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0E1526]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0E1526]'
+                    market === 'IND' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
                   <span>🇮🇳 India (NSE/BSE)</span>
@@ -551,7 +551,7 @@ export default function Header({
                     closeAllMenus();
                   }}
                   className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
-                    market === 'USA' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0E1526]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0E1526]'
+                    market === 'USA' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
                   <span>🇺🇸 USA (CBOE/NYSE)</span>
@@ -577,14 +577,14 @@ export default function Header({
             </button>
 
             {langMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-36 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-1.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute right-0 top-full mt-2 w-36 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-1.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <button
                   onClick={() => {
                     setLang('English');
                     closeAllMenus();
                   }}
                   className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
-                    lang === 'English' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0E1526]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0E1526]'
+                    lang === 'English' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
                   <span>English</span>
@@ -596,7 +596,7 @@ export default function Header({
                     closeAllMenus();
                   }}
                   className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
-                    lang === 'हिन्दी' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0E1526]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0E1526]'
+                    lang === 'हिन्दी' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
                   <span>हिन्दी</span>
@@ -627,7 +627,7 @@ export default function Header({
             </button>
 
             {profileOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
                   <div className="text-xs font-bold text-slate-900 dark:text-white">algobulls</div>
                   <div className="text-[10px] text-slate-400 font-mono">ID: 83794997 · Live Quant</div>
@@ -636,28 +636,28 @@ export default function Header({
                 <div className="pt-1.5 space-y-0.5">
                   <button
                     onClick={() => handleSelectTab('dashboard')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
                   >
                     <TrendingUp className="w-4 h-4 text-slate-400" />
                     <span>My Dashboard</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('mystrategies')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
                   >
                     <LayoutGrid className="w-4 h-4 text-slate-400" />
                     <span>My Strategies</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('brokers')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
                   >
                     <Key className="w-4 h-4 text-slate-400" />
                     <span>Connected Brokers</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('pricing')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
                   >
                     <CreditCard className="w-4 h-4 text-slate-400" />
                     <span>Subscription Plan</span>

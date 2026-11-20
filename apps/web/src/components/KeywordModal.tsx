@@ -117,11 +117,11 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 animate-in fade-in zoom-in-95 duration-150 transition-colors">
+      <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 animate-in fade-in zoom-in-95 duration-150 transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#1E293B] bg-slate-50 dark:bg-[#0E1526]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0B1220]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#FF6600]/15 text-[#FF6600] flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-lg bg-[#FF6B00]/15 text-[#FF6B00] flex items-center justify-center font-bold">
               <Code className="w-4 h-4" />
             </div>
             <div>
@@ -137,7 +137,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
         {/* Content Split: Left list, Right parameter configurator */}
         <div className="flex-1 flex overflow-hidden">
           {/* Left Panel: Search & Keyword list */}
-          <div className="w-1/2 border-r border-slate-200 dark:border-[#1E293B] flex flex-col p-4 bg-slate-50/70 dark:bg-[#0E1526]/50">
+          <div className="w-1/2 border-r border-slate-200 dark:border-[#334155] flex flex-col p-4 bg-slate-50/70 dark:bg-[#0B1220]/50">
             {/* Search */}
             <div className="relative mb-3">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -146,7 +146,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                 placeholder="Search 214 keywords (e.g. EMA, RSI, CPR, LTP, Delta)..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-xl pl-9 pr-3 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#FF6600]"
+                className="w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-xl pl-9 pr-3 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#FF6B00]"
               />
             </div>
 
@@ -157,7 +157,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition ${
-                    selectedCategory === cat ? 'bg-[#FF6600] text-white shadow-sm' : 'bg-slate-200/80 dark:bg-[#1E293B] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    selectedCategory === cat ? 'bg-[#FF6B00] text-white shadow-sm' : 'bg-slate-200/80 dark:bg-[#334155] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {cat}
@@ -173,8 +173,8 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                   onClick={() => handleSelectKeyword(kw)}
                   className={`p-2.5 rounded-xl border cursor-pointer transition flex items-center justify-between ${
                     selectedKeyword.name === kw.name
-                      ? 'bg-[#FF6600]/10 border-[#FF6600] text-slate-900 dark:text-white'
-                      : 'bg-white dark:bg-[#131B2E]/60 border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+                      ? 'bg-[#FF6B00]/10 border-[#FF6B00] text-slate-900 dark:text-white'
+                      : 'bg-white dark:bg-[#1F2937]/60 border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-[#1F2937]'
                   }`}
                 >
                   <div>
@@ -187,7 +187,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                     <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">{kw.description}</p>
                   </div>
                   {selectedKeyword.name === kw.name && (
-                    <Check className="w-4 h-4 text-[#FF6600] shrink-0 ml-2" />
+                    <Check className="w-4 h-4 text-[#FF6B00] shrink-0 ml-2" />
                   )}
                 </div>
               ))}
@@ -195,10 +195,10 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
           </div>
 
           {/* Right Panel: Parameters, Comparator & Preview */}
-          <div className="w-1/2 p-6 flex flex-col overflow-y-auto bg-white dark:bg-[#131B2E]">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-[#1E293B]">
+          <div className="w-1/2 p-6 flex flex-col overflow-y-auto bg-white dark:bg-[#1F2937]">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-[#334155]">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#FF6600]">Configure Keyword</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#FF6B00]">Configure Keyword</span>
                 <h4 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{selectedKeyword.name}</h4>
               </div>
               <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">
@@ -206,7 +206,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
               </span>
             </div>
 
-            <p className="text-sm text-slate-700 dark:text-slate-300 mb-5 leading-relaxed bg-slate-50 dark:bg-[#0E1526] p-3 rounded-xl border border-slate-200 dark:border-[#1E293B]">
+            <p className="text-sm text-slate-700 dark:text-slate-300 mb-5 leading-relaxed bg-slate-50 dark:bg-[#0B1220] p-3 rounded-xl border border-slate-200 dark:border-[#334155]">
               {selectedKeyword.description}
             </p>
 
@@ -222,7 +222,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                         <select
                           value={paramValues[param.name] || param.default}
                           onChange={e => setParamValues({ ...paramValues, [param.name]: e.target.value })}
-                          className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+                          className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
                         >
                           <option value="NIFTY 50">NIFTY 50</option>
                           <option value="BANKNIFTY">BANKNIFTY</option>
@@ -235,7 +235,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                         <select
                           value={paramValues[param.name] || param.default}
                           onChange={e => setParamValues({ ...paramValues, [param.name]: e.target.value })}
-                          className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+                          className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
                         >
                           <option value="1m">1 min</option>
                           <option value="3m">3 min</option>
@@ -250,7 +250,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                           type="text"
                           value={paramValues[param.name] ?? param.default}
                           onChange={e => setParamValues({ ...paramValues, [param.name]: e.target.value })}
-                          className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+                          className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
                         />
                       )}
                     </div>
@@ -268,7 +268,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                   <select
                     value={comparator}
                     onChange={e => setComparator(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
                   >
                     <option value=">">Greater than (&gt;)</option>
                     <option value=">=">Greater than or Equal (&gt;=)</option>
@@ -287,18 +287,18 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                     value={rightValue}
                     onChange={e => setRightValue(e.target.value)}
                     placeholder="e.g. 50, 09:20, or SMA(50)"
-                    className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
                   />
                 </div>
               </div>
             </div>
 
             {/* Preview Box */}
-            <div className="mt-auto pt-4 border-t border-slate-200 dark:border-[#1E293B]">
+            <div className="mt-auto pt-4 border-t border-slate-200 dark:border-[#334155]">
               <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 Calculated Condition Expression
               </span>
-              <div className="p-3 bg-slate-100 dark:bg-[#0E1526] border border-[#FF6600]/40 rounded-xl font-mono text-sm text-[#FF6600] font-semibold overflow-x-auto whitespace-nowrap shadow-inner">
+              <div className="p-3 bg-slate-100 dark:bg-[#0B1220] border border-[#FF6B00]/40 rounded-xl font-mono text-sm text-[#FF6B00] font-semibold overflow-x-auto whitespace-nowrap shadow-inner">
                 {constructExpression()}
               </div>
             </div>
@@ -306,7 +306,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-[#1E293B] bg-slate-50 dark:bg-[#0E1526]">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0B1220]">
           <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
             Tradetron AST Engine · Zero-Eval Safe
           </span>
@@ -319,7 +319,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
             </button>
             <button
               onClick={handleConfirm}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 transition flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 transition flex items-center gap-1.5"
             >
               <Check className="w-4 h-4" /> Add Condition to Strategy
             </button>

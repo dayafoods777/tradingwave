@@ -139,7 +139,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
             <span>Language</span>
             <button
               onClick={() => setSelectedLanguage(prev => (prev === 'English' ? 'Hindi' : 'English'))}
-              className="font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1 flex items-center gap-1 hover:bg-slate-50 dark:hover:bg-[#131B2E] transition"
+              className="font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1 flex items-center gap-1 hover:bg-slate-50 dark:hover:bg-[#1F2937] transition"
             >
               <span>{selectedLanguage}</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -163,7 +163,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         {/* 3 Option Doors */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {/* DOOR 1: Build it now with Cookie (Featured) */}
-          <div className="rounded-2xl p-6 bg-white dark:bg-[#131B2E] border-2 border-[#5B45E0] shadow-xl relative flex flex-col justify-between">
+          <div className="rounded-2xl p-6 bg-white dark:bg-[#1F2937] border-2 border-[#5B45E0] shadow-xl relative flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] tracking-wider uppercase">
@@ -201,7 +201,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* DOOR 2: Talk to a quant */}
-          <div className="rounded-2xl p-6 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+          <div className="rounded-2xl p-6 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
             <div>
               <div className="flex items-center gap-2 mb-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
                 <span className="font-bold">02</span>
@@ -226,7 +226,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               </div>
               <button
                 onClick={() => setQuantModalOpen(true)}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0E1526] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1"
+                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1"
               >
                 <span>Talk to a quant</span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
@@ -236,7 +236,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                   const el = document.getElementById('what-it-costs');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0E1526] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
+                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
               >
                 <span>How it works</span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
@@ -245,7 +245,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* DOOR 3: Connect your own AI */}
-          <div className="rounded-2xl p-6 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+          <div className="rounded-2xl p-6 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -272,14 +272,14 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               </div>
               <button
                 onClick={() => setConnectAiModalOpen(true)}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0E1526] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1"
+                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1"
               >
                 <span>Connect it in two minutes</span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
               </button>
               <button
                 onClick={() => setConnectAiModalOpen(true)}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0E1526] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
+                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
               >
                 <span>How it works</span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
@@ -289,7 +289,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         </div>
 
         {/* Included with Door 1 & 2 Banner */}
-        <div className="mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 text-xs">
+        <div className="mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 text-xs">
           <div className="font-bold text-[#5B45E0] dark:text-[#818CF8] uppercase tracking-wider text-[11px] mb-2 flex items-center gap-1.5">
             <Check className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>INCLUDED WITH DOOR 1 AND DOOR 2</span>
@@ -331,7 +331,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         {/* 4 Steps Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           {/* Step 1 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
               <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
                 1
@@ -347,7 +347,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* Step 2 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
               <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
                 2
@@ -363,7 +363,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* Step 3 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
               <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
                 3
@@ -379,7 +379,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* Step 4 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
               <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
                 4
@@ -497,9 +497,9 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* ========================================================= */}
       {cookieModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150">
             {/* Header */}
-            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#0E1526]">
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#0B1220]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] flex items-center justify-center">
                   <Sparkles className="w-5 h-5" />
@@ -598,7 +598,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
             </div>
 
             {/* Input Footer */}
-            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0E1526]">
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0B1220]">
               {chatStep === 'input' && (
                 <div className="flex items-center gap-2">
                   <input
@@ -607,7 +607,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                     onChange={e => setStrategyPrompt(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendPromptToCookie()}
                     placeholder="e.g. 9:20 NIFTY short straddle with 25% SL and 15:10 square-off..."
-                    className="flex-1 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                    className="flex-1 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
                   />
                   <button
                     onClick={handleSendPromptToCookie}
@@ -653,7 +653,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* ========================================================= */}
       {quantModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl animate-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Users className="w-5 h-5 text-[#5B45E0]" />
@@ -675,7 +675,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                 <input
                   type="text"
                   placeholder="e.g. Rahul Sharma"
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0E1526] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
                 />
               </div>
               <div>
@@ -683,7 +683,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                 <input
                   type="text"
                   placeholder="name@example.com or +91 9876543210"
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0E1526] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
                 />
               </div>
               <div>
@@ -691,7 +691,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                 <textarea
                   rows={3}
                   placeholder="Describe your rules, indicators, and instruments..."
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0E1526] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
                 />
               </div>
             </div>
@@ -721,7 +721,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* ========================================================= */}
       {connectAiModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-xl p-6 shadow-2xl animate-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-xl p-6 shadow-2xl animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bot className="w-5 h-5 text-[#5B45E0]" />
@@ -748,7 +748,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                     type="text"
                     readOnly
                     value="https://api.tradingwave.tech/v1/ai/mcp/manifest.json"
-                    className="flex-1 p-2 rounded-xl font-mono border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0E1526] text-slate-900 dark:text-white"
+                    className="flex-1 p-2 rounded-xl font-mono border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white"
                   />
                   <button
                     onClick={() => {

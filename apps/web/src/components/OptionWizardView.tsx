@@ -151,9 +151,9 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#131B2E] dark:via-[#1A2542] dark:to-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#1F2937] dark:via-[#1A2542] dark:to-[#1F2937] border border-slate-200 dark:border-[#334155] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">Options Wizard</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-[#FF6B00]">Options Wizard</span>
           <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">Multi-Leg Strategy & Greek Simulator</h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
             Visually design straddles, strangles, iron condors, and ratio spreads with real-time Black-Scholes Greeks, payoff diagram, and spot price slider.
@@ -161,7 +161,7 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
         </div>
         <button
           onClick={() => onDeployToLive(`${underlying} ${selectedPreset}`)}
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-2 transition"
+          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-2 transition"
         >
           <Play className="w-4 h-4 fill-white" />
           <span>Deploy Wizard Strategy</span>
@@ -182,8 +182,8 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
             onClick={() => applyPreset(p.id as any)}
             className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
               selectedPreset === p.id
-                ? 'bg-[#FF6600] text-white shadow-md'
-                : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#FF6B00] text-white shadow-md'
+                : 'bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             {p.label}
@@ -196,10 +196,10 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
         {/* Left: Interactive Payoff Chart & Greeks (7 cols) */}
         <div className="lg:col-span-7 space-y-5">
           {/* Payoff Chart Card */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl transition-colors">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm dark:shadow-xl transition-colors">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <BarChart2 className="w-4 h-4 text-[#FF6600]" />
+                <BarChart2 className="w-4 h-4 text-[#FF6B00]" />
                 <h3 className="font-bold text-sm text-slate-900 dark:text-white">Expiration Payoff Curve</h3>
               </div>
               <div className="flex items-center gap-3 text-xs">
@@ -223,15 +223,15 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
             </div>
 
             {/* SVG Visualizer */}
-            <div className="w-full bg-slate-900 dark:bg-[#0A0D17] rounded-xl border border-slate-200 dark:border-[#1E293B] p-2 overflow-hidden flex items-center justify-center">
+            <div className="w-full bg-slate-900 dark:bg-[#0A0D17] rounded-xl border border-slate-200 dark:border-[#334155] p-2 overflow-hidden flex items-center justify-center">
               <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
                 {/* Zero PnL Reference Line */}
                 <line x1="0" y1={height / 2} x2={width} y2={height / 2} stroke="#334155" strokeDasharray="3 3" strokeWidth="1" />
                 {/* Current Spot Price Reference Line */}
-                <line x1={width / 2} y1="0" x2={width / 2} y2={height} stroke="#FF6600" strokeDasharray="2 2" strokeWidth="1" />
+                <line x1={width / 2} y1="0" x2={width / 2} y2={height} stroke="#FF6B00" strokeDasharray="2 2" strokeWidth="1" />
 
                 {/* Payoff Curve */}
-                <path d={svgPath} fill="none" stroke="#FF6600" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d={svgPath} fill="none" stroke="#FF6B00" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
                 {/* Breakeven points markers */}
                 {payoffData.breakevens.map((be, idx) => (
@@ -248,14 +248,14 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
 
             <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 font-mono">
               <span>Low: {spotPrice - 600}</span>
-              <span className="text-[#FF6600] font-bold">Spot: {spotPrice}</span>
+              <span className="text-[#FF6B00] font-bold">Spot: {spotPrice}</span>
               <span>High: {spotPrice + 600}</span>
             </div>
           </div>
 
           {/* Greeks Bar */}
           <div className="grid grid-cols-4 gap-3">
-            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-center shadow-sm dark:shadow-md transition-colors">
               <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Delta (Δ)</div>
               <div className={`text-base font-black font-mono mt-0.5 ${Number(netGreeks.delta) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                 {netGreeks.delta}
@@ -263,7 +263,7 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
               <div className="text-[10px] text-slate-400 dark:text-slate-500">Directional exposure</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-center shadow-sm dark:shadow-md transition-colors">
               <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Theta (Θ)</div>
               <div className={`text-base font-black font-mono mt-0.5 ${netGreeks.theta >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                 {netGreeks.theta > 0 ? `+₹${netGreeks.theta}` : `₹${netGreeks.theta}`}
@@ -271,13 +271,13 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
               <div className="text-[10px] text-slate-400 dark:text-slate-500">Daily time decay</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-center shadow-sm dark:shadow-md transition-colors">
               <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Gamma (Γ)</div>
               <div className="text-base font-black font-mono text-blue-600 dark:text-blue-400 mt-0.5">{netGreeks.gamma}</div>
               <div className="text-[10px] text-slate-400 dark:text-slate-500">Curvature risk</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-center shadow-sm dark:shadow-md transition-colors">
               <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Vega (ν)</div>
               <div className="text-base font-black font-mono text-purple-600 dark:text-purple-400 mt-0.5">₹{netGreeks.vega}</div>
               <div className="text-[10px] text-slate-400 dark:text-slate-500">Per 1% IV move</div>
@@ -288,13 +288,13 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
         {/* Right: Legs Configuration & Interactive Sliders (5 cols) */}
         <div className="lg:col-span-5 space-y-5">
           {/* Sliders Card */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] space-y-4 shadow-sm dark:shadow-xl transition-colors">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] space-y-4 shadow-sm dark:shadow-xl transition-colors">
             <h3 className="font-bold text-sm text-slate-900 dark:text-white">Market Simulation Sliders</h3>
 
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-slate-600 dark:text-slate-400">Simulate Spot Price (NIFTY 50):</span>
-                <span className="font-bold text-[#FF6600] font-mono">{spotPrice}</span>
+                <span className="font-bold text-[#FF6B00] font-mono">{spotPrice}</span>
               </div>
               <input
                 type="range"
@@ -303,7 +303,7 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
                 step="20"
                 value={spotPrice}
                 onChange={e => setSpotPrice(Number(e.target.value))}
-                className="w-full accent-[#FF6600] cursor-pointer"
+                className="w-full accent-[#FF6B00] cursor-pointer"
               />
             </div>
 
@@ -319,18 +319,18 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
                 step="1"
                 value={daysToExpiry}
                 onChange={e => setDaysToExpiry(Number(e.target.value))}
-                className="w-full accent-[#FF6600] cursor-pointer"
+                className="w-full accent-[#FF6B00] cursor-pointer"
               />
             </div>
           </div>
 
           {/* Option Legs Table */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] space-y-3 shadow-sm dark:shadow-xl transition-colors">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] space-y-3 shadow-sm dark:shadow-xl transition-colors">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm text-slate-900 dark:text-white">Configured Strategy Legs ({legs.length})</h3>
               <button
                 onClick={() => setLegs([...legs, { id: Date.now(), action: 'BUY', type: 'CE', strike: spotPrice + 100, expiry: 'Current Week', premium: 45.0, lots: 1 }])}
-                className="text-xs px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-[#FF6600] hover:border-[#FF6600] font-semibold flex items-center gap-1 transition"
+                className="text-xs px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] text-[#FF6B00] hover:border-[#FF6B00] font-semibold flex items-center gap-1 transition"
               >
                 <Plus className="w-3 h-3" /> Add Leg
               </button>
@@ -338,7 +338,7 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
 
             <div className="space-y-2">
               {legs.map(leg => (
-                <div key={leg.id} className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] flex items-center justify-between gap-2 text-xs">
+                <div key={leg.id} className="p-3 bg-slate-50 dark:bg-[#0B1220] rounded-xl border border-slate-200 dark:border-[#334155] flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${leg.action === 'BUY' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/15 text-red-600 dark:text-red-400'}`}>
                       {leg.action}

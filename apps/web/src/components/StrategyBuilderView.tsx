@@ -633,14 +633,14 @@ export default function StrategyBuilderView({
         <div className="flex items-center gap-2">
           <button
             onClick={handleImportStrategy}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#131B2E] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-[#1E293B] shadow-sm transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1F2937] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-[#334155] shadow-sm transition"
           >
             <Download className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
             <span>Import</span>
           </button>
           <button
             onClick={handleExportStrategy}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#131B2E] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-[#1E293B] shadow-sm transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1F2937] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-[#334155] shadow-sm transition"
           >
             <Upload className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
             <span>Export</span>
@@ -664,7 +664,7 @@ export default function StrategyBuilderView({
       )}
 
       {/* 2. STRATEGY INFO CARD (Exact Tradetron Layout from Screenshot) */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm transition-colors">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm transition-colors">
         <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">Strategy info</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -678,7 +678,7 @@ export default function StrategyBuilderView({
               value={strategyName}
               onChange={e => setStrategyName(e.target.value)}
               placeholder=""
-              className="w-full bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] focus:ring-1 focus:ring-[#5B45E0] transition"
+              className="w-full bg-white dark:bg-[#0B1220] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] focus:ring-1 focus:ring-[#5B45E0] transition"
             />
           </div>
 
@@ -689,7 +689,7 @@ export default function StrategyBuilderView({
             </label>
             <div
               onClick={() => setTagsDropdownOpen(!tagsDropdownOpen)}
-              className="w-full bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer flex items-center justify-between"
+              className="w-full bg-white dark:bg-[#0B1220] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer flex items-center justify-between"
             >
               <span className={selectedTags.length ? 'text-slate-900 dark:text-white' : 'text-slate-400'}>
                 {selectedTags.length ? selectedTags.join(', ') : 'Tags...'}
@@ -697,7 +697,7 @@ export default function StrategyBuilderView({
               <ChevronDown className="w-4 h-4 text-slate-400" />
             </div>
             {tagsDropdownOpen && (
-              <div className="absolute top-full mt-1 left-0 right-0 z-30 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 shadow-xl flex flex-wrap gap-1.5">
+              <div className="absolute top-full mt-1 left-0 right-0 z-30 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 shadow-xl flex flex-wrap gap-1.5">
                 {AVAILABLE_TAGS.map(t => (
                   <button
                     key={t}
@@ -860,7 +860,7 @@ export default function StrategyBuilderView({
               onChange={e => setDescription(e.target.value)}
               placeholder="Description"
               className={`w-full p-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 bg-transparent focus:outline-none resize-y ${
-                isFullscreen ? 'fixed inset-0 z-50 bg-white dark:bg-[#131B2E] p-6' : 'min-h-[160px]'
+                isFullscreen ? 'fixed inset-0 z-50 bg-white dark:bg-[#1F2937] p-6' : 'min-h-[160px]'
               }`}
             />
           </div>
@@ -868,20 +868,20 @@ export default function StrategyBuilderView({
       </div>
 
       {/* 3. STRATEGY ENGINE PARAMETERS */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm transition-colors">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-base text-slate-900 dark:text-white">Engine & Execution Parameters</h3>
           <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-500/10 text-[#5B45E0] dark:text-[#818CF8] border border-indigo-500/20">
             Execution Frequency
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-slate-200 dark:border-[#1E293B] text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-slate-200 dark:border-[#334155] text-xs">
           <div>
             <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Default Underlying</label>
             <select
               value={underlying}
               onChange={e => setUnderlying(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6B00]"
             >
               <option value="NIFTY 50">NIFTY 50</option>
               <option value="BANKNIFTY">BANKNIFTY</option>
@@ -896,7 +896,7 @@ export default function StrategyBuilderView({
             <select
               value={checkFrequency}
               onChange={e => setCheckFrequency(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6B00]"
             >
               <option value="Continuous">Continuous (1-second tick)</option>
               <option value="1m">1 minute candle</option>
@@ -914,7 +914,7 @@ export default function StrategyBuilderView({
                 type="checkbox"
                 checked={checkOnCandleClose}
                 onChange={e => setCheckOnCandleClose(e.target.checked)}
-                className="accent-[#FF6600] w-4 h-4 rounded cursor-pointer"
+                className="accent-[#FF6B00] w-4 h-4 rounded cursor-pointer"
               />
               <span>Check on candle close only</span>
             </label>
@@ -931,11 +931,11 @@ export default function StrategyBuilderView({
       </div>
 
       {/* 4. SET 1 CONTAINER */}
-      <div className="rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl overflow-hidden transition-colors">
+      <div className="rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm dark:shadow-xl overflow-hidden transition-colors">
         {/* Set Header Bar */}
-        <div className="px-6 py-4 bg-slate-50 dark:bg-[#0E1526] border-b border-slate-200 dark:border-[#1E293B] flex items-center justify-between">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-[#0B1220] border-b border-slate-200 dark:border-[#334155] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-lg bg-[#FF6600]/15 text-[#FF6600] font-black text-xs flex items-center justify-center">
+            <span className="w-7 h-7 rounded-lg bg-[#FF6B00]/15 text-[#FF6B00] font-black text-xs flex items-center justify-center">
               1
             </span>
             <h3 className="font-bold text-base text-slate-900 dark:text-white">Strategy Set 1</h3>
@@ -948,7 +948,7 @@ export default function StrategyBuilderView({
             <span className="text-xs text-slate-600 dark:text-slate-400">Condition Combinator:</span>
             <button
               onClick={() => setConditionCombinator(conditionCombinator === 'AND' ? 'OR' : 'AND')}
-              className="px-2.5 py-1 rounded bg-[#FF6600] text-white text-xs font-black shadow-sm"
+              className="px-2.5 py-1 rounded bg-[#FF6B00] text-white text-xs font-black shadow-sm"
               title="Toggle between AND / OR logic"
             >
               {conditionCombinator}
@@ -965,7 +965,7 @@ export default function StrategyBuilderView({
               </label>
               <button
                 onClick={handleAddConditionFromModal}
-                className="text-xs px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-[#0E1526] border border-[#FF6600]/40 text-[#FF6600] hover:bg-[#FF6600] hover:text-white font-bold flex items-center gap-1.5 transition"
+                className="text-xs px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-[#0B1220] border border-[#FF6B00]/40 text-[#FF6B00] hover:bg-[#FF6B00] hover:text-white font-bold flex items-center gap-1.5 transition"
               >
                 <Code className="w-3.5 h-3.5" />
                 <span>Open 214 Keyword Catalogue</span>
@@ -990,12 +990,12 @@ export default function StrategyBuilderView({
                       handleAddCustomCondition(typingInput);
                     }
                   }}
-                  className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-xl pl-9 pr-24 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#FF6600] font-mono shadow-inner"
+                  className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl pl-9 pr-24 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#FF6B00] font-mono shadow-inner"
                 />
                 <button
                   onClick={() => handleAddCustomCondition(typingInput)}
                   disabled={!typingInput.trim()}
-                  className="absolute right-2 px-3 py-1 rounded-lg bg-[#FF6600] text-white text-xs font-bold disabled:opacity-40 transition hover:brightness-110"
+                  className="absolute right-2 px-3 py-1 rounded-lg bg-[#FF6B00] text-white text-xs font-bold disabled:opacity-40 transition hover:brightness-110"
                 >
                   Add Condition
                 </button>
@@ -1003,8 +1003,8 @@ export default function StrategyBuilderView({
 
               {/* Floating Autocomplete Dropdown */}
               {showSuggestions && typingInput.trim().length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-xl shadow-2xl overflow-hidden max-h-64 overflow-y-auto font-mono text-xs animate-in fade-in duration-100">
-                  <div className="p-2 bg-slate-50 dark:bg-[#0E1526] border-b border-slate-200 dark:border-[#1E293B] text-[11px] text-slate-500 font-sans flex items-center justify-between">
+                <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-xl shadow-2xl overflow-hidden max-h-64 overflow-y-auto font-mono text-xs animate-in fade-in duration-100">
+                  <div className="p-2 bg-slate-50 dark:bg-[#0B1220] border-b border-slate-200 dark:border-[#334155] text-[11px] text-slate-500 font-sans flex items-center justify-between">
                     <span>Keyword & Expression Suggestions ({filteredSuggestions.length} matches)</span>
                     <span className="text-[10px]">Click or press Enter to insert</span>
                   </div>
@@ -1017,7 +1017,7 @@ export default function StrategyBuilderView({
                       <div
                         key={kw.name}
                         onClick={() => handleAddCustomCondition(kw.template)}
-                        className="p-2.5 hover:bg-slate-100 dark:hover:bg-[#0E1526] border-b border-slate-100 dark:border-slate-800/60 cursor-pointer flex items-center justify-between transition"
+                        className="p-2.5 hover:bg-slate-100 dark:hover:bg-[#0B1220] border-b border-slate-100 dark:border-slate-800/60 cursor-pointer flex items-center justify-between transition"
                       >
                         <div>
                           <div className="flex items-center gap-2">
@@ -1026,10 +1026,10 @@ export default function StrategyBuilderView({
                               {kw.category}
                             </span>
                           </div>
-                          <div className="text-[11px] text-[#FF6600] mt-0.5">{kw.template}</div>
+                          <div className="text-[11px] text-[#FF6B00] mt-0.5">{kw.template}</div>
                           <div className="text-[10px] text-slate-400 font-sans mt-0.5">{kw.description}</div>
                         </div>
-                        <span className="text-[10px] px-2 py-1 rounded bg-orange-500/10 text-[#FF6600] font-sans font-bold shrink-0">
+                        <span className="text-[10px] px-2 py-1 rounded bg-orange-500/10 text-[#FF6B00] font-sans font-bold shrink-0">
                           Insert →
                         </span>
                       </div>
@@ -1046,7 +1046,7 @@ export default function StrategyBuilderView({
                 <button
                   key={snip}
                   onClick={() => handleAddCustomCondition(snip)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-orange-500/10 hover:text-[#FF6600] dark:bg-[#0E1526] dark:hover:bg-[#FF6600]/15 border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 font-mono whitespace-nowrap transition"
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-orange-500/10 hover:text-[#FF6B00] dark:bg-[#0B1220] dark:hover:bg-[#FF6B00]/15 border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 font-mono whitespace-nowrap transition"
                 >
                   + {snip}
                 </button>
@@ -1058,7 +1058,7 @@ export default function StrategyBuilderView({
               {entryConditions.map((cond, idx) => (
                 <div
                   key={cond.id}
-                  className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] flex items-center justify-between gap-3 text-xs font-mono group"
+                  className="p-3 bg-slate-50 dark:bg-[#0B1220] rounded-xl border border-slate-200 dark:border-[#334155] flex items-center justify-between gap-3 text-xs font-mono group"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-slate-500 font-bold">{idx + 1}.</span>
@@ -1084,17 +1084,17 @@ export default function StrategyBuilderView({
               </label>
               <button
                 onClick={handleAddLeg}
-                className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0E1526] border border-slate-300 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:border-[#FF6600] hover:text-[#FF6600] font-semibold flex items-center gap-1.5 transition"
+                className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0B1220] border border-slate-300 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:border-[#FF6B00] hover:text-[#FF6B00] font-semibold flex items-center gap-1.5 transition"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Position Leg</span>
               </button>
             </div>
 
-            <div className="rounded-xl border border-slate-200 dark:border-[#1E293B] overflow-x-auto bg-slate-50 dark:bg-[#0E1526]">
+            <div className="rounded-xl border border-slate-200 dark:border-[#334155] overflow-x-auto bg-slate-50 dark:bg-[#0B1220]">
               <table className="w-full text-xs font-mono text-left">
                 <thead>
-                  <tr className="bg-slate-100 dark:bg-[#111827] text-slate-600 dark:text-slate-400 text-[10px] uppercase border-b border-slate-200 dark:border-[#1E293B]">
+                  <tr className="bg-slate-100 dark:bg-[#111827] text-slate-600 dark:text-slate-400 text-[10px] uppercase border-b border-slate-200 dark:border-[#334155]">
                     <th className="py-2.5 px-3">Leg</th>
                     <th className="py-2.5 px-3">Action</th>
                     <th className="py-2.5 px-3">Type</th>
@@ -1109,9 +1109,9 @@ export default function StrategyBuilderView({
                     <th className="py-2.5 px-3"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-[#1E293B]">
+                <tbody className="divide-y divide-slate-200 dark:divide-[#334155]">
                   {legs.map((leg, idx) => (
-                    <tr key={leg.id} className="hover:bg-slate-100/70 dark:hover:bg-[#131B2E] transition">
+                    <tr key={leg.id} className="hover:bg-slate-100/70 dark:hover:bg-[#1F2937] transition">
                       <td className="py-2.5 px-3 text-slate-500">{idx + 1}</td>
                       <td className="py-2.5 px-3">
                         <select
@@ -1219,7 +1219,7 @@ export default function StrategyBuilderView({
                             newLegs[idx].moveToCost = e.target.checked;
                             setLegs(newLegs);
                           }}
-                          className="accent-[#FF6600] w-4 h-4 rounded cursor-pointer"
+                          className="accent-[#FF6B00] w-4 h-4 rounded cursor-pointer"
                         />
                       </td>
                       <td className="py-2.5 px-3 text-right">
@@ -1238,7 +1238,7 @@ export default function StrategyBuilderView({
           </div>
 
           {/* REPAIR CONDITIONS BLOCK */}
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] space-y-3">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
                 <span>Set Repair Logic (Hedges or Strike Adjustments)</span>
@@ -1248,7 +1248,7 @@ export default function StrategyBuilderView({
                   type="checkbox"
                   checked={hasRepair}
                   onChange={e => setHasRepair(e.target.checked)}
-                  className="accent-[#FF6600] w-3.5 h-3.5 rounded"
+                  className="accent-[#FF6B00] w-3.5 h-3.5 rounded"
                 />
                 <span>Enable Repair Condition</span>
               </label>
@@ -1262,7 +1262,7 @@ export default function StrategyBuilderView({
                     type="text"
                     value={repairCondition}
                     onChange={e => setRepairCondition(e.target.value)}
-                    className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+                    className="w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
                   />
                 </div>
                 <div>
@@ -1271,7 +1271,7 @@ export default function StrategyBuilderView({
                     type="text"
                     value={repairLegAction}
                     onChange={e => setRepairLegAction(e.target.value)}
-                    className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+                    className="w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
                   />
                 </div>
               </div>
@@ -1286,7 +1286,7 @@ export default function StrategyBuilderView({
               </label>
               <button
                 onClick={handleAddExitConditionFromModal}
-                className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0E1526] border border-slate-300 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:border-[#FF6600] hover:text-[#FF6600] font-semibold flex items-center gap-1.5 transition"
+                className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0B1220] border border-slate-300 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:border-[#FF6B00] hover:text-[#FF6B00] font-semibold flex items-center gap-1.5 transition"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Exit Condition</span>
@@ -1297,7 +1297,7 @@ export default function StrategyBuilderView({
               {exitConditions.map((cond, idx) => (
                 <div
                   key={cond.id}
-                  className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] flex items-center justify-between gap-3 text-xs font-mono group"
+                  className="p-3 bg-slate-50 dark:bg-[#0B1220] rounded-xl border border-slate-200 dark:border-[#334155] flex items-center justify-between gap-3 text-xs font-mono group"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-slate-500 font-bold">{idx + 1}.</span>
@@ -1317,7 +1317,7 @@ export default function StrategyBuilderView({
       </div>
 
       {/* 4. UNIVERSAL EXIT & TRAILING STOP LOSS BLOCK */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-4 transition-colors">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm dark:shadow-xl space-y-4 transition-colors">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-base text-slate-900 dark:text-white">Universal Exit & Trailing Stop Loss</h3>
@@ -1335,7 +1335,7 @@ export default function StrategyBuilderView({
               type="text"
               value={universalSl}
               onChange={e => setUniversalSl(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-red-600 dark:text-red-400 font-bold focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-red-600 dark:text-red-400 font-bold focus:outline-none focus:border-[#FF6B00]"
             />
           </div>
 
@@ -1345,7 +1345,7 @@ export default function StrategyBuilderView({
               type="text"
               value={universalTarget}
               onChange={e => setUniversalTarget(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-emerald-600 dark:text-emerald-400 font-bold focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-emerald-600 dark:text-emerald-400 font-bold focus:outline-none focus:border-[#FF6B00]"
             />
           </div>
 
@@ -1355,7 +1355,7 @@ export default function StrategyBuilderView({
               type="text"
               value={trailIfProfit}
               onChange={e => setTrailIfProfit(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
             />
           </div>
 
@@ -1365,14 +1365,14 @@ export default function StrategyBuilderView({
               type="text"
               value={trailStopBy}
               onChange={e => setTrailStopBy(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
             />
           </div>
         </div>
       </div>
 
       {/* 5. BOTTOM ACTION BAR: Save / Cancel / Backtest / Deploy */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -1403,7 +1403,7 @@ export default function StrategyBuilderView({
           <button
             type="button"
             onClick={() => onDeploy(strategyName || 'My Strategy')}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-1.5 transition"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-1.5 transition"
           >
             <Play className="w-3.5 h-3.5 fill-white" />
             <span>Deploy 1-Click</span>

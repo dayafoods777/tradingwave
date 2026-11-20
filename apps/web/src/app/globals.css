@@ -1,4 +1,4 @@
-@import "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap";
 
 @tailwind base;
 @tailwind components;
@@ -7,26 +7,44 @@
 :root {
   color-scheme: light;
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "Manrope", "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
-  --paper: #FAFAFB;
-  --paper-2: #F1F5F9;
-  --paper-3: #EEEDFD;
+
+  /* App Background */
+  --paper: #F5F7FA;
+  --paper-2: #F8FAFC;
+  --paper-3: #EEF2F7;
   --surface: #FFFFFF;
+
+  /* Text Colours */
   --ink: #0F172A;
-  --ink-soft: #334155;
-  --slate: #64748B;
+  --ink-soft: #475569;
+  --slate: #475569;
   --slate-soft: #94A3B8;
-  --rule: #E2E8F0;
+
+  /* Border & Divider */
+  --rule: #E5E7EB;
   --rule-strong: #CBD5E1;
   --rule-grid: rgba(15, 23, 42, 0.05);
-  --signal: #FF6600;
-  --signal-soft: #E65C00;
+
+  /* Brand Colours */
+  --signal: #FF6B00;
+  --signal-soft: #FF8A3D;
   --signal-tint: #FFF4ED;
   --signal-tint-strong: #FFE4D3;
-  --positive: #059669;
-  --positive-soft: #ECFDF5;
-  --negative: #DC2626;
-  --negative-soft: #FEF2F2;
+
+  /* Market / Trade Colours */
+  --positive: #10B981;
+  --positive-soft: #DCFCE7;
+  --negative: #EF4444;
+  --negative-soft: #FEE2E2;
+
+  /* Accent Colours */
+  --accent-amber: #F59E0B;
+  --accent-blue: #3B82F6;
+  --accent-purple: #8B5CF6;
+  --accent-cyan: #06B6D4;
+
   --card-bg: #FFFFFF;
   --header-bg: #FFFFFF;
   --dot-color: rgba(15, 23, 42, 0.06);
@@ -34,27 +52,44 @@
 
 html.dark {
   color-scheme: dark;
-  --paper: #0B0F19;
+
+  /* App Background */
+  --paper: #0B1220;
   --paper-2: #111827;
   --paper-3: #1F2937;
-  --surface: #131B2E;
-  --ink: #F9FAFB;
-  --ink-soft: #D1D5DB;
-  --slate: #9CA3AF;
-  --slate-soft: #6B7280;
-  --rule: #1E293B;
-  --rule-strong: #334155;
-  --rule-grid: rgba(249, 250, 251, 0.05);
-  --signal: #FF6600;
-  --signal-soft: #FFA366;
-  --signal-tint: rgba(255, 102, 0, 0.12);
-  --signal-tint-strong: rgba(255, 102, 0, 0.24);
+  --surface: #1F2937;
+
+  /* Text Colours */
+  --ink: #F8FAFC;
+  --ink-soft: #94A3B8;
+  --slate: #94A3B8;
+  --slate-soft: #CBD5E1;
+
+  /* Border & Divider */
+  --rule: #334155;
+  --rule-strong: #475569;
+  --rule-grid: rgba(248, 250, 252, 0.05);
+
+  /* Brand Colours */
+  --signal: #FF6B00;
+  --signal-soft: #FF8A3D;
+  --signal-tint: rgba(255, 107, 0, 0.15);
+  --signal-tint-strong: rgba(255, 107, 0, 0.3);
+
+  /* Market / Trade Colours */
   --positive: #10B981;
   --positive-soft: rgba(16, 185, 129, 0.16);
   --negative: #EF4444;
   --negative-soft: rgba(239, 68, 68, 0.16);
-  --card-bg: #131B2E;
-  --header-bg: #0E1526;
+
+  /* Accent Colours */
+  --accent-amber: #F59E0B;
+  --accent-blue: #3B82F6;
+  --accent-purple: #8B5CF6;
+  --accent-cyan: #06B6D4;
+
+  --card-bg: #1F2937;
+  --header-bg: #0B1220;
   --dot-color: rgba(255, 255, 255, 0.05);
 }
 
@@ -68,6 +103,10 @@ body {
   color: var(--ink);
   overflow-x: hidden;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
 }
 
 code, pre, .font-mono {
@@ -115,4 +154,3 @@ code, pre, .font-mono {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
-

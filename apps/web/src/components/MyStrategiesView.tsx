@@ -323,14 +323,14 @@ export default function MyStrategiesView({
     <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white dark:bg-[#131B2E] border border-[#5B45E0] text-slate-900 dark:text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in duration-150">
+        <div className="fixed bottom-6 right-6 z-50 bg-white dark:bg-[#1F2937] border border-[#5B45E0] text-slate-900 dark:text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in duration-150">
           <span className="w-2.5 h-2.5 rounded-full bg-[#5B45E0] animate-pulse"></span>
           <span className="text-xs font-semibold">{toastMessage}</span>
         </div>
       )}
 
       {/* 1. TOP BANNER - Tradetron Signature Header */}
-      <div className="relative p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#F8F7FF] via-white to-white dark:from-[#131B2E] dark:via-[#131B2E] dark:to-[#0E1526] border-2 border-[#5B45E0] dark:border-[#6366F1] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      <div className="relative p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#F8F7FF] via-white to-white dark:from-[#1F2937] dark:via-[#1F2937] dark:to-[#0B1220] border-2 border-[#5B45E0] dark:border-[#6366F1] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           {/* Eyebrow */}
           <div className="flex items-center gap-1.5 text-[#5B45E0] dark:text-[#818CF8] font-bold text-[11px] tracking-widest uppercase mb-1">
@@ -358,7 +358,7 @@ export default function MyStrategiesView({
             className={`px-4 py-2 rounded-full border text-xs font-bold shadow-sm transition flex items-center gap-2 ${
               selectedIds.length > 0
                 ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100 cursor-pointer'
-                : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0E1526] text-red-600/50 dark:text-red-400/50 cursor-not-allowed'
+                : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] text-red-600/50 dark:text-red-400/50 cursor-not-allowed'
             }`}
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -367,7 +367,7 @@ export default function MyStrategiesView({
 
           <button
             onClick={onCreateNew}
-            className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0E1526] text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold shadow-sm transition flex items-center gap-1.5"
+            className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold shadow-sm transition flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>New strategy</span>
@@ -376,7 +376,7 @@ export default function MyStrategiesView({
       </div>
 
       {/* 2. SUB-NAVIGATION TABS STRIP (Ready Strategies after My Strategies - SS1) */}
-      <div className="flex items-center gap-8 border-b border-slate-200 dark:border-[#1E293B] text-sm font-semibold">
+      <div className="flex items-center gap-8 border-b border-slate-200 dark:border-[#334155] text-sm font-semibold">
         <button
           onClick={() => onNavigateTab && onNavigateTab('dashboard')}
           className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
@@ -403,7 +403,7 @@ export default function MyStrategiesView({
       </div>
 
       {/* 3. METRIC COUNTERS STRIP (Marketplace excluded) */}
-      <div className="rounded-2xl border border-slate-200 dark:border-[#1E293B] bg-white dark:bg-[#131B2E] overflow-hidden shadow-sm grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-[#1E293B] transition-colors">
+      <div className="rounded-2xl border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1F2937] overflow-hidden shadow-sm grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-[#334155] transition-colors">
         <div className="p-4 sm:p-5">
           <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
             Private
@@ -453,7 +453,7 @@ export default function MyStrategiesView({
               placeholder="Search name..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#5B45E0] shadow-sm transition"
+              className="w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#5B45E0] shadow-sm transition"
             />
           </div>
 
@@ -476,7 +476,7 @@ export default function MyStrategiesView({
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
                     selectedType === type
                       ? 'bg-[#5B45E0] text-white shadow-sm'
-                      : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      : 'bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {type}
@@ -496,7 +496,7 @@ export default function MyStrategiesView({
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
                   selectedVisibility === 'Private'
                     ? 'bg-[#5B45E0] text-white shadow-sm'
-                    : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    : 'bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 Private {strategies.filter(s => s.visibility === 'PRIVATE').length}
@@ -506,7 +506,7 @@ export default function MyStrategiesView({
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
                   selectedVisibility === 'Private Link'
                     ? 'bg-[#5B45E0] text-white shadow-sm'
-                    : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    : 'bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 Private Link {strategies.filter(s => s.visibility === 'PRIVATE_LINK').length}
@@ -527,7 +527,7 @@ export default function MyStrategiesView({
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition ${
                     selectedExchange === ex
                       ? 'bg-[#5B45E0] text-white shadow-sm'
-                      : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      : 'bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {ex}
@@ -548,7 +548,7 @@ export default function MyStrategiesView({
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as any)}
-              className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-xl px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:border-[#5B45E0] shadow-sm cursor-pointer"
+              className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-xl px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:border-[#5B45E0] shadow-sm cursor-pointer"
             >
               <option value="NEWEST">Newest first</option>
               <option value="OLDEST">Oldest first</option>
@@ -564,7 +564,7 @@ export default function MyStrategiesView({
               return (
                 <div
                   key={strat.id}
-                  className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4"
+                  className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4"
                 >
                   {/* Left: Badges + Title + Metadata */}
                   <div className="space-y-1.5 min-w-0 flex-1">
@@ -695,7 +695,7 @@ export default function MyStrategiesView({
             })}
 
             {filteredStrategies.length === 0 && (
-              <div className="p-12 text-center rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B]">
+              <div className="p-12 text-center rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155]">
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   No strategies match your filter criteria.
                 </p>
@@ -714,8 +714,8 @@ export default function MyStrategiesView({
       {/* 5. API WEBHOOK MODAL */}
       {apiModalStrategy && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-xl w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-[#1E293B] pb-3">
+          <div className="max-w-xl w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-[#334155] pb-3">
               <div className="flex items-center gap-2">
                 <Code className="w-5 h-5 text-[#5B45E0]" />
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -746,7 +746,7 @@ export default function MyStrategiesView({
                     type="text"
                     readOnly
                     value={`https://api.tradingwave.tech/v1/webhook/${apiModalStrategy.id}`}
-                    className="flex-1 bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-xl px-3 py-2 font-mono text-slate-800 dark:text-slate-200 text-xs"
+                    className="flex-1 bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl px-3 py-2 font-mono text-slate-800 dark:text-slate-200 text-xs"
                   />
                   <button
                     onClick={() => {

@@ -65,10 +65,10 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 transition-colors">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#1E293B] bg-slate-50 dark:bg-[#0E1526]">
+      <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 transition-colors">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0B1220]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/15 text-[#FF6600] flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/15 text-[#FF6B00] flex items-center justify-center font-bold">
               <Key className="w-4 h-4" />
             </div>
             <div>
@@ -108,7 +108,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
                 placeholder="e.g. Account Holder Name or Trading Entity"
                 value={clientName}
                 onChange={e => setClientName(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-sans focus:outline-none focus:border-[#FF6600]"
+                className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-sans focus:outline-none focus:border-[#FF6B00]"
               />
             </div>
 
@@ -122,7 +122,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
                 placeholder="e.g. AB1234 or Client ID"
                 value={clientId}
                 onChange={e => setClientId(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6600]"
+                className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B00]"
               />
             </div>
 
@@ -142,12 +142,12 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
                   placeholder="e.g. 13.235.122.84"
                   value={staticIp}
                   onChange={e => setStaticIp(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6600]"
+                  className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B00]"
                 />
                 <button
                   type="button"
                   onClick={handleCopyIp}
-                  className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1E293B] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-xs flex items-center gap-1.5 shrink-0 transition cursor-pointer"
+                  className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#334155] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-xs flex items-center gap-1.5 shrink-0 transition cursor-pointer"
                   title="Copy Static IP to clipboard"
                 >
                   {copiedIp ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -169,7 +169,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
                 placeholder="Enter API Key from broker developer portal"
                 value={apiKey}
                 onChange={e => setApiKey(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6600]"
+                className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B00]"
               />
             </div>
 
@@ -183,7 +183,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
                 placeholder="Enter API Secret"
                 value={apiSecret}
                 onChange={e => setApiSecret(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6600]"
+                className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B00]"
               />
             </div>
 
@@ -197,7 +197,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
                 placeholder="Optional 2FA TOTP secret key"
                 value={totpSecret}
                 onChange={e => setTotpSecret(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6600]"
+                className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B00]"
               />
             </div>
           </div>
@@ -213,7 +213,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-[#1E293B]">
+          <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-[#334155]">
             <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
               AES-256 GCM Encrypted Vault
             </span>
@@ -227,7 +227,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
               <button
                 onClick={handleTestAndConnect}
                 disabled={isTesting}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
               >
                 {isTesting ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Key className="w-3.5 h-3.5" />}
                 <span>{isTesting ? 'Authenticating...' : 'Connect & Verify API'}</span>

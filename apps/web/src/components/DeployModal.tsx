@@ -91,7 +91,7 @@ export default function DeployModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-white dark:bg-[#131B2E] w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white transition-all"
+        className="bg-white dark:bg-[#1F2937] w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white transition-all"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -118,7 +118,7 @@ export default function DeployModal({
               <select
                 value={multiplier}
                 onChange={e => setMultiplier(e.target.value)}
-                className="w-full bg-white dark:bg-[#0E1526] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                className="w-full bg-white dark:bg-[#0B1220] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
               >
                 <option value="0.5x">0.5x</option>
                 <option value="1x">1x</option>
@@ -140,7 +140,7 @@ export default function DeployModal({
                 type="text"
                 value={capitalRecommended}
                 onChange={e => setCapitalRecommended(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0E1526]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:border-[#5B45E0]"
+                className="w-full bg-slate-50 dark:bg-[#0B1220]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:border-[#5B45E0]"
               />
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function DeployModal({
               <select
                 value={executionType}
                 onChange={e => handleExecutionTypeChange(e.target.value as any)}
-                className="w-full bg-white dark:bg-[#0E1526] border border-[#5B45E0] ring-1 ring-[#5B45E0]/30 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                className="w-full bg-white dark:bg-[#0B1220] border border-[#5B45E0] ring-1 ring-[#5B45E0]/30 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
               >
                 <option value="Paper Trading">Paper Trading</option>
                 <option value="Live Offline">Live Offline</option>
@@ -175,7 +175,7 @@ export default function DeployModal({
               <select
                 value={stopLooping}
                 onChange={e => setStopLooping(e.target.value)}
-                className="w-full bg-white dark:bg-[#0E1526] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                className="w-full bg-white dark:bg-[#0B1220] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
               >
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -196,7 +196,7 @@ export default function DeployModal({
             <div className="flex items-center gap-2">
               <div className="flex-1">
                 {executionType === 'Paper Trading' ? (
-                  <div className="w-full bg-slate-50 dark:bg-[#0E1526]/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                  <div className="w-full bg-slate-50 dark:bg-[#0B1220]/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
                     <span>TT Paper Trading</span>
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400">
                       VIRTUAL
@@ -206,7 +206,7 @@ export default function DeployModal({
                   <select
                     value={broker}
                     onChange={e => setBroker(e.target.value)}
-                    className="w-full bg-white dark:bg-[#0E1526] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                    className="w-full bg-white dark:bg-[#0B1220] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
                   >
                     <option value="Select broker">Select broker</option>
                     {connectedBrokers.length > 0 ? (

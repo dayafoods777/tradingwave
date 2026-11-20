@@ -49,9 +49,9 @@ export default function GlobalError({
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFB] dark:bg-[#0B0F19] flex items-center justify-center p-4 font-sans">
-      <div className="max-w-md w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-6 sm:p-8 shadow-2xl text-center space-y-4">
-        <div className="w-14 h-14 rounded-2xl bg-orange-500/10 text-[#FF6600] flex items-center justify-center mx-auto">
+    <div className="min-h-screen bg-[#F5F7FA] dark:bg-[#0B1220] flex items-center justify-center p-4 font-sans">
+      <div className="max-w-md w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-6 sm:p-8 shadow-2xl text-center space-y-4">
+        <div className="w-14 h-14 rounded-2xl bg-orange-500/10 text-[#FF6B00] flex items-center justify-center mx-auto">
           <AlertTriangle className="w-7 h-7" />
         </div>
 
@@ -63,7 +63,7 @@ export default function GlobalError({
         </div>
 
         {error?.message && (
-          <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-[11px] text-slate-600 dark:text-slate-400 font-mono text-left break-words overflow-x-auto max-h-32">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] text-[11px] text-slate-600 dark:text-slate-400 font-mono text-left break-words overflow-x-auto max-h-32">
             {error.message}
           </div>
         )}
@@ -71,7 +71,7 @@ export default function GlobalError({
         <div className="flex flex-col sm:flex-row items-center gap-2 pt-2">
           <button
             onClick={handleHardReload}
-            className="w-full sm:flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-md shadow-orange-500/20 hover:brightness-110 flex items-center justify-center gap-1.5 transition cursor-pointer"
+            className="w-full sm:flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white text-xs font-bold shadow-md shadow-orange-500/20 hover:brightness-110 flex items-center justify-center gap-1.5 transition cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reload Platform</span>
