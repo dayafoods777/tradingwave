@@ -1,7 +1,19 @@
 'use client';
 
-import React from 'react';
-import { Terminal, X, RefreshCw, CheckCircle, Clock } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Terminal,
+  X,
+  RefreshCw,
+  Copy,
+  Check,
+  Download,
+  Filter,
+  Search,
+  ShieldCheck,
+  Zap,
+  ArrowDown
+} from 'lucide-react';
 
 interface ExecutionLogModalProps {
   isOpen: boolean;
@@ -9,63 +21,193 @@ interface ExecutionLogModalProps {
   onClose: () => void;
 }
 
+interface LogEntry {
+  time: string;
+  type: 'SYS' | 'FEED' | 'CHECK' | 'RISK' | 'ORDER' | 'BROKER' | 'POSITION';
+  text: string;
+}
+
 export default function ExecutionLogModal({ isOpen, botName, onClose }: ExecutionLogModalProps) {
+  const [filterType, setFilterType] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [copied, setCopied] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
-  const logs = [
-    { time: '09:15:00.012', type: 'SYS', text: `Engine initialized for bot: "${botName}". Broker: Zerodha Kite. Mode: LIVE_AUTO.` },
-    { time: '09:15:01.045', type: 'FEED', text: 'Market WebSocket stream active. NIFTY 50 Spot tick: 24,342.80.' },
-    { time: '09:19:59.998', type: 'CHECK', text: 'Evaluating Set 1 Entry Conditions: [Time >= 09:20: FALSE (09:19:59)].' },
-    { time: '09:20:00.124', type: 'CHECK', text: 'Evaluating Set 1 Entry Conditions: [Time >= 09:20: TRUE, EMA(9) > EMA(21): TRUE]. ALL CONDITIONS MET.' },
+  const rawLogs: LogEntry[] = [
+    { time: '09:15:00.012', type: 'SYS', text: `Engine initialized for bot: "${botName}". Broker: Zerodha Kite. Mode: LIVE_AUTO. Resolution: 1-sec continuous.` },
+    { time: '09:15:01.045', type: 'FEED', text: 'Market WebSocket stream active. NIFTY 50 Spot tick: 24,342.80. IV Index: 13.5%.' },
+    { time: '09:19:59.998', type: 'CHECK', text: 'Evaluating Set 1 Entry Conditions: [Time >= 09:20: FALSE (09:19:59)]. Execution deferred.' },
+    { time: '09:20:00.124', type: 'CHECK', text: 'Evaluating Set 1 Entry Conditions: [Time >= 09:20: TRUE, EMA(NIFTY 50, 9, 5m, 0) Crosses Above EMA(21): TRUE]. ALL CONDITIONS MET.' },
     { time: '09:20:00.150', type: 'RISK', text: 'Pre-trade Risk Controller passed: Price within collar (0.05%), Rate limits OK (1 req/sec), Margin required: ₹1,42,000, Margin available: ₹3,50,000.' },
     { time: '09:20:00.180', type: 'ORDER', text: 'Dispatching basket order to Broker Adapter: [SELL 1x NIFTY24DEC24350CE MIS, SELL 1x NIFTY24DEC24350PE MIS].' },
     { time: '09:20:00.320', type: 'BROKER', text: 'Broker response received: Order ID #ORD_887411 (CE @ ₹125.40), Order ID #ORD_887412 (PE @ ₹118.20). Status: FILLED.' },
     { time: '09:20:05.000', type: 'POSITION', text: 'Position book updated: Net Delta: -0.02, Theta: +₹1,240/day, Unrealized PnL: +₹150.00.' },
     { time: '09:21:00.005', type: 'CHECK', text: 'Continuous check tick: Universal Exit Conditions: Stoploss (PnL <= -₹3000: FALSE), Target (PnL >= ₹6000: FALSE).' },
-    { time: '09:25:00.010', type: 'CHECK', text: 'Continuous check tick: Set 1 Repair Condition: Delta divergence (> 0.25: FALSE). Maintaining active legs.' }
+    { time: '09:25:00.010', type: 'CHECK', text: 'Continuous check tick: Set 1 Repair Condition: Delta divergence (> 0.25: FALSE). Maintaining active legs.' },
+    { time: '09:30:00.015', type: 'POSITION', text: 'MTM Snapshot: CE LTP ₹118.60 (PnL +₹170.00), PE LTP ₹112.40 (PnL +₹145.00). Total PnL: +₹315.00.' }
   ];
+
+  const filteredLogs = rawLogs.filter(log => {
+    const matchesType = filterType === 'ALL' || log.type === filterType;
+    const matchesSearch = log.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          log.time.includes(searchQuery);
+    return matchesType && matchesSearch;
+  });
+
+  const handleCopyLogs = () => {
+    const textToCopy = filteredLogs.map(l => `[${l.time}] [${l.type}] ${l.text}`).join('\n');
+    navigator.clipboard.writeText(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadLogs = () => {
+    const textToDownload = filteredLogs.map(l => `[${l.time}] [${l.type}] ${l.text}`).join('\n');
+    const blob = new Blob([textToDownload], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${botName.replace(/\s+/g, '_')}_audit_logs.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 transition-colors">
+      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl w-full max-w-4xl max-h-[88vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 transition-colors animate-in fade-in zoom-in-95 duration-150">
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#1E293B] bg-slate-50 dark:bg-[#0E1526]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <Terminal className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-sm">
+              <Terminal className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">Execution Logs & Order Audits</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">{botName}</p>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-base text-slate-900 dark:text-white">Execution Logs & Order Audits</h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold uppercase">
+                  LIVE STREAM
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">{botName}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
-            <X className="w-5 h-5" />
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopyLogs}
+              className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white text-xs font-semibold flex items-center gap-1.5 transition"
+              title="Copy filtered logs to clipboard"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? 'Copied' : 'Copy'}</span>
+            </button>
+            <button
+              onClick={handleDownloadLogs}
+              className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white text-xs font-semibold flex items-center gap-1.5 transition"
+              title="Download audit logs"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Export</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
+              title="Close modal (Esc)"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <div className="p-4 bg-slate-950 dark:bg-[#0A0D17] flex-1 overflow-y-auto font-mono text-xs space-y-2 border-b border-slate-200 dark:border-[#1E293B]">
-          {logs.map((log, idx) => (
-            <div key={idx} className="flex items-start gap-2.5 leading-relaxed hover:bg-slate-900 p-1.5 rounded transition">
-              <span className="text-slate-500 shrink-0">{log.time}</span>
-              <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold shrink-0 ${
-                log.type === 'ORDER' ? 'bg-orange-500/20 text-[#FF6600]' :
-                log.type === 'BROKER' ? 'bg-emerald-500/20 text-emerald-400' :
-                log.type === 'RISK' ? 'bg-blue-500/20 text-blue-400' :
-                'bg-slate-800 text-slate-400'
-              }`}>
-                {log.type}
-              </span>
-              <span className="text-slate-300 break-all">{log.text}</span>
+        {/* Filters and Search Strip */}
+        <div className="px-6 py-2.5 bg-slate-100/80 dark:bg-[#10172A] border-b border-slate-200 dark:border-[#1E293B] flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            {['ALL', 'ORDER', 'BROKER', 'RISK', 'CHECK', 'POSITION', 'FEED'].map(type => (
+              <button
+                key={type}
+                onClick={() => setFilterType(type)}
+                className={`px-2.5 py-1 rounded-md font-mono font-bold transition text-[11px] ${
+                  filterType === type
+                    ? 'bg-[#FF6600] text-white shadow-sm'
+                    : 'bg-white dark:bg-[#1E293B] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60'
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-full sm:w-60">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
+            <input
+              type="text"
+              placeholder="Search logs..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-700/80 rounded-lg pl-8 pr-3 py-1 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#FF6600]"
+            />
+          </div>
+        </div>
+
+        {/* Log Viewer Body */}
+        <div
+          ref={scrollRef}
+          className="p-4 bg-slate-950 dark:bg-[#070A12] flex-1 overflow-y-auto font-mono text-xs space-y-1.5 border-b border-slate-200 dark:border-[#1E293B] min-h-[320px]"
+        >
+          {filteredLogs.length === 0 ? (
+            <div className="h-48 flex items-center justify-center text-slate-500 font-sans text-xs">
+              No log entries match the selected filter or search term.
             </div>
-          ))}
+          ) : (
+            filteredLogs.map((log, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-2.5 leading-relaxed hover:bg-slate-900/80 p-1.5 rounded transition group"
+              >
+                <span className="text-slate-500 shrink-0 select-none text-[11px]">{log.time}</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded text-[10px] font-bold shrink-0 select-none ${
+                    log.type === 'ORDER' ? 'bg-orange-500/20 text-[#FF6600]' :
+                    log.type === 'BROKER' ? 'bg-emerald-500/20 text-emerald-400' :
+                    log.type === 'RISK' ? 'bg-blue-500/20 text-blue-400' :
+                    log.type === 'POSITION' ? 'bg-purple-500/20 text-purple-400' :
+                    log.type === 'FEED' ? 'bg-cyan-500/20 text-cyan-400' :
+                    log.type === 'CHECK' ? 'bg-amber-500/20 text-amber-400' :
+                    'bg-slate-800 text-slate-400'
+                  }`}
+                >
+                  {log.type}
+                </span>
+                <span className="text-slate-300 break-all select-text font-mono group-hover:text-white transition">
+                  {log.text}
+                </span>
+              </div>
+            ))
+          )}
         </div>
 
+        {/* Footer */}
         <div className="flex items-center justify-between px-6 py-3 bg-slate-50 dark:bg-[#0E1526] text-xs text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Continuous Execution Engine · 1-sec Resolution</span>
+            <span>Continuous Execution Engine · 1-sec Resolution · Zero-eval Sandbox Active</span>
           </div>
-          <button onClick={onClose} className="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-medium transition">
+          <button
+            onClick={onClose}
+            className="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-medium transition"
+          >
             Close
           </button>
         </div>
