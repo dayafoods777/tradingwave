@@ -18,11 +18,9 @@ import {
   Key,
   LogOut,
   User,
-  Sliders,
   Check,
   X
 } from 'lucide-react';
-import { ALL_BROKERS_BASE } from './BrokersView';
 
 interface HeaderProps {
   activeTab: string;
@@ -44,8 +42,6 @@ export default function Header({
   // Dropdown states
   const [createMenuOpen, setCreateMenuOpen] = useState(false);
   const [strategiesMenuOpen, setStrategiesMenuOpen] = useState(false);
-  const [creatorHubOpen, setCreatorHubOpen] = useState(false);
-  const [servicesMenuOpen, setServicesMenuOpen] = useState(false);
   const [marketMenuOpen, setMarketMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -59,8 +55,6 @@ export default function Header({
   // Refs for outside click handling
   const createRef = useRef<HTMLDivElement>(null);
   const strategiesRef = useRef<HTMLDivElement>(null);
-  const creatorHubRef = useRef<HTMLDivElement>(null);
-  const servicesRef = useRef<HTMLDivElement>(null);
   const marketRef = useRef<HTMLDivElement>(null);
   const langRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -70,8 +64,6 @@ export default function Header({
   const closeAllMenus = () => {
     setCreateMenuOpen(false);
     setStrategiesMenuOpen(false);
-    setCreatorHubOpen(false);
-    setServicesMenuOpen(false);
     setMarketMenuOpen(false);
     setLangMenuOpen(false);
     setNotificationsOpen(false);
@@ -85,8 +77,6 @@ export default function Header({
       if (
         createRef.current && !createRef.current.contains(target) &&
         strategiesRef.current && !strategiesRef.current.contains(target) &&
-        creatorHubRef.current && !creatorHubRef.current.contains(target) &&
-        servicesRef.current && !servicesRef.current.contains(target) &&
         marketRef.current && !marketRef.current.contains(target) &&
         langRef.current && !langRef.current.contains(target) &&
         notifRef.current && !notifRef.current.contains(target) &&
@@ -335,100 +325,6 @@ export default function Header({
             >
               Reports
             </button>
-
-            {/* 5. Creator Hub ▾ */}
-            <div className="relative" ref={creatorHubRef}>
-              <button
-                onClick={() => {
-                  const state = !creatorHubOpen;
-                  closeAllMenus();
-                  setCreatorHubOpen(state);
-                }}
-                className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
-                  creatorHubOpen
-                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
-                }`}
-              >
-                <span>Creator Hub</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${creatorHubOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {creatorHubOpen && (
-                <div className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <button
-                    onClick={() => handleSelectTab('builder')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
-                  >
-                    <Sliders className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
-                    <span>Strategy Studio</span>
-                  </button>
-                  <button
-                    onClick={() => handleSelectTab('backtest')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
-                  >
-                    <LineChart className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
-                    <span>Backtest Studio &amp; Reports</span>
-                  </button>
-                  <button
-                    onClick={() => handleSelectTab('mystrategies')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
-                  >
-                    <LayoutGrid className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
-                    <span>Monetize &amp; Templates</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* 6. Services ▾ */}
-            <div className="relative" ref={servicesRef}>
-              <button
-                onClick={() => {
-                  const state = !servicesMenuOpen;
-                  closeAllMenus();
-                  setServicesMenuOpen(state);
-                }}
-                className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
-                  servicesMenuOpen || ['brokers', 'pricing'].includes(activeTab)
-                    ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
-                }`}
-              >
-                <span>Services</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${servicesMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {servicesMenuOpen && (
-                <div className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <button
-                    onClick={() => handleSelectTab('brokers')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
-                  >
-                    <Key className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
-                    <span>Brokers &amp; APIs ({ALL_BROKERS_BASE.length})</span>
-                  </button>
-                  <button
-                    onClick={() => handleSelectTab('pricing')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
-                  >
-                    <CreditCard className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
-                    <span>Plans &amp; Pricing</span>
-                  </button>
-                  <div className="my-1 border-t border-slate-200 dark:border-slate-800"></div>
-                  <button
-                    onClick={() => {
-                      closeAllMenus();
-                      onKillSwitch();
-                    }}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2.5 transition text-xs font-semibold text-red-600 dark:text-red-400"
-                  >
-                    <ShieldAlert className="w-4 h-4" />
-                    <span>Universal Kill Switch</span>
-                  </button>
-                </div>
-              )}
-            </div>
           </nav>
         </div>
 
