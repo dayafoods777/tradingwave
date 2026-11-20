@@ -1,22 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Layers,
   Plus,
   Trash2,
   Play,
   Save,
-  Copy,
-  Sliders,
   CheckCircle2,
   Clock,
   Sparkles,
   ShieldCheck,
   Code,
-  ArrowRight,
   TrendingUp,
-  Settings2
+  Wand2,
+  Zap,
+  Search,
+  Check,
+  ChevronDown,
+  BookOpen
 } from 'lucide-react';
 
 interface ConditionItem {
@@ -38,6 +40,290 @@ interface LegItem {
   moveToCost: boolean;
 }
 
+interface StrategyTemplate {
+  id: string;
+  name: string;
+  badge: string;
+  category: string;
+  description: string;
+  underlying: string;
+  frequency: string;
+  checkOnCandleClose: boolean;
+  combinator: 'AND' | 'OR';
+  entryConditions: string[];
+  legs: Omit<LegItem, 'id'>[];
+  hasRepair: boolean;
+  repairCondition: string;
+  repairLegAction: string;
+  exitConditions: string[];
+  universalSl: string;
+  universalTarget: string;
+  trailIfProfit: string;
+  trailStopBy: string;
+}
+
+// 7 Tradetron Production Templates
+const READY_TEMPLATES: StrategyTemplate[] = [
+  {
+    id: 'short_straddle',
+    name: 'NIFTY 9:20 Intraday Short Straddle v2.0',
+    badge: 'Popular',
+    category: 'Delta Neutral Options',
+    description: 'Delta-neutral automated options selling engine with continuous 1-second monitoring, 25% leg stop-loss, auto move-to-cost, and 15:10 auto square-off.',
+    underlying: 'NIFTY 50',
+    frequency: 'Continuous',
+    checkOnCandleClose: false,
+    combinator: 'AND',
+    entryConditions: [
+      'Time >= 09:20',
+      'EMA(NIFTY 50, 9, 5m, 0) Crosses Above EMA(NIFTY 50, 21, 5m, 0)'
+    ],
+    legs: [
+      { action: 'SELL', type: 'CALL', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'ATM', product: 'MIS', lots: 1, sl: '25%', target: '60%', moveToCost: true },
+      { action: 'SELL', type: 'PUT', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'ATM', product: 'MIS', lots: 1, sl: '25%', target: '60%', moveToCost: true }
+    ],
+    hasRepair: true,
+    repairCondition: 'Delta(Set 1, Leg 1) > 0.35 OR Position_PnL(Set 1, Leg 1) <= -2500',
+    repairLegAction: 'BUY · NIFTY 50 · OTM 2 CE · Current Week · 1 lot',
+    exitConditions: [
+      'Time >= 15:10',
+      'Strategy_PnL <= -4000 OR Strategy_PnL >= 8000'
+    ],
+    universalSl: '4000',
+    universalTarget: '8000',
+    trailIfProfit: '2000',
+    trailStopBy: '1000'
+  },
+  {
+    id: 'supertrend_breakout',
+    name: 'BANKNIFTY Multi-Timeframe Supertrend Breakout',
+    badge: 'Momentum',
+    category: 'Trend Following',
+    description: 'Directional options buying engine executing on 5-minute and 15-minute Supertrend confluence with automated ATR trailing stop.',
+    underlying: 'BANKNIFTY',
+    frequency: 'Continuous',
+    checkOnCandleClose: true,
+    combinator: 'AND',
+    entryConditions: [
+      'Time >= 09:25',
+      'LTP(BANKNIFTY) Crosses Above Supertrend(BANKNIFTY, 7, 3, 5m)',
+      'RSI(BANKNIFTY, 14, 5m, 0) > 55'
+    ],
+    legs: [
+      { action: 'BUY', type: 'CALL', underlying: 'BANKNIFTY', expiry: 'Current Week', strike: 'ATM', product: 'MIS', lots: 1, sl: '20%', target: '45%', moveToCost: true }
+    ],
+    hasRepair: false,
+    repairCondition: '',
+    repairLegAction: '',
+    exitConditions: [
+      'LTP(BANKNIFTY) Crosses Below Supertrend(BANKNIFTY, 7, 3, 5m)',
+      'Time >= 15:15'
+    ],
+    universalSl: '3500',
+    universalTarget: '9000',
+    trailIfProfit: '2500',
+    trailStopBy: '1200'
+  },
+  {
+    id: 'iron_condor',
+    name: 'NIFTY Weekly Iron Condor (Defined Risk)',
+    badge: 'Defined Risk',
+    category: 'Hedged Non-Directional',
+    description: 'Low-beta 4-leg condor collecting theta premium on Thursday expiry with outer wing protection and automated delta imbalance repair.',
+    underlying: 'NIFTY 50',
+    frequency: '15m',
+    checkOnCandleClose: true,
+    combinator: 'AND',
+    entryConditions: [
+      'Day_of_Week == 4',
+      'Time >= 09:30',
+      'Atmiv(NIFTY 50) <= 16.5'
+    ],
+    legs: [
+      { action: 'BUY', type: 'PUT', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 4', product: 'NRML', lots: 1, sl: '50%', target: '80%', moveToCost: false },
+      { action: 'SELL', type: 'PUT', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 2', product: 'NRML', lots: 1, sl: '40%', target: '70%', moveToCost: true },
+      { action: 'SELL', type: 'CALL', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 2', product: 'NRML', lots: 1, sl: '40%', target: '70%', moveToCost: true },
+      { action: 'BUY', type: 'CALL', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 4', product: 'NRML', lots: 1, sl: '50%', target: '80%', moveToCost: false }
+    ],
+    hasRepair: true,
+    repairCondition: 'Absolute(Delta(Set 1, Leg 2) + Delta(Set 1, Leg 3)) > 0.30',
+    repairLegAction: 'SELL · NIFTY 50 · OTM 1 CE · Current Week · 1 lot',
+    exitConditions: [
+      'Days_to_Expiry(NIFTY 50) == 0 AND Time >= 15:20',
+      'Strategy_PnL >= 6500'
+    ],
+    universalSl: '4500',
+    universalTarget: '6500',
+    trailIfProfit: '1500',
+    trailStopBy: '750'
+  },
+  {
+    id: 'theta_scalper',
+    name: 'FINNIFTY 0-DTE Expiry Theta Scalper',
+    badge: '0-DTE High Yield',
+    category: 'Expiry Day Scalping',
+    description: 'Captures afternoon accelerated premium erosion on Tuesday expiry with VWAP crossover confirmation and tight 15% leg risk guard.',
+    underlying: 'FINNIFTY',
+    frequency: 'Continuous',
+    checkOnCandleClose: false,
+    combinator: 'AND',
+    entryConditions: [
+      'Days_to_Expiry(FINNIFTY) == 0',
+      'Time >= 12:45',
+      'LTP(FINNIFTY) >= VWAP(FINNIFTY, 1m)'
+    ],
+    legs: [
+      { action: 'SELL', type: 'CALL', underlying: 'FINNIFTY', expiry: 'Current Week', strike: 'OTM 1', product: 'MIS', lots: 2, sl: '20%', target: '75%', moveToCost: true },
+      { action: 'SELL', type: 'PUT', underlying: 'FINNIFTY', expiry: 'Current Week', strike: 'OTM 1', product: 'MIS', lots: 2, sl: '20%', target: '75%', moveToCost: true }
+    ],
+    hasRepair: false,
+    repairCondition: '',
+    repairLegAction: '',
+    exitConditions: [
+      'Time >= 15:20',
+      'Strategy_PnL <= -3000 OR Strategy_PnL >= 5500'
+    ],
+    universalSl: '3000',
+    universalTarget: '5500',
+    trailIfProfit: '1500',
+    trailStopBy: '800'
+  },
+  {
+    id: 'ema_ribbon',
+    name: 'EMA Ribbon (9/21/50) Momentum Trend Follower',
+    badge: 'Multi-EMA',
+    category: 'Momentum',
+    description: 'Enters directional ATM options when short EMA(9) crosses medium EMA(21) above baseline EMA(50) with volume confirmation.',
+    underlying: 'NIFTY 50',
+    frequency: '5m',
+    checkOnCandleClose: true,
+    combinator: 'AND',
+    entryConditions: [
+      'Time >= 09:30',
+      'EMA(NIFTY 50, 9, 5m, 0) Crosses Above EMA(NIFTY 50, 21, 5m, 0)',
+      'EMA(NIFTY 50, 21, 5m, 0) > EMA(NIFTY 50, 50, 5m, 0)',
+      'Volume(NIFTY 50, 5m) > 100000'
+    ],
+    legs: [
+      { action: 'BUY', type: 'CALL', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'ATM', product: 'MIS', lots: 1, sl: '18%', target: '50%', moveToCost: true }
+    ],
+    hasRepair: false,
+    repairCondition: '',
+    repairLegAction: '',
+    exitConditions: [
+      'EMA(NIFTY 50, 9, 5m, 0) Crosses Below EMA(NIFTY 50, 21, 5m, 0)',
+      'Time >= 15:15'
+    ],
+    universalSl: '2500',
+    universalTarget: '7500',
+    trailIfProfit: '2000',
+    trailStopBy: '1000'
+  },
+  {
+    id: 'cpr_breakout',
+    name: 'CPR (Central Pivot Range) Intraday Breakout',
+    badge: 'Price Action',
+    category: 'Pivot Range Breakout',
+    description: 'Trades High/Low breakouts outside the daily Central Pivot Range Top Central (TC) or Bottom Central (BC) levels.',
+    underlying: 'SENSEX',
+    frequency: 'Continuous',
+    checkOnCandleClose: true,
+    combinator: 'AND',
+    entryConditions: [
+      'Time >= 09:45',
+      'LTP(SENSEX) Crosses Above CPR(TC, SENSEX)',
+      'RSI(SENSEX, 14, 15m, 0) > 60'
+    ],
+    legs: [
+      { action: 'BUY', type: 'CALL', underlying: 'SENSEX', expiry: 'Current Week', strike: 'ATM', product: 'MIS', lots: 1, sl: '22%', target: '55%', moveToCost: true }
+    ],
+    hasRepair: false,
+    repairCondition: '',
+    repairLegAction: '',
+    exitConditions: [
+      'Time >= 15:10',
+      'Strategy_PnL <= -3500 OR Strategy_PnL >= 9000'
+    ],
+    universalSl: '3500',
+    universalTarget: '9000',
+    trailIfProfit: '3000',
+    trailStopBy: '1500'
+  },
+  {
+    id: 'hedged_strangle',
+    name: 'Hedged Short Strangle with Dynamic Delta Repair',
+    badge: 'Hedging',
+    category: 'Delta Neutral Options',
+    description: 'Writes 100-point OTM Call & Put contracts on NIFTY 50 with outer far-OTM protection and active delta rebalancing when leg delta exceeds 0.30.',
+    underlying: 'NIFTY 50',
+    frequency: 'Continuous',
+    checkOnCandleClose: false,
+    combinator: 'AND',
+    entryConditions: [
+      'Time >= 09:25',
+      'Atmiv(NIFTY 50) >= 12.0'
+    ],
+    legs: [
+      { action: 'BUY', type: 'PUT', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 3', product: 'MIS', lots: 1, sl: '50%', target: '80%', moveToCost: false },
+      { action: 'SELL', type: 'PUT', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 1', product: 'MIS', lots: 1, sl: '25%', target: '65%', moveToCost: true },
+      { action: 'SELL', type: 'CALL', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 1', product: 'MIS', lots: 1, sl: '25%', target: '65%', moveToCost: true },
+      { action: 'BUY', type: 'CALL', underlying: 'NIFTY 50', expiry: 'Current Week', strike: 'OTM 3', product: 'MIS', lots: 1, sl: '50%', target: '80%', moveToCost: false }
+    ],
+    hasRepair: true,
+    repairCondition: 'Delta(Set 1, Leg 2) > 0.32 OR Delta(Set 1, Leg 3) > 0.32',
+    repairLegAction: 'BUY · NIFTY 50 · OTM 1 CE · Current Week · 1 lot',
+    exitConditions: [
+      'Time >= 15:15',
+      'Strategy_PnL <= -4500 OR Strategy_PnL >= 7500'
+    ],
+    universalSl: '4500',
+    universalTarget: '7500',
+    trailIfProfit: '2000',
+    trailStopBy: '1000'
+  }
+];
+
+// Autocomplete Keyword Suggestions Database
+interface SuggestionKeyword {
+  name: string;
+  category: string;
+  template: string;
+  description: string;
+}
+
+const AUTOCOMPLETE_KEYWORDS: SuggestionKeyword[] = [
+  { name: 'Time', category: 'Time & Calendar', template: 'Time >= 09:20', description: 'Exchange trading clock time (HH:MM)' },
+  { name: 'Days_to_Expiry', category: 'Time & Calendar', template: 'Days_to_Expiry(NIFTY 50) == 0', description: 'Days remaining until option expiry' },
+  { name: 'Day_of_Week', category: 'Time & Calendar', template: 'Day_of_Week == 4', description: 'Day of week (1=Mon, 4=Thu)' },
+  { name: 'EMA', category: 'Indicators', template: 'EMA(NIFTY 50, 9, 5m, 0) Crosses Above EMA(NIFTY 50, 21, 5m, 0)', description: 'Exponential Moving Average' },
+  { name: 'SMA', category: 'Indicators', template: 'SMA(NIFTY 50, 50, 15m, 0) > SMA(NIFTY 50, 200, 15m, 0)', description: 'Simple Moving Average' },
+  { name: 'RSI', category: 'Indicators', template: 'RSI(NIFTY 50, 14, 5m, 0) > 60', description: 'Relative Strength Index momentum (0-100)' },
+  { name: 'Supertrend', category: 'Indicators', template: 'LTP(NIFTY 50) Crosses Above Supertrend(NIFTY 50, 7, 3, 5m)', description: 'Supertrend trend direction' },
+  { name: 'VWAP', category: 'Indicators', template: 'LTP(NIFTY 50) >= VWAP(NIFTY 50, 1m)', description: 'Volume Weighted Average Price' },
+  { name: 'CPR', category: 'Indicators', template: 'LTP(NIFTY 50) Crosses Above CPR(TC, NIFTY 50)', description: 'Central Pivot Range (TC, Pivot, BC)' },
+  { name: 'LTP', category: 'Market Data', template: 'LTP(NIFTY 50) > Close(NIFTY 50, 5m, 1)', description: 'Last Traded Price of symbol' },
+  { name: 'Open', category: 'Market Data', template: 'Close(NIFTY 50, 15m, 0) > Open(NIFTY 50, 15m, 0)', description: 'Candle open price' },
+  { name: 'High', category: 'Market Data', template: 'LTP(NIFTY 50) > High(NIFTY 50, 15m, 1)', description: 'Previous candle high price' },
+  { name: 'Low', category: 'Market Data', template: 'LTP(NIFTY 50) < Low(NIFTY 50, 15m, 1)', description: 'Previous candle low price' },
+  { name: 'Volume', category: 'Market Data', template: 'Volume(NIFTY 50, 5m) > 150000', description: 'Traded volume of candle' },
+  { name: 'Open_Interest', category: 'Market Data', template: 'Open_Interest(NIFTY 50) > 500000', description: 'Option open interest contracts' },
+  { name: 'Position_PnL', category: 'Position', template: 'Position_PnL(Set 1, Leg 1) <= -2500', description: 'Live mark-to-market P&L of leg (₹)' },
+  { name: 'Strategy_PnL', category: 'Position', template: 'Strategy_PnL <= -4000 OR Strategy_PnL >= 8000', description: 'Overall strategy P&L (₹)' },
+  { name: 'Delta', category: 'Option Greeks', template: 'Delta(Set 1, Leg 1) > 0.35', description: 'Option Greek delta exposure' },
+  { name: 'Theta', category: 'Option Greeks', template: 'Theta(Set 1, Leg 1) >= 15.0', description: 'Daily time decay in points' },
+  { name: 'Atmiv', category: 'Option Greeks', template: 'Atmiv(NIFTY 50) <= 15.0', description: 'At-The-Money Implied Volatility %' }
+];
+
+const POPULAR_SNIPPETS = [
+  'Time >= 09:20',
+  'EMA(NIFTY 50, 9, 5m, 0) Crosses Above EMA(NIFTY 50, 21, 5m, 0)',
+  'RSI(NIFTY 50, 14, 5m, 0) > 60',
+  'LTP(NIFTY 50) >= VWAP(NIFTY 50, 1m)',
+  'Position_PnL(Set 1, Leg 1) <= -2500',
+  'Strategy_PnL <= -4000',
+  'Time >= 15:10'
+];
+
 interface StrategyBuilderViewProps {
   onOpenKeywordModal: (onSelect: (expr: string) => void) => void;
   onDeploy: (name: string) => void;
@@ -49,12 +335,14 @@ export default function StrategyBuilderView({
   onDeploy,
   onBacktest
 }: StrategyBuilderViewProps) {
+  // Strategy Header State
   const [strategyName, setStrategyName] = useState('NIFTY 9:20 Intraday Short Straddle v2.0');
   const [description, setDescription] = useState('Delta-neutral automated options selling engine with continuous monitoring, 25% leg SL, and 15:10 auto square-off.');
   const [underlying, setUnderlying] = useState('NIFTY 50');
   const [checkFrequency, setCheckFrequency] = useState('Continuous');
   const [checkOnCandleClose, setCheckOnCandleClose] = useState(false);
   const [conditionCombinator, setConditionCombinator] = useState<'AND' | 'OR'>('AND');
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('short_straddle');
 
   // Set 1 Entry Conditions
   const [entryConditions, setEntryConditions] = useState<ConditionItem[]>([
@@ -85,15 +373,76 @@ export default function StrategyBuilderView({
   const [trailIfProfit, setTrailIfProfit] = useState('2000');
   const [trailStopBy, setTrailStopBy] = useState('1000');
 
+  // Notifications
   const [savedBanner, setSavedBanner] = useState(false);
+  const [templateBanner, setTemplateBanner] = useState<string | null>(null);
 
-  const handleAddCondition = () => {
+  // Autocomplete typing state for entry conditions
+  const [typingInput, setTypingInput] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filtered autocomplete suggestions based on typing
+  const filteredSuggestions = AUTOCOMPLETE_KEYWORDS.filter(kw =>
+    kw.name.toLowerCase().includes(typingInput.toLowerCase()) ||
+    kw.category.toLowerCase().includes(typingInput.toLowerCase()) ||
+    kw.description.toLowerCase().includes(typingInput.toLowerCase())
+  );
+
+  // Apply Ready Template
+  const handleApplyTemplate = (tpl: StrategyTemplate) => {
+    setSelectedTemplateId(tpl.id);
+    setStrategyName(tpl.name);
+    setDescription(tpl.description);
+    setUnderlying(tpl.underlying);
+    setCheckFrequency(tpl.frequency);
+    setCheckOnCandleClose(tpl.checkOnCandleClose);
+    setConditionCombinator(tpl.combinator);
+
+    setEntryConditions(tpl.entryConditions.map((c, i) => ({ id: Date.now() + i, text: c })));
+    setLegs(tpl.legs.map((l, i) => ({ id: Date.now() + 100 + i, ...l })));
+
+    setHasRepair(tpl.hasRepair);
+    setRepairCondition(tpl.repairCondition);
+    setRepairLegAction(tpl.repairLegAction);
+
+    setExitConditions(tpl.exitConditions.map((c, i) => ({ id: Date.now() + 200 + i, text: c })));
+
+    setUniversalSl(tpl.universalSl);
+    setUniversalTarget(tpl.universalTarget);
+    setTrailIfProfit(tpl.trailIfProfit);
+    setTrailStopBy(tpl.trailStopBy);
+
+    setTemplateBanner(`Loaded "${tpl.name}" template with all legs, conditions & risk controls!`);
+    setTimeout(() => setTemplateBanner(null), 3500);
+  };
+
+  // Add condition from typing autocomplete or snippet
+  const handleAddCustomCondition = (expr: string) => {
+    if (!expr.trim()) return;
+    setEntryConditions(prev => [...prev, { id: Date.now(), text: expr.trim() }]);
+    setTypingInput('');
+    setShowSuggestions(false);
+  };
+
+  const handleAddConditionFromModal = () => {
     onOpenKeywordModal((newExpr: string) => {
       setEntryConditions(prev => [...prev, { id: Date.now(), text: newExpr }]);
     });
   };
 
-  const handleAddExitCondition = () => {
+  const handleAddExitConditionFromModal = () => {
     onOpenKeywordModal((newExpr: string) => {
       setExitConditions(prev => [...prev, { id: Date.now(), text: newExpr }]);
     });
@@ -125,39 +474,53 @@ export default function StrategyBuilderView({
 
   return (
     <div className="space-y-6">
-      {/* Header & Meta Bar */}
+      {/* 1. TOP STRATEGY HEADER BAR (FULL WIDTH, NO TRUNCATION) */}
       <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-4 transition-colors">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">
-              Advanced Strategy Builder · No Code
-            </span>
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          {/* Full-width Responsive Title & Description */}
+          <div className="flex-1 w-full min-w-0">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FF6600]">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Advanced Strategy Builder · No-Code Algorithmic Engine</span>
+            </div>
             <input
               type="text"
               value={strategyName}
               onChange={e => setStrategyName(e.target.value)}
-              className="text-2xl font-black text-slate-900 dark:text-white bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-[#FF6600] focus:outline-none transition block mt-1 w-full max-w-xl"
+              placeholder="Enter Strategy Name (e.g. NIFTY 9:20 Intraday Short Straddle v2.0)..."
+              className="w-full text-xl sm:text-2xl font-black text-slate-900 dark:text-white bg-transparent border-b border-slate-200 dark:border-slate-800 focus:border-[#FF6600] focus:outline-none transition py-1 mt-1"
+            />
+            <input
+              type="text"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              placeholder="Add an optional strategy summary or logic description..."
+              className="w-full text-xs text-slate-500 dark:text-slate-400 bg-transparent border-none focus:outline-none mt-1 truncate"
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 shrink-0 self-end lg:self-center">
             <button
               onClick={handleSave}
-              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              title="Save Strategy AST"
             >
               <Save className="w-3.5 h-3.5" />
               <span>Save Strategy</span>
             </button>
             <button
               onClick={() => onBacktest(strategyName)}
-              className="px-4 py-2 rounded-xl border border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition"
+              title="Simulate with historical data"
             >
               <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Backtest</span>
             </button>
             <button
               onClick={() => onDeploy(strategyName)}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-1.5 transition"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-1.5 transition"
+              title="Deploy 1-click to Live Auto or Paper"
             >
               <Play className="w-3.5 h-3.5 fill-white" />
               <span>Deploy 1-Click</span>
@@ -165,14 +528,23 @@ export default function StrategyBuilderView({
           </div>
         </div>
 
+        {/* Feedback Banners */}
         {savedBanner && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-2 animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>Strategy AST validated successfully with Zero-Eval security parser. Ready for deployment.</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-slate-200 dark:border-[#1E293B] text-xs">
+        {templateBanner && (
+          <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl text-xs text-[#FF6600] font-medium flex items-center gap-2 animate-in fade-in">
+            <Zap className="w-4 h-4 shrink-0" />
+            <span>{templateBanner}</span>
+          </div>
+        )}
+
+        {/* Global Strategy Parameters Strip */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-slate-200 dark:border-[#1E293B] text-xs">
           <div>
             <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Default Underlying</label>
             <select
@@ -211,7 +583,7 @@ export default function StrategyBuilderView({
                 type="checkbox"
                 checked={checkOnCandleClose}
                 onChange={e => setCheckOnCandleClose(e.target.checked)}
-                className="accent-[#FF6600] w-4 h-4 rounded"
+                className="accent-[#FF6600] w-4 h-4 rounded cursor-pointer"
               />
               <span>Check on candle close only</span>
             </label>
@@ -221,13 +593,68 @@ export default function StrategyBuilderView({
             <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Pre-trade Risk Guard</label>
             <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold mt-1.5">
               <ShieldCheck className="w-4 h-4" />
-              <span>Active · Margin & Collar Collar Guard</span>
+              <span>Active · Margin & Collar Guard</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* SET 1 CONTAINER */}
+      {/* 2. READY-MADE STRATEGY TEMPLATES SELECTOR */}
+      <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-3 transition-colors">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-orange-500/15 text-[#FF6600] flex items-center justify-center font-bold">
+              <Wand2 className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-slate-900 dark:text-white">Ready-to-Use Strategy Templates</h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Select any template to instantly populate conditions, legs, SL, and trailing rules</p>
+            </div>
+          </div>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">
+            {READY_TEMPLATES.length} Production Presets
+          </span>
+        </div>
+
+        {/* Horizontal Scrolling Template Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+          {READY_TEMPLATES.map(tpl => (
+            <div
+              key={tpl.id}
+              onClick={() => handleApplyTemplate(tpl)}
+              className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between group ${
+                selectedTemplateId === tpl.id
+                  ? 'bg-orange-50/60 dark:bg-[#FF6600]/10 border-[#FF6600] shadow-sm'
+                  : 'bg-slate-50/70 dark:bg-[#0E1526] border-slate-200 dark:border-[#1E293B] hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-[#131B2E]'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase">
+                    {tpl.badge}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">{tpl.underlying}</span>
+                </div>
+                <h4 className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-[#FF6600] transition line-clamp-1">
+                  {tpl.name}
+                </h4>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-1 leading-snug">
+                  {tpl.description}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-slate-200 dark:border-slate-800/80 text-[10px]">
+                <span className="text-slate-500">{tpl.legs.length} legs · {tpl.hasRepair ? 'With Repair' : 'No Repair'}</span>
+                <span className="text-[#FF6600] font-bold group-hover:underline flex items-center gap-1">
+                  Load Template →
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. SET 1 CONTAINER */}
       <div className="rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl overflow-hidden transition-colors">
         {/* Set Header Bar */}
         <div className="px-6 py-4 bg-slate-50 dark:bg-[#0E1526] border-b border-slate-200 dark:border-[#1E293B] flex items-center justify-between">
@@ -246,6 +673,7 @@ export default function StrategyBuilderView({
             <button
               onClick={() => setConditionCombinator(conditionCombinator === 'AND' ? 'OR' : 'AND')}
               className="px-2.5 py-1 rounded bg-[#FF6600] text-white text-xs font-black shadow-sm"
+              title="Toggle between AND / OR logic"
             >
               {conditionCombinator}
             </button>
@@ -253,21 +681,103 @@ export default function StrategyBuilderView({
         </div>
 
         <div className="p-6 space-y-6">
-          {/* 1. ENTRY CONDITIONS BLOCK */}
+          {/* ENTRY CONDITIONS BLOCK */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span>Entry Conditions (When all true, take positions below)</span>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                Entry Conditions (When all true, take positions below)
               </label>
               <button
-                onClick={handleAddCondition}
+                onClick={handleAddConditionFromModal}
                 className="text-xs px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-[#0E1526] border border-[#FF6600]/40 text-[#FF6600] hover:bg-[#FF6600] hover:text-white font-bold flex items-center gap-1.5 transition"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Add Condition via Keyword Modal</span>
+                <Code className="w-3.5 h-3.5" />
+                <span>Open 214 Keyword Catalogue</span>
               </button>
             </div>
 
+            {/* Live Autocomplete Typing Bar */}
+            <div className="relative mb-3" ref={suggestionsRef}>
+              <div className="relative flex items-center">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Type a keyword, indicator, or condition (e.g. Time, EMA, RSI, LTP, Supertrend, CPR)..."
+                  value={typingInput}
+                  onChange={e => {
+                    setTypingInput(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && typingInput.trim()) {
+                      handleAddCustomCondition(typingInput);
+                    }
+                  }}
+                  className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-xl pl-9 pr-24 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#FF6600] font-mono shadow-inner"
+                />
+                <button
+                  onClick={() => handleAddCustomCondition(typingInput)}
+                  disabled={!typingInput.trim()}
+                  className="absolute right-2 px-3 py-1 rounded-lg bg-[#FF6600] text-white text-xs font-bold disabled:opacity-40 transition hover:brightness-110"
+                >
+                  Add Condition
+                </button>
+              </div>
+
+              {/* Floating Autocomplete Dropdown */}
+              {showSuggestions && typingInput.trim().length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-xl shadow-2xl overflow-hidden max-h-64 overflow-y-auto font-mono text-xs animate-in fade-in duration-100">
+                  <div className="p-2 bg-slate-50 dark:bg-[#0E1526] border-b border-slate-200 dark:border-[#1E293B] text-[11px] text-slate-500 font-sans flex items-center justify-between">
+                    <span>Keyword & Expression Suggestions ({filteredSuggestions.length} matches)</span>
+                    <span className="text-[10px]">Click or press Enter to insert</span>
+                  </div>
+                  {filteredSuggestions.length === 0 ? (
+                    <div className="p-3 text-slate-500 text-center font-sans">
+                      No exact keyword matches found. Press Enter to add custom condition &quot;{typingInput}&quot;.
+                    </div>
+                  ) : (
+                    filteredSuggestions.map(kw => (
+                      <div
+                        key={kw.name}
+                        onClick={() => handleAddCustomCondition(kw.template)}
+                        className="p-2.5 hover:bg-slate-100 dark:hover:bg-[#0E1526] border-b border-slate-100 dark:border-slate-800/60 cursor-pointer flex items-center justify-between transition"
+                      >
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-900 dark:text-white">{kw.name}</span>
+                            <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-sans uppercase">
+                              {kw.category}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-[#FF6600] mt-0.5">{kw.template}</div>
+                          <div className="text-[10px] text-slate-400 font-sans mt-0.5">{kw.description}</div>
+                        </div>
+                        <span className="text-[10px] px-2 py-1 rounded bg-orange-500/10 text-[#FF6600] font-sans font-bold shrink-0">
+                          Insert →
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Quick-Insert Suggestions Strip */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 text-[11px] no-scrollbar">
+              <span className="text-slate-500 font-semibold shrink-0">Quick Add:</span>
+              {POPULAR_SNIPPETS.map(snip => (
+                <button
+                  key={snip}
+                  onClick={() => handleAddCustomCondition(snip)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-orange-500/10 hover:text-[#FF6600] dark:bg-[#0E1526] dark:hover:bg-[#FF6600]/15 border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 font-mono whitespace-nowrap transition"
+                >
+                  + {snip}
+                </button>
+              ))}
+            </div>
+
+            {/* Active Entry Conditions List */}
             <div className="space-y-2">
               {entryConditions.map((cond, idx) => (
                 <div
@@ -281,6 +791,7 @@ export default function StrategyBuilderView({
                   <button
                     onClick={() => setEntryConditions(entryConditions.filter(c => c.id !== cond.id))}
                     className="p-1 text-slate-400 hover:text-red-500 transition"
+                    title="Remove condition"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -289,7 +800,7 @@ export default function StrategyBuilderView({
             </div>
           </div>
 
-          {/* 2. POSITION LEGS TABLE */}
+          {/* POSITION LEGS TABLE */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
@@ -450,7 +961,7 @@ export default function StrategyBuilderView({
             </div>
           </div>
 
-          {/* 3. REPAIR CONDITIONS BLOCK */}
+          {/* REPAIR CONDITIONS BLOCK */}
           <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
@@ -491,14 +1002,14 @@ export default function StrategyBuilderView({
             )}
           </div>
 
-          {/* 4. SET EXIT CONDITIONS BLOCK */}
+          {/* SET EXIT CONDITIONS BLOCK */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 Set Exit Conditions (Square off all Set 1 legs)
               </label>
               <button
-                onClick={handleAddExitCondition}
+                onClick={handleAddExitConditionFromModal}
                 className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0E1526] border border-slate-300 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:border-[#FF6600] hover:text-[#FF6600] font-semibold flex items-center gap-1.5 transition"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -529,7 +1040,7 @@ export default function StrategyBuilderView({
         </div>
       </div>
 
-      {/* UNIVERSAL EXIT & TRAILING STOP LOSS BLOCK */}
+      {/* 4. UNIVERSAL EXIT & TRAILING STOP LOSS BLOCK */}
       <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-4 transition-colors">
         <div className="flex items-center justify-between">
           <div>
