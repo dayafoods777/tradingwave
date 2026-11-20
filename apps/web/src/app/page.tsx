@@ -46,9 +46,11 @@ export default function TradingWaveApp() {
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('tw_theme', nextTheme);
-    }
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('tw_theme', nextTheme);
+      }
+    } catch (_) {}
     if (nextTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -57,14 +59,16 @@ export default function TradingWaveApp() {
   };
 
   useEffect(() => {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem('tw_theme') : null;
-    if (saved === 'dark') {
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
-    } else {
-      setTheme('light');
-      document.documentElement.classList.remove('dark');
-    }
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('tw_theme') : null;
+      if (saved === 'dark') {
+        setTheme('dark');
+        document.documentElement.classList.add('dark');
+      } else {
+        setTheme('light');
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (_) {}
   }, []);
 
   // Bot actions
