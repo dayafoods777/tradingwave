@@ -56,6 +56,11 @@ export interface BotDeployment {
 
 // Indian Stocks today's live status for continuous scrolling ticker
 export const INDIAN_STOCKS = [
+  { symbol: 'ADANIPORTS', price: '1,917.00', change: '-0.01%', isPositive: false },
+  { symbol: 'ASIANPAINT', price: '2,608.30', change: '+0.51%', isPositive: true },
+  { symbol: 'AXISBANK', price: '1,446.00', change: '+4.72%', isPositive: true },
+  { symbol: 'BAJAJ-AUTO', price: '10,765.00', change: '-0.48%', isPositive: false },
+  { symbol: 'BAJFINANCE', price: '1,122.00', change: '+2.67%', isPositive: true },
   { symbol: 'GRASIM', price: '3,103.70', change: '-0.24%', isPositive: false },
   { symbol: 'HCLTECH', price: '1,344.40', change: '+0.86%', isPositive: true },
   { symbol: 'HDFCBANK', price: '846.00', change: '+2.94%', isPositive: true },
@@ -70,7 +75,6 @@ export const INDIAN_STOCKS = [
   { symbol: 'SBIN', price: '814.20', change: '-0.52%', isPositive: false },
   { symbol: 'ITC', price: '472.60', change: '+0.35%', isPositive: true },
   { symbol: 'LT', price: '3,580.00', change: '+1.04%', isPositive: true },
-  { symbol: 'BAJFINANCE', price: '6,940.00', change: '-1.18%', isPositive: false },
   { symbol: 'MARUTI', price: '11,240.00', change: '+0.55%', isPositive: true },
   { symbol: 'TATAMOTORS', price: '785.40', change: '-0.92%', isPositive: false },
   { symbol: 'KOTAKBANK', price: '1,745.00', change: '+0.48%', isPositive: true },
@@ -78,7 +82,6 @@ export const INDIAN_STOCKS = [
   { symbol: 'ADANIENT', price: '2,820.00', change: '+2.35%', isPositive: true },
   { symbol: 'SUNPHARMA', price: '1,780.00', change: '+0.95%', isPositive: true },
   { symbol: 'TITAN', price: '3,240.00', change: '-0.42%', isPositive: false },
-  { symbol: 'AXISBANK', price: '1,160.00', change: '+0.65%', isPositive: true },
   { symbol: 'NTPC', price: '368.50', change: '+1.20%', isPositive: true },
   { symbol: 'POWERGRID', price: '318.00', change: '-0.30%', isPositive: false },
   { symbol: 'ONGC', price: '254.80', change: '+0.85%', isPositive: true },
