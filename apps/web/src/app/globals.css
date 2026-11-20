@@ -1,16 +1,96 @@
+@import "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #0b0f19;
-  --foreground: #f8fafc;
+  color-scheme: light;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --paper: #FAFAFB;
+  --paper-2: #F2F2F5;
+  --paper-3: #EEEDFD;
+  --surface: #FFFFFF;
+  --ink: #0B0B10;
+  --ink-soft: #3F3F4E;
+  --slate: #6B6B7B;
+  --slate-soft: #8A8A99;
+  --rule: #E5E7EB;
+  --rule-strong: #DCDEE5;
+  --rule-grid: rgba(11, 11, 16, 0.06);
+  --signal: #FF6600;
+  --signal-soft: #E65C00;
+  --signal-tint: #FFF4ED;
+  --signal-tint-strong: #FFE4D3;
+  --positive: #059669;
+  --positive-soft: #ECFDF5;
+  --negative: #DC2626;
+  --negative-soft: #FEF2F2;
+  --card-bg: #FFFFFF;
+  --header-bg: #FFFFFF;
+  --dot-color: rgba(11, 11, 16, 0.06);
+}
+
+html.dark {
+  color-scheme: dark;
+  --paper: #0B0F19;
+  --paper-2: #111827;
+  --paper-3: #1F2937;
+  --surface: #131B2E;
+  --ink: #F9FAFB;
+  --ink-soft: #D1D5DB;
+  --slate: #9CA3AF;
+  --slate-soft: #6B7280;
+  --rule: #1E293B;
+  --rule-strong: #334155;
+  --rule-grid: rgba(249, 250, 251, 0.05);
+  --signal: #FF6600;
+  --signal-soft: #FFA366;
+  --signal-tint: rgba(255, 102, 0, 0.12);
+  --signal-tint-strong: rgba(255, 102, 0, 0.24);
+  --positive: #10B981;
+  --positive-soft: rgba(16, 185, 129, 0.16);
+  --negative: #EF4444;
+  --negative-soft: rgba(239, 68, 68, 0.16);
+  --card-bg: #131B2E;
+  --header-bg: #0E1526;
+  --dot-color: rgba(255, 255, 255, 0.05);
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--paper);
+  color: var(--ink);
   overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+.h-grid-bg {
+  background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--slate);
+}
