@@ -246,7 +246,7 @@ export default function Header({
                   setCreateMenuOpen(false);
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition ${
-                  strategiesMenuOpen || ['dashboard', 'mystrategies', 'builder', 'wizard', 'optionchain'].includes(activeTab)
+                  strategiesMenuOpen || ['dashboard', 'mystrategies', 'readystrategies', 'builder', 'wizard', 'optionchain'].includes(activeTab)
                     ? 'text-[#4F46E5] dark:text-[#818CF8]'
                     : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
                 }`}
@@ -257,7 +257,7 @@ export default function Header({
 
               {strategiesMenuOpen && (
                 <div
-                  className="absolute left-0 top-full mt-2 w-[480px] bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-3 shadow-2xl z-50 grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute left-0 top-full mt-2 w-[680px] bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-3 shadow-2xl z-50 grid grid-cols-1 sm:grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-2 duration-150"
                 >
                   {/* Deployed */}
                   <button
@@ -288,6 +288,22 @@ export default function Header({
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
                       Everything you have built and deployed
+                    </div>
+                  </button>
+
+                  {/* Ready Strategies */}
+                  <button
+                    onClick={() => handleSelectStrategiesItem('readystrategies')}
+                    className="text-left p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:border-[#1E293B] transition group flex flex-col items-start"
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <Sparkles className="w-5 h-5 stroke-[2.2]" />
+                    </div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#4F46E5] dark:group-hover:text-[#818CF8] transition-colors">
+                      Ready Strategies
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                      Pre-built quantitative strategies ready to deploy
                     </div>
                   </button>
                 </div>
@@ -399,6 +415,7 @@ export default function Header({
           {[
             { id: 'dashboard', label: '⚡ Deployed Bots & Live PnL' },
             { id: 'mystrategies', label: '📂 My Strategies' },
+            { id: 'readystrategies', label: '🚀 Ready Strategies' },
             { id: 'builder', label: '🛠️ Advanced Strategy Builder' },
             { id: 'wizard', label: '🧙 Option Wizard & Greeks' },
             { id: 'optionchain', label: '📊 Live Option Chain' },

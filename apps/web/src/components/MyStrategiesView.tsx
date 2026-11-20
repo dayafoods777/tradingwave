@@ -365,7 +365,7 @@ export default function MyStrategiesView({
         </div>
       </div>
 
-      {/* 2. SUB-NAVIGATION TABS STRIP (Marketplace excluded) */}
+      {/* 2. SUB-NAVIGATION TABS STRIP (Ready Strategies after My Strategies - SS1) */}
       <div className="flex items-center gap-8 border-b border-slate-200 dark:border-[#1E293B] text-sm font-semibold">
         <button
           onClick={() => onNavigateTab && onNavigateTab('dashboard')}
@@ -377,6 +377,12 @@ export default function MyStrategiesView({
           className="pb-3 text-[#5B45E0] dark:text-[#818CF8] border-b-2 border-[#5B45E0] dark:border-[#818CF8] font-bold"
         >
           My Strategies
+        </button>
+        <button
+          onClick={() => onNavigateTab && onNavigateTab('readystrategies')}
+          className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
+        >
+          Ready Strategies
         </button>
         <button
           onClick={() => onNavigateTab && onNavigateTab('backtest')}

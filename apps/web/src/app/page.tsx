@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import DashboardView, { BotDeployment } from '../components/DashboardView';
 import MyStrategiesView from '../components/MyStrategiesView';
+import ReadyStrategiesView from '../components/ReadyStrategiesView';
 import StrategyBuilderView from '../components/StrategyBuilderView';
 import OptionWizardView from '../components/OptionWizardView';
 import OptionChainView from '../components/OptionChainView';
@@ -16,7 +17,7 @@ import BrokerModal from '../components/BrokerModal';
 
 export default function TradingWaveApp() {
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'mystrategies' | 'builder' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
+    'dashboard' | 'mystrategies' | 'readystrategies' | 'builder' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
   >('dashboard');
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
@@ -160,6 +161,15 @@ export default function TradingWaveApp() {
             onEditStrategy={_name => setActiveTab('builder')}
             onDeployStrategy={name => handleDeployNew(name)}
             onBacktestStrategy={_name => setActiveTab('backtest')}
+            onNavigateTab={tab => setActiveTab(tab)}
+          />
+        )}
+
+        {activeTab === 'readystrategies' && (
+          <ReadyStrategiesView
+            onDeploy={name => handleDeployNew(name)}
+            onEdit={_name => setActiveTab('builder')}
+            onBacktest={_name => setActiveTab('backtest')}
             onNavigateTab={tab => setActiveTab(tab)}
           />
         )}
