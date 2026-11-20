@@ -120,13 +120,15 @@ interface MyStrategiesViewProps {
   onEditStrategy: (strategyName: string) => void;
   onDeployStrategy: (strategyName: string) => void;
   onBacktestStrategy: (strategyName: string) => void;
+  onNavigateTab?: (tab: any) => void;
 }
 
 export default function MyStrategiesView({
   onCreateNew,
   onEditStrategy,
   onDeployStrategy,
-  onBacktestStrategy
+  onBacktestStrategy,
+  onNavigateTab
 }: MyStrategiesViewProps) {
   const [strategies, setStrategies] = useState<StrategyRecord[]>(INITIAL_STRATEGIES);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -224,6 +226,66 @@ export default function MyStrategiesView({
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>New strategy</span>
           </button>
+        </div>
+      </div>
+
+      {/* Sub-Navigation Tabs Strip (Excluding Marketplace as requested) */}
+      <div className="flex items-center gap-8 border-b border-slate-200 dark:border-[#1E293B] text-sm font-semibold">
+        <button
+          onClick={() => onNavigateTab && onNavigateTab('dashboard')}
+          className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
+        >
+          Deployed
+        </button>
+        <button
+          className="pb-3 text-[#5B45E0] dark:text-[#818CF8] border-b-2 border-[#5B45E0] dark:border-[#818CF8] font-bold"
+        >
+          My Strategies
+        </button>
+        <button
+          onClick={() => onNavigateTab && onNavigateTab('backtest')}
+          className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
+        >
+          Backtest
+        </button>
+      </div>
+
+      {/* Strategies Metric Counters Strip (Excluding Marketplace as requested) */}
+      <div className="rounded-2xl border border-slate-200 dark:border-[#1E293B] bg-white dark:bg-[#131B2E] overflow-hidden shadow-sm grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-[#1E293B] transition-colors">
+        <div className="p-4 sm:p-5">
+          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+            Private
+          </span>
+          <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
+            {strategies.length}
+          </div>
+        </div>
+
+        <div className="p-4 sm:p-5">
+          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+            Private Link
+          </span>
+          <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
+            0
+          </div>
+        </div>
+
+        <div className="p-4 sm:p-5">
+          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+            Option Wizard
+          </span>
+          <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
+            0
+          </div>
+        </div>
+
+        <div className="p-4 sm:p-5">
+          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+            Subscribed
+          </span>
+          <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
+            0
+          </div>
         </div>
       </div>
 

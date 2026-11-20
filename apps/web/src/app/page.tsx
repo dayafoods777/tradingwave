@@ -156,6 +156,7 @@ export default function TradingWaveApp() {
             onEditStrategy={_name => setActiveTab('builder')}
             onDeployStrategy={name => handleDeployNew(name)}
             onBacktestStrategy={_name => setActiveTab('backtest')}
+            onNavigateTab={tab => setActiveTab(tab)}
           />
         )}
 
