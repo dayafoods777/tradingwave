@@ -6,6 +6,7 @@ import DashboardView, { BotDeployment } from '../components/DashboardView';
 import MyStrategiesView, { StrategyItem, TRADETRON_STRATEGIES } from '../components/MyStrategiesView';
 import ReadyStrategiesView from '../components/ReadyStrategiesView';
 import StrategyBuilderView from '../components/StrategyBuilderView';
+import UsingAIView from '../components/UsingAIView';
 import OptionWizardView from '../components/OptionWizardView';
 import OptionChainView from '../components/OptionChainView';
 import BrokersView from '../components/BrokersView';
@@ -17,7 +18,7 @@ import BrokerModal from '../components/BrokerModal';
 
 export default function TradingWaveApp() {
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'mystrategies' | 'readystrategies' | 'builder' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
+    'dashboard' | 'mystrategies' | 'readystrategies' | 'builder' | 'usingai' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
   >('dashboard');
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
@@ -242,6 +243,13 @@ export default function TradingWaveApp() {
             onSaveStrategy={handleSaveStrategy}
             onNavigateTab={tab => setActiveTab(tab as any)}
             initialStrategyName={editingStrategyName}
+          />
+        )}
+
+        {activeTab === 'usingai' && (
+          <UsingAIView
+            onSaveStrategy={handleSaveStrategy}
+            onNavigateTab={tab => setActiveTab(tab as any)}
           />
         )}
 

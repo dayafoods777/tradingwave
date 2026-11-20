@@ -112,7 +112,7 @@ export default function Header({
                   setStrategiesMenuOpen(false);
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition ${
-                  createMenuOpen
+                  createMenuOpen || ['builder', 'usingai'].includes(activeTab)
                     ? 'bg-slate-100 dark:bg-[#131B2E] text-slate-900 dark:text-white'
                     : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
                 }`}
@@ -132,7 +132,7 @@ export default function Header({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {/* 1. Using AI */}
                     <button
-                      onClick={() => handleSelectCreateItem('builder')}
+                      onClick={() => handleSelectCreateItem('usingai')}
                       className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:border-[#1E293B] transition group flex flex-col items-start"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
