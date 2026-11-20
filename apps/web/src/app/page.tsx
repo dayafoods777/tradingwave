@@ -9,7 +9,7 @@ import StrategyBuilderView from '../components/StrategyBuilderView';
 import UsingAIView from '../components/UsingAIView';
 import OptionWizardView from '../components/OptionWizardView';
 import OptionChainView from '../components/OptionChainView';
-import BrokersView from '../components/BrokersView';
+import BrokersView, { ALL_BROKERS_BASE } from '../components/BrokersView';
 import BacktestView from '../components/BacktestView';
 import PricingView from '../components/PricingView';
 import KeywordModal from '../components/KeywordModal';
@@ -357,7 +357,7 @@ export default function TradingWaveApp() {
 
           <div className="flex items-center gap-6 text-slate-600 dark:text-slate-400">
             <button onClick={() => setActiveTab('pricing')} className="hover:text-slate-900 dark:hover:text-white transition">Pricing</button>
-            <button onClick={() => setActiveTab('brokers')} className="hover:text-slate-900 dark:hover:text-white transition">38+ Brokers</button>
+            <button onClick={() => setActiveTab('brokers')} className="hover:text-slate-900 dark:hover:text-white transition">{ALL_BROKERS_BASE.length} Brokers</button>
             <button onClick={() => setActiveTab('backtest')} className="hover:text-slate-900 dark:hover:text-white transition">Backtest Studio</button>
             <span className="text-slate-300 dark:text-slate-600">|</span>
             <span>Zero-Eval DSL</span>

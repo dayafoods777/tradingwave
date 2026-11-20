@@ -42,7 +42,15 @@ export const ALL_BROKERS_BASE: Omit<BrokerInfo, 'status'>[] = [
   { name: 'ICICI Direct Breeze', category: 'Full Service', apiName: 'Breeze API v2', algoCharge: 'Free for Prime', segments: ['NSE EQ', 'NSE F&O'] },
   { name: 'HDFC Sky', category: 'Discount', apiName: 'Sky Algo API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
   { name: 'Sharekhan', category: 'Full Service', apiName: 'Sharekhan Espresso API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] },
-  { name: 'Coinswitch', category: 'Crypto & Global', apiName: 'CoinSwitchX API', algoCharge: 'Free API', segments: ['Crypto Spot & Perps'] }
+  { name: 'Coinswitch', category: 'Crypto & Global', apiName: 'CoinSwitchX API', algoCharge: 'Free API', segments: ['Crypto Spot & Perps'] },
+  { name: 'Tradejini', category: 'Discount', apiName: 'CubePlus API v2', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
+  { name: 'SAS Online', category: 'Discount', apiName: 'Alpha API REST', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
+  { name: 'Swastika', category: 'Full Service', apiName: 'Justrade Open API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE'] },
+  { name: 'Trustline', category: 'Full Service', apiName: 'TrustTrade API v2', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'MCX'] },
+  { name: 'SMC Global', category: 'Full Service', apiName: 'SMC Easy Trade API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE', 'MCX'] },
+  { name: 'Profitmart', category: 'Discount', apiName: 'Profitmart Open API', algoCharge: 'Zero Brokerage / Free API', segments: ['NSE EQ', 'NSE F&O'] },
+  { name: 'Axis Direct', category: 'Full Service', apiName: 'Axis Direct Ring API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O', 'BSE'] },
+  { name: 'Geojit', category: 'Full Service', apiName: 'Geojit Selfie API', algoCharge: 'Free API', segments: ['NSE EQ', 'NSE F&O'] }
 ];
 
 interface BrokersViewProps {
@@ -71,7 +79,7 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
       <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#131B2E] dark:via-[#15233E] dark:to-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">Broker Adapters</span>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">38+ Supported Indian & Global Brokers</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{ALL_BROKERS_BASE.length} Supported Indian & Global Brokers</h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
             Execute orders directly into your personal broker trading account with zero latency markup. TradingWave provides standardized order reconciliation, automatic token refresh, and universal pre-trade risk checks.
           </p>

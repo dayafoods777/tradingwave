@@ -22,6 +22,7 @@ import {
   Check,
   X
 } from 'lucide-react';
+import { ALL_BROKERS_BASE } from './BrokersView';
 
 interface HeaderProps {
   activeTab: string;
@@ -405,7 +406,7 @@ export default function Header({
                     className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0E1526] flex items-center gap-2.5 transition text-xs font-semibold text-slate-800 dark:text-slate-200"
                   >
                     <Key className="w-4 h-4 text-[#5B45E0] dark:text-[#818CF8]" />
-                    <span>Brokers &amp; APIs (38+)</span>
+                    <span>Brokers &amp; APIs ({ALL_BROKERS_BASE.length})</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('pricing')}
