@@ -18,7 +18,7 @@ export default function TradingWaveApp() {
     'dashboard' | 'builder' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
   >('dashboard');
 
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [isKillSwitchTriggered, setIsKillSwitchTriggered] = useState(false);
 
   // Modals state
@@ -114,10 +114,13 @@ export default function TradingWaveApp() {
     return () => clearInterval(interval);
   }, [isKillSwitchTriggered]);
 
-  // Theme synchronization
+  // Theme synchronization (Default: Light Mode)
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('tw_theme', nextTheme);
+    }
     if (nextTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -126,12 +129,15 @@ export default function TradingWaveApp() {
   };
 
   useEffect(() => {
-    if (theme === 'dark') {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('tw_theme') : null;
+    if (saved === 'dark') {
+      setTheme('dark');
       document.documentElement.classList.add('dark');
     } else {
+      setTheme('light');
       document.documentElement.classList.remove('dark');
     }
-  }, [theme]);
+  }, []);
 
   // Bot actions
   const handleToggleBot = (id: string) => {
