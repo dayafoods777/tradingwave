@@ -54,6 +54,40 @@ export interface BotDeployment {
   runCount?: number;
 }
 
+// Indian Stocks today's live status for continuous scrolling ticker
+export const INDIAN_STOCKS = [
+  { symbol: 'GRASIM', price: '3,103.70', change: '-0.24%', isPositive: false },
+  { symbol: 'HCLTECH', price: '1,344.40', change: '+0.86%', isPositive: true },
+  { symbol: 'HDFCBANK', price: '846.00', change: '+2.94%', isPositive: true },
+  { symbol: 'HEROMOTOCO', price: '5,536.00', change: '-0.36%', isPositive: false },
+  { symbol: 'HINDALCO', price: '929.50', change: '+2.14%', isPositive: true },
+  { symbol: 'HINDUNILVR', price: '2,384.10', change: '-0.68%', isPositive: false },
+  { symbol: 'RELIANCE', price: '1,274.50', change: '+1.42%', isPositive: true },
+  { symbol: 'TCS', price: '4,142.00', change: '-0.45%', isPositive: false },
+  { symbol: 'INFY', price: '1,865.30', change: '+0.72%', isPositive: true },
+  { symbol: 'ICICIBANK', price: '1,248.00', change: '+1.15%', isPositive: true },
+  { symbol: 'BHARTIARTL', price: '1,692.00', change: '+1.88%', isPositive: true },
+  { symbol: 'SBIN', price: '814.20', change: '-0.52%', isPositive: false },
+  { symbol: 'ITC', price: '472.60', change: '+0.35%', isPositive: true },
+  { symbol: 'LT', price: '3,580.00', change: '+1.04%', isPositive: true },
+  { symbol: 'BAJFINANCE', price: '6,940.00', change: '-1.18%', isPositive: false },
+  { symbol: 'MARUTI', price: '11,240.00', change: '+0.55%', isPositive: true },
+  { symbol: 'TATAMOTORS', price: '785.40', change: '-0.92%', isPositive: false },
+  { symbol: 'KOTAKBANK', price: '1,745.00', change: '+0.48%', isPositive: true },
+  { symbol: 'WIPRO', price: '562.30', change: '-0.15%', isPositive: false },
+  { symbol: 'ADANIENT', price: '2,820.00', change: '+2.35%', isPositive: true },
+  { symbol: 'SUNPHARMA', price: '1,780.00', change: '+0.95%', isPositive: true },
+  { symbol: 'TITAN', price: '3,240.00', change: '-0.42%', isPositive: false },
+  { symbol: 'AXISBANK', price: '1,160.00', change: '+0.65%', isPositive: true },
+  { symbol: 'NTPC', price: '368.50', change: '+1.20%', isPositive: true },
+  { symbol: 'POWERGRID', price: '318.00', change: '-0.30%', isPositive: false },
+  { symbol: 'ONGC', price: '254.80', change: '+0.85%', isPositive: true },
+  { symbol: 'TATASTEEL', price: '148.60', change: '-0.75%', isPositive: false },
+  { symbol: 'JSWSTEEL', price: '962.00', change: '+1.40%', isPositive: true },
+  { symbol: 'COALINDIA', price: '412.30', change: '+0.45%', isPositive: true },
+  { symbol: 'BPCL', price: '302.50', change: '-0.60%', isPositive: false }
+];
+
 interface DashboardViewProps {
   bots: BotDeployment[];
   connectedBrokersCount?: number;
@@ -246,63 +280,49 @@ export default function DashboardView({
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. TOP TICKER STRIP (Tradetron Live Ticker) */}
-      <div className="bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs font-mono transition-colors">
-        <div className="flex items-center gap-6 overflow-x-auto no-scrollbar py-0.5">
-          {/* Market Status Badge */}
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] tracking-wide">
-              <span className="w-2 h-2 rounded-full bg-slate-400"></span>
-              CLOSED
-            </span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold text-xs">+0.86%</span>
-          </div>
+      {/* 1. TOP TICKER STRIP (Tradetron Live Continuous Scrolling Ticker) */}
+      <div className="bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs font-mono transition-colors overflow-hidden relative">
+        {/* Market Status Badge (Pinned Left) */}
+        <div className="flex items-center gap-2 shrink-0 z-10 bg-slate-50 dark:bg-[#0E1526] pr-4 shadow-[12px_0_16px_-4px_rgba(248,250,252,0.95)] dark:shadow-[12px_0_16px_-4px_rgba(14,21,38,0.95)]">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] tracking-wide">
+            <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+            CLOSED
+          </span>
+          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-xs">+0.86%</span>
+        </div>
 
-          {/* Real-time Tickers */}
-          <div className="flex items-center gap-5 text-[11px] whitespace-nowrap text-slate-700 dark:text-slate-300">
-            <span className="flex items-center gap-1">
-              <span className="font-semibold text-slate-900 dark:text-white">HDFCBANK</span>
-              <span>₹ 846.00</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">+2.94%</span>
-            </span>
-            <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="flex items-center gap-1">
-              <span className="font-semibold text-slate-900 dark:text-white">HEROMOTOCO</span>
-              <span>₹ 5,536.00</span>
-              <span className="text-red-600 dark:text-red-400 font-bold">-0.36%</span>
-            </span>
-            <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="flex items-center gap-1">
-              <span className="font-semibold text-slate-900 dark:text-white">HINDALCO</span>
-              <span>₹ 929.50</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">+2.14%</span>
-            </span>
-            <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="flex items-center gap-1">
-              <span className="font-semibold text-slate-900 dark:text-white">HINDUNILVR</span>
-              <span>₹ 2,052.50</span>
-              <span className="text-red-600 dark:text-red-400 font-bold">-1.05%</span>
-            </span>
-            <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="flex items-center gap-1">
-              <span className="font-semibold text-slate-900 dark:text-white">ITC</span>
-              <span>₹ 299.10</span>
-              <span className="text-red-600 dark:text-red-400 font-bold">-0.63%</span>
-            </span>
-            <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="flex items-center gap-1">
-              <span className="font-semibold text-slate-900 dark:text-white">ICICIBANK</span>
-              <span>₹ 1,248.00</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">+1.15%</span>
-            </span>
+        {/* Real-time Scrolling Tickers */}
+        <div className="overflow-hidden flex-1 relative mx-3">
+          <div className="animate-marquee flex items-center gap-6 text-[11px] whitespace-nowrap text-slate-700 dark:text-slate-300 py-0.5 select-none">
+            {/* 2 duplicated instances of the array for a completely seamless, jitter-free loop */}
+            {[...INDIAN_STOCKS, ...INDIAN_STOCKS].map((stock, idx) => (
+              <span key={`${stock.symbol}-${idx}`} className="flex items-center gap-6 shrink-0">
+                <span className="flex items-center gap-1.5 font-mono">
+                  <span className="font-semibold text-slate-900 dark:text-white">{stock.symbol}</span>
+                  <span className="text-slate-600 dark:text-slate-400">₹ {stock.price}</span>
+                  <span
+                    className={`font-bold ${
+                      stock.isPositive
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-red-600 dark:text-red-400'
+                    }`}
+                  >
+                    {stock.change}
+                  </span>
+                </span>
+                <span className="text-slate-300 dark:text-slate-700 font-normal">|</span>
+              </span>
+            ))}
           </div>
         </div>
 
-        {/* Lists dropdown button */}
-        <button className="px-3 py-1 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-sans font-semibold flex items-center gap-1.5 shrink-0 ml-3 transition">
-          <span>Lists</span>
-          <ChevronDown className="w-3 h-3 text-slate-400" />
-        </button>
+        {/* Lists dropdown button (Pinned Right) */}
+        <div className="shrink-0 z-10 bg-slate-50 dark:bg-[#0E1526] pl-3 shadow-[-12px_0_16px_-4px_rgba(248,250,252,0.95)] dark:shadow-[-12px_0_16px_-4px_rgba(14,21,38,0.95)]">
+          <button className="px-3 py-1 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-sans font-semibold flex items-center gap-1.5 transition">
+            <span>Lists</span>
+            <ChevronDown className="w-3 h-3 text-slate-400" />
+          </button>
+        </div>
       </div>
 
       {/* 2. SUB-NAVIGATION TABS (Deployed | My Strategies | Ready Strategies | Backtest) */}
