@@ -867,26 +867,7 @@ export default function StrategyBuilderView({
         </div>
       </div>
 
-      {/* 3. TEMPLATES BAR (Optional 1-Click Loaders) */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
-          <Sparkles className="w-4 h-4 text-[#5B45E0]" />
-          <span>Quick Start Strategy Templates:</span>
-        </div>
-        <div className="flex items-center gap-2 overflow-x-auto">
-          {READY_TEMPLATES.map(tpl => (
-            <button
-              key={tpl.id}
-              onClick={() => handleApplyTemplate(tpl)}
-              className="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-[#EEF2FF] hover:text-[#5B45E0] dark:bg-slate-800 dark:hover:bg-[#1E1B4B] text-slate-700 dark:text-slate-300 transition shrink-0"
-            >
-              {tpl.name.split(' ')[0]} {tpl.badge}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 4. STRATEGY ENGINE PARAMETERS */}
+      {/* 3. STRATEGY ENGINE PARAMETERS */}
       <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-base text-slate-900 dark:text-white">Engine & Execution Parameters</h3>
@@ -949,62 +930,7 @@ export default function StrategyBuilderView({
         </div>
       </div>
 
-      {/* 2. READY-MADE STRATEGY TEMPLATES SELECTOR */}
-      <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-3 transition-colors">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-orange-500/15 text-[#FF6600] flex items-center justify-center font-bold">
-              <Wand2 className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="font-bold text-sm text-slate-900 dark:text-white">Ready-to-Use Strategy Templates</h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Select any template to instantly populate conditions, legs, SL, and trailing rules</p>
-            </div>
-          </div>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">
-            {READY_TEMPLATES.length} Production Presets
-          </span>
-        </div>
-
-        {/* Horizontal Scrolling Template Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
-          {READY_TEMPLATES.map(tpl => (
-            <div
-              key={tpl.id}
-              onClick={() => handleApplyTemplate(tpl)}
-              className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between group ${
-                selectedTemplateId === tpl.id
-                  ? 'bg-orange-50/60 dark:bg-[#FF6600]/10 border-[#FF6600] shadow-sm'
-                  : 'bg-slate-50/70 dark:bg-[#0E1526] border-slate-200 dark:border-[#1E293B] hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-[#131B2E]'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase">
-                    {tpl.badge}
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">{tpl.underlying}</span>
-                </div>
-                <h4 className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-[#FF6600] transition line-clamp-1">
-                  {tpl.name}
-                </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-1 leading-snug">
-                  {tpl.description}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-slate-200 dark:border-slate-800/80 text-[10px]">
-                <span className="text-slate-500">{tpl.legs.length} legs · {tpl.hasRepair ? 'With Repair' : 'No Repair'}</span>
-                <span className="text-[#FF6600] font-bold group-hover:underline flex items-center gap-1">
-                  Load Template →
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. SET 1 CONTAINER */}
+      {/* 4. SET 1 CONTAINER */}
       <div className="rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl overflow-hidden transition-colors">
         {/* Set Header Bar */}
         <div className="px-6 py-4 bg-slate-50 dark:bg-[#0E1526] border-b border-slate-200 dark:border-[#1E293B] flex items-center justify-between">
