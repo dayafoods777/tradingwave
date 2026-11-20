@@ -123,17 +123,17 @@ export default function Header({
 
               {createMenuOpen && (
                 <div
-                  className="absolute left-0 top-full mt-2 w-[480px] sm:w-[520px] bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute left-0 top-full mt-2 w-[680px] bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                 >
                   <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3 px-1">
                     BUILD
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {/* 1. Using AI */}
                     <button
                       onClick={() => handleSelectCreateItem('builder')}
-                      className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:hover:border-[#1E293B] transition group flex flex-col items-start"
+                      className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:border-[#1E293B] transition group flex flex-col items-start"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
                         <Sparkles className="w-5 h-5 stroke-[2.2]" />
@@ -149,7 +149,7 @@ export default function Header({
                     {/* 2. Advanced Strategy Builder */}
                     <button
                       onClick={() => handleSelectCreateItem('builder')}
-                      className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:hover:border-[#1E293B] transition group flex flex-col items-start"
+                      className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:border-[#1E293B] transition group flex flex-col items-start"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
                         <LayoutGrid className="w-5 h-5 stroke-[2.2]" />
@@ -159,6 +159,22 @@ export default function Header({
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
                         Full control — sets, legs and conditions
+                      </div>
+                    </button>
+
+                    {/* 3. Pine Script Bridge */}
+                    <button
+                      onClick={() => handleSelectCreateItem('mystrategies')}
+                      className="text-left p-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:border-[#1E293B] transition group flex flex-col items-start"
+                    >
+                      <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+                        <LineChart className="w-5 h-5 stroke-[2.2]" />
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#4F46E5] dark:group-hover:text-[#818CF8] transition-colors">
+                        Pine Script Bridge
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                        Webhook alerts from TradingView
                       </div>
                     </button>
                   </div>
