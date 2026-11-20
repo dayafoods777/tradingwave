@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import DashboardView, { BotDeployment } from '../components/DashboardView';
-import MyStrategiesView from '../components/MyStrategiesView';
+import MyStrategiesView, { StrategyItem, TRADETRON_STRATEGIES } from '../components/MyStrategiesView';
 import ReadyStrategiesView from '../components/ReadyStrategiesView';
 import StrategyBuilderView from '../components/StrategyBuilderView';
 import OptionWizardView from '../components/OptionWizardView';
@@ -42,6 +42,55 @@ export default function TradingWaveApp() {
 
   // Deployed Bots State - Starts empty with 0 fake/dummy bots
   const [deployedBots, setDeployedBots] = useState<BotDeployment[]>([]);
+
+  // Strategies State with localStorage persistence
+  const [strategies, setStrategies] = useState<StrategyItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('twave_my_strategies');
+        if (saved) return JSON.parse(saved);
+      } catch (_) {}
+    }
+    return TRADETRON_STRATEGIES;
+  });
+
+  const [editingStrategyName, setEditingStrategyName] = useState<string>('');
+
+  const handleSaveStrategy = (strategyData: Partial<StrategyItem>) => {
+    const finalName = strategyData.name || 'Custom Strategy';
+    const newStrategy: StrategyItem = {
+      id: 'strat_' + Date.now(),
+      name: finalName,
+      author: 'algobulls',
+      createdAgo: 'Just now',
+      liveDeploys: 0,
+      segment: (strategyData.segment as any) || 'NFO',
+      minCapitalDisplay: strategyData.minCapitalDisplay || '₹ 1,00,000',
+      minCapitalRaw: strategyData.minCapitalRaw || 100000,
+      type: 'ASB',
+      visibility: 'PRIVATE',
+      description: strategyData.description || 'Custom multi-leg algorithmic strategy.',
+      ...strategyData
+    };
+
+    setStrategies(prev => {
+      const existingIdx = prev.findIndex(s => s.name === finalName);
+      let updated: StrategyItem[];
+      if (existingIdx >= 0) {
+        updated = [...prev];
+        updated[existingIdx] = { ...updated[existingIdx], ...newStrategy };
+      } else {
+        updated = [newStrategy, ...prev];
+      }
+      try {
+        localStorage.setItem('twave_my_strategies', JSON.stringify(updated));
+      } catch (_) {}
+      return updated;
+    });
+
+    showToast(`Strategy "${finalName}" created & saved to My Strategies!`);
+    setActiveTab('mystrategies');
+  };
 
   // Theme synchronization (Default: Light Mode)
   const toggleTheme = () => {
@@ -157,11 +206,19 @@ export default function TradingWaveApp() {
 
         {activeTab === 'mystrategies' && (
           <MyStrategiesView
-            onCreateNew={() => setActiveTab('builder')}
-            onEditStrategy={_name => setActiveTab('builder')}
+            strategies={strategies}
+            setStrategies={setStrategies}
+            onCreateNew={() => {
+              setEditingStrategyName('');
+              setActiveTab('builder');
+            }}
+            onEditStrategy={name => {
+              setEditingStrategyName(name);
+              setActiveTab('builder');
+            }}
             onDeployStrategy={name => handleDeployNew(name)}
             onBacktestStrategy={_name => setActiveTab('backtest')}
-            onNavigateTab={tab => setActiveTab(tab)}
+            onNavigateTab={tab => setActiveTab(tab as any)}
           />
         )}
 
@@ -170,7 +227,7 @@ export default function TradingWaveApp() {
             onDeploy={name => handleDeployNew(name)}
             onEdit={_name => setActiveTab('builder')}
             onBacktest={_name => setActiveTab('backtest')}
-            onNavigateTab={tab => setActiveTab(tab)}
+            onNavigateTab={tab => setActiveTab(tab as any)}
           />
         )}
 
@@ -182,6 +239,9 @@ export default function TradingWaveApp() {
             }}
             onDeploy={handleDeployNew}
             onBacktest={() => setActiveTab('backtest')}
+            onSaveStrategy={handleSaveStrategy}
+            onNavigateTab={tab => setActiveTab(tab as any)}
+            initialStrategyName={editingStrategyName}
           />
         )}
 

@@ -45,7 +45,7 @@ export interface StrategyItem {
   description: string;
 }
 
-const TRADETRON_STRATEGIES: StrategyItem[] = [
+export const TRADETRON_STRATEGIES: StrategyItem[] = [
   {
     id: 'strat_btcusd_01',
     name: 'TradingWave BTCUSD OHOL 5M',
@@ -184,6 +184,8 @@ interface MyStrategiesViewProps {
   onDeployStrategy: (strategyName: string) => void;
   onBacktestStrategy: (strategyName: string) => void;
   onNavigateTab?: (tab: any) => void;
+  strategies?: StrategyItem[];
+  setStrategies?: React.Dispatch<React.SetStateAction<StrategyItem[]>>;
 }
 
 export default function MyStrategiesView({
@@ -191,9 +193,13 @@ export default function MyStrategiesView({
   onEditStrategy,
   onDeployStrategy,
   onBacktestStrategy,
-  onNavigateTab
+  onNavigateTab,
+  strategies: propsStrategies,
+  setStrategies: propsSetStrategies
 }: MyStrategiesViewProps) {
-  const [strategies, setStrategies] = useState<StrategyItem[]>(TRADETRON_STRATEGIES);
+  const [localStrategies, setLocalStrategies] = useState<StrategyItem[]>(TRADETRON_STRATEGIES);
+  const strategies = propsStrategies ?? localStrategies;
+  const setStrategies = propsSetStrategies ?? setLocalStrategies;
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('All');

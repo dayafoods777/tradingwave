@@ -18,7 +18,23 @@ import {
   Search,
   Check,
   ChevronDown,
-  BookOpen
+  BookOpen,
+  Download,
+  Upload,
+  Bold,
+  Italic,
+  Strikethrough,
+  Link2,
+  Image,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  List,
+  ListOrdered,
+  Maximize2,
+  Minimize2,
+  X
 } from 'lucide-react';
 
 interface ConditionItem {
@@ -324,20 +340,37 @@ const POPULAR_SNIPPETS = [
   'Time >= 15:10'
 ];
 
+const AVAILABLE_TAGS = ['NFO', 'NSE', 'BSE', 'MCX', 'Intraday', 'Positional', 'Options', 'Straddle', 'Scalping', 'Momentum', 'Hedging'];
+
 interface StrategyBuilderViewProps {
   onOpenKeywordModal: (onSelect: (expr: string) => void) => void;
   onDeploy: (name: string) => void;
   onBacktest: (name: string) => void;
+  onSaveStrategy?: (strategyData: any) => void;
+  onNavigateTab?: (tab: string) => void;
+  initialStrategyName?: string;
 }
 
 export default function StrategyBuilderView({
   onOpenKeywordModal,
   onDeploy,
-  onBacktest
+  onBacktest,
+  onSaveStrategy,
+  onNavigateTab,
+  initialStrategyName
 }: StrategyBuilderViewProps) {
-  // Strategy Header State
-  const [strategyName, setStrategyName] = useState('NIFTY 9:20 Intraday Short Straddle v2.0');
-  const [description, setDescription] = useState('Delta-neutral automated options selling engine with continuous monitoring, 25% leg SL, and 15:10 auto square-off.');
+  // Strategy Header State matching Tradetron Create Strategy
+  const [strategyName, setStrategyName] = useState(initialStrategyName || '');
+  const [description, setDescription] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>(['NFO', 'Intraday']);
+  const [tagsDropdownOpen, setTagsDropdownOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (initialStrategyName) {
+      setStrategyName(initialStrategyName);
+    }
+  }, [initialStrategyName]);
   const [underlying, setUnderlying] = useState('NIFTY 50');
   const [checkFrequency, setCheckFrequency] = useState('Continuous');
   const [checkOnCandleClose, setCheckOnCandleClose] = useState(false);
@@ -468,82 +501,399 @@ export default function StrategyBuilderView({
   };
 
   const handleSave = () => {
+    handleSaveAndRedirect();
+  };
+
+  const handleSaveAndRedirect = () => {
+    const finalName = strategyName.trim() || 'Custom Strategy ' + new Date().toLocaleDateString('en-GB');
     setSavedBanner(true);
-    setTimeout(() => setSavedBanner(false), 2500);
+    if (onSaveStrategy) {
+      onSaveStrategy({
+        name: finalName,
+        description: description || 'Custom multi-leg algorithmic strategy.',
+        segment: underlying === 'SENSEX' ? 'BSE' : underlying === 'CRUDEOIL' ? 'MCX' : 'NFO',
+        minCapitalDisplay: '₹ ' + Number(universalTarget || 100000).toLocaleString('en-IN'),
+        minCapitalRaw: Number(universalTarget || 100000),
+        type: 'ASB',
+        visibility: 'PRIVATE'
+      });
+    } else {
+      setTimeout(() => {
+        setSavedBanner(false);
+        if (onNavigateTab) onNavigateTab('mystrategies');
+      }, 600);
+    }
+  };
+
+  const handleExportStrategy = () => {
+    const exportData = {
+      name: strategyName || 'TradingWave_Strategy',
+      description,
+      tags: selectedTags,
+      underlying,
+      checkFrequency,
+      checkOnCandleClose,
+      conditionCombinator,
+      entryConditions,
+      legs,
+      hasRepair,
+      repairCondition,
+      repairLegAction,
+      exitConditions,
+      universalSl,
+      universalTarget,
+      trailIfProfit,
+      trailStopBy,
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (strategyName || 'strategy').toLowerCase().replace(/\s+/g, '_') + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportStrategy = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = e => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = event => {
+        try {
+          const imported = JSON.parse(event.target?.result as string);
+          if (imported.name) setStrategyName(imported.name);
+          if (imported.description) setDescription(imported.description);
+          if (imported.tags && Array.isArray(imported.tags)) setSelectedTags(imported.tags);
+          if (imported.underlying) setUnderlying(imported.underlying);
+          if (imported.checkFrequency) setCheckFrequency(imported.checkFrequency);
+          if (imported.entryConditions) setEntryConditions(imported.entryConditions);
+          if (imported.legs) setLegs(imported.legs);
+          if (imported.exitConditions) setExitConditions(imported.exitConditions);
+          if (imported.universalSl) setUniversalSl(imported.universalSl);
+          if (imported.universalTarget) setUniversalTarget(imported.universalTarget);
+          setTemplateBanner(`Successfully imported "${imported.name || 'strategy'}"!`);
+          setTimeout(() => setTemplateBanner(null), 3500);
+        } catch (err) {
+          alert('Invalid strategy JSON file.');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
+  const applyFormatting = (format: string) => {
+    switch (format) {
+      case 'bold':
+        setDescription(prev => prev + ' **bold text**');
+        break;
+      case 'italic':
+        setDescription(prev => prev + ' *italic text*');
+        break;
+      case 'strikethrough':
+        setDescription(prev => prev + ' ~~strikethrough~~');
+        break;
+      case 'link':
+        setDescription(prev => prev + ' [link text](https://)');
+        break;
+      case 'image':
+        setDescription(prev => prev + ' ![image alt](https://)');
+        break;
+      case 'bullet':
+        setDescription(prev => prev ? prev + '\n- List item' : '- List item');
+        break;
+      case 'numbered':
+        setDescription(prev => prev ? prev + '\n1. List item' : '1. List item');
+        break;
+      default:
+        break;
+    }
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
   };
 
   return (
     <div className="space-y-6">
-      {/* 1. TOP STRATEGY HEADER BAR (FULL WIDTH, NO TRUNCATION) */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-4 transition-colors">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          {/* Full-width Responsive Title & Description */}
-          <div className="flex-1 w-full min-w-0">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FF6600]">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Advanced Strategy Builder · No-Code Algorithmic Engine</span>
-            </div>
+            {/* 1. TOP HEADER: Create Strategy & Import / Export */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Create Strategy</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleImportStrategy}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#131B2E] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-[#1E293B] shadow-sm transition"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+            <span>Import</span>
+          </button>
+          <button
+            onClick={handleExportStrategy}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#131B2E] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-[#1E293B] shadow-sm transition"
+          >
+            <Upload className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+            <span>Export</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Feedback Banners */}
+      {savedBanner && (
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-2 animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span>Strategy saved successfully and added to My Strategies.</span>
+        </div>
+      )}
+
+      {templateBanner && (
+        <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-xs text-[#5B45E0] dark:text-[#818CF8] font-medium flex items-center gap-2 animate-in fade-in">
+          <Zap className="w-4 h-4 shrink-0" />
+          <span>{templateBanner}</span>
+        </div>
+      )}
+
+      {/* 2. STRATEGY INFO CARD (Exact Tradetron Layout from Screenshot) */}
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm transition-colors">
+        <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">Strategy info</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Strategy name */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Strategy name
+            </label>
             <input
               type="text"
               value={strategyName}
               onChange={e => setStrategyName(e.target.value)}
-              placeholder="Enter Strategy Name (e.g. NIFTY 9:20 Intraday Short Straddle v2.0)..."
-              className="w-full text-xl sm:text-2xl font-black text-slate-900 dark:text-white bg-transparent border-b border-slate-200 dark:border-slate-800 focus:border-[#FF6600] focus:outline-none transition py-1 mt-1"
-            />
-            <input
-              type="text"
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              placeholder="Add an optional strategy summary or logic description..."
-              className="w-full text-xs text-slate-500 dark:text-slate-400 bg-transparent border-none focus:outline-none mt-1 truncate"
+              placeholder=""
+              className="w-full bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] focus:ring-1 focus:ring-[#5B45E0] transition"
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2 shrink-0 self-end lg:self-center">
-            <button
-              onClick={handleSave}
-              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
-              title="Save Strategy AST"
+          {/* Tags */}
+          <div className="relative">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Tags
+            </label>
+            <div
+              onClick={() => setTagsDropdownOpen(!tagsDropdownOpen)}
+              className="w-full bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer flex items-center justify-between"
             >
-              <Save className="w-3.5 h-3.5" />
-              <span>Save Strategy</span>
-            </button>
-            <button
-              onClick={() => onBacktest(strategyName)}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition"
-              title="Simulate with historical data"
-            >
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Backtest</span>
-            </button>
-            <button
-              onClick={() => onDeploy(strategyName)}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-1.5 transition"
-              title="Deploy 1-click to Live Auto or Paper"
-            >
-              <Play className="w-3.5 h-3.5 fill-white" />
-              <span>Deploy 1-Click</span>
-            </button>
+              <span className={selectedTags.length ? 'text-slate-900 dark:text-white' : 'text-slate-400'}>
+                {selectedTags.length ? selectedTags.join(', ') : 'Tags...'}
+              </span>
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            </div>
+            {tagsDropdownOpen && (
+              <div className="absolute top-full mt-1 left-0 right-0 z-30 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 shadow-xl flex flex-wrap gap-1.5">
+                {AVAILABLE_TAGS.map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => toggleTag(t)}
+                    className={`px-2.5 py-1 rounded-md text-xs font-medium transition ${
+                      selectedTags.includes(t)
+                        ? 'bg-[#5B45E0] text-white'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Feedback Banners */}
-        {savedBanner && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-2 animate-in fade-in">
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-            <span>Strategy AST validated successfully with Zero-Eval security parser. Ready for deployment.</span>
-          </div>
-        )}
+        {/* Description with Full Rich Text Toolbar */}
+        <div className="mt-4">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+            Description
+          </label>
+          <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden focus-within:border-[#5B45E0] transition">
+            {/* Toolbar */}
+            <div className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700 px-3 py-1.5 flex items-center gap-1 flex-wrap text-slate-600 dark:text-slate-300">
+              {/* Paragraph format dropdown */}
+              <div className="flex items-center gap-0.5 px-2 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer text-xs font-semibold">
+                <span>¶</span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </div>
 
-        {templateBanner && (
-          <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl text-xs text-[#FF6600] font-medium flex items-center gap-2 animate-in fade-in">
-            <Zap className="w-4 h-4 shrink-0" />
-            <span>{templateBanner}</span>
-          </div>
-        )}
+              {/* Bold */}
+              <button
+                type="button"
+                onClick={() => applyFormatting('bold')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition font-bold"
+                title="Bold"
+              >
+                <Bold className="w-3.5 h-3.5 stroke-[2.5]" />
+              </button>
 
-        {/* Global Strategy Parameters Strip */}
+              {/* Italic */}
+              <button
+                type="button"
+                onClick={() => applyFormatting('italic')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition italic"
+                title="Italic"
+              >
+                <Italic className="w-3.5 h-3.5 stroke-[2.5]" />
+              </button>
+
+              {/* Strikethrough */}
+              <button
+                type="button"
+                onClick={() => applyFormatting('strikethrough')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition line-through"
+                title="Strikethrough"
+              >
+                <Strikethrough className="w-3.5 h-3.5 stroke-[2.5]" />
+              </button>
+
+              {/* Divider */}
+              <div className="w-[1px] h-4 bg-slate-300 dark:bg-slate-700 mx-1" />
+
+              {/* Link */}
+              <button
+                type="button"
+                onClick={() => applyFormatting('link')}
+                className="flex items-center gap-0.5 p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Link"
+              >
+                <Link2 className="w-3.5 h-3.5" />
+                <ChevronDown className="w-2.5 h-2.5 text-slate-400" />
+              </button>
+
+              {/* Image */}
+              <button
+                type="button"
+                onClick={() => applyFormatting('image')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Image"
+              >
+                <Image className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Divider */}
+              <div className="w-[1px] h-4 bg-slate-300 dark:bg-slate-700 mx-1" />
+
+              {/* Alignments */}
+              <button
+                type="button"
+                onClick={() => applyFormatting('align-left')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Align Left"
+              >
+                <AlignLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormatting('align-center')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Align Center"
+              >
+                <AlignCenter className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormatting('align-right')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Align Right"
+              >
+                <AlignRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormatting('align-justify')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Justify"
+              >
+                <AlignJustify className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Divider */}
+              <div className="w-[1px] h-4 bg-slate-300 dark:bg-slate-700 mx-1" />
+
+              {/* Lists */}
+              <button
+                type="button"
+                onClick={() => applyFormatting('bullet')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Bullet List"
+              >
+                <List className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormatting('numbered')}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Numbered List"
+              >
+                <ListOrdered className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Fullscreen Expand */}
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition ml-auto"
+                title="Fullscreen"
+              >
+                {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+
+            {/* Content Textarea */}
+            <textarea
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              placeholder="Description"
+              className={`w-full p-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 bg-transparent focus:outline-none resize-y ${
+                isFullscreen ? 'fixed inset-0 z-50 bg-white dark:bg-[#131B2E] p-6' : 'min-h-[160px]'
+              }`}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 3. TEMPLATES BAR (Optional 1-Click Loaders) */}
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+          <Sparkles className="w-4 h-4 text-[#5B45E0]" />
+          <span>Quick Start Strategy Templates:</span>
+        </div>
+        <div className="flex items-center gap-2 overflow-x-auto">
+          {READY_TEMPLATES.map(tpl => (
+            <button
+              key={tpl.id}
+              onClick={() => handleApplyTemplate(tpl)}
+              className="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-[#EEF2FF] hover:text-[#5B45E0] dark:bg-slate-800 dark:hover:bg-[#1E1B4B] text-slate-700 dark:text-slate-300 transition shrink-0"
+            >
+              {tpl.name.split(' ')[0]} {tpl.badge}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. STRATEGY ENGINE PARAMETERS */}
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm transition-colors">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-base text-slate-900 dark:text-white">Engine & Execution Parameters</h3>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-500/10 text-[#5B45E0] dark:text-[#818CF8] border border-indigo-500/20">
+            Execution Frequency
+          </span>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-slate-200 dark:border-[#1E293B] text-xs">
           <div>
             <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Default Underlying</label>
@@ -1092,6 +1442,46 @@ export default function StrategyBuilderView({
               className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
             />
           </div>
+        </div>
+      </div>
+
+      {/* 5. BOTTOM ACTION BAR: Save / Cancel / Backtest / Deploy */}
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onNavigateTab ? onNavigateTab('mystrategies') : null}
+            className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSaveAndRedirect}
+            className="px-6 py-2.5 rounded-xl bg-[#5B45E0] hover:bg-[#4935C7] text-white text-xs font-bold flex items-center gap-2 transition shadow-md shadow-indigo-500/20"
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Strategy</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onBacktest(strategyName || 'My Strategy')}
+            className="px-4 py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition"
+          >
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Backtest</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onDeploy(strategyName || 'My Strategy')}
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 flex items-center gap-1.5 transition"
+          >
+            <Play className="w-3.5 h-3.5 fill-white" />
+            <span>Deploy 1-Click</span>
+          </button>
         </div>
       </div>
     </div>
