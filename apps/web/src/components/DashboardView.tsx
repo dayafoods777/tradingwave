@@ -117,6 +117,8 @@ export default function DashboardView({
 
   // 3-Dots Menu State
   const [openMenuBotId, setOpenMenuBotId] = useState<string | null>(null);
+  const [menuCoords, setMenuCoords] = useState<{ top: number; right: number } | null>(null);
+  const [menuBot, setMenuBot] = useState<BotDeployment | null>(null);
   const [activeModal, setActiveModal] = useState<{
     type: 'statistics' | 'payoff' | 'intraday_pnl' | 'runtime_data' | 'debug' | 'user_notes' | 'full_detail';
     bot: BotDeployment;
@@ -129,18 +131,51 @@ export default function DashboardView({
     setTimeout(() => setToastMsg(null), 3000);
   };
 
+  const handleOpenMenu = (e: React.MouseEvent, bot: BotDeployment) => {
+    e.stopPropagation();
+    if (openMenuBotId === bot.id) {
+      setOpenMenuBotId(null);
+      setMenuCoords(null);
+      setMenuBot(null);
+    } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const menuHeight = 420;
+      let top = rect.bottom + 6;
+      if (top + menuHeight > window.innerHeight) {
+        top = Math.max(10, rect.top - menuHeight);
+      }
+      const right = Math.max(10, window.innerWidth - rect.right);
+      setMenuCoords({ top, right });
+      setOpenMenuBotId(bot.id);
+      setMenuBot(bot);
+    }
+  };
+
   React.useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest('.bot-action-menu')) {
         setOpenMenuBotId(null);
+        setMenuCoords(null);
+        setMenuBot(null);
       }
     };
+    const handleScroll = () => {
+      setOpenMenuBotId(null);
+      setMenuCoords(null);
+      setMenuBot(null);
+    };
     document.addEventListener('click', handleOutsideClick);
-    return () => document.removeEventListener('click', handleOutsideClick);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const handleAction = (action: string, bot: BotDeployment) => {
     setOpenMenuBotId(null);
+    setMenuCoords(null);
+    setMenuBot(null);
     if (action === 'Archive') {
       setLocalBots(prev => prev.map(b => (b.id === bot.id ? { ...b, status: 'SQUARED_OFF', statusLabel: 'Archived' } : b)));
       showToast(`Strategy "${bot.name}" archived.`);
@@ -176,6 +211,8 @@ export default function DashboardView({
 
   const handleDeleteBot = (id: string, name: string) => {
     setOpenMenuBotId(null);
+    setMenuCoords(null);
+    setMenuBot(null);
     if (confirm(`Are you sure you want to delete "${name}" deployment from Dashboard?`)) {
       setLocalBots(prev => prev.filter(b => b.id !== id));
       showToast(`Deployment "${name}" deleted.`);
@@ -390,7 +427,7 @@ export default function DashboardView({
       </div>
 
       {/* 5. DEPLOYED STRATEGIES TABLE SECTION */}
-      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
         {/* Table Controls Header */}
         <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Left: Title & Filter Pills */}
@@ -571,136 +608,18 @@ export default function DashboardView({
                         <X className="w-3.5 h-3.5" />
                       </button>
 
-                      {/* 3-Dots More Options Menu */}
-                      <div className="relative bot-action-menu inline-block text-left">
-                        <button
-                          onClick={e => {
-                            e.stopPropagation();
-                            setOpenMenuBotId(openMenuBotId === bot.id ? null : bot.id);
-                          }}
-                          className={`p-1.5 rounded-lg border transition ${
-                            openMenuBotId === bot.id
-                              ? 'border-[#5B45E0] bg-[#5B45E0]/10 text-[#5B45E0]'
-                              : 'border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
-                          }`}
-                          title="More Options"
-                        >
-                          <MoreHorizontal className="w-3.5 h-3.5" />
-                        </button>
-
-                        {/* Dropdown Menu (Exact match to screenshot) */}
-                        {openMenuBotId === bot.id && (
-                          <div className="absolute right-0 top-full mt-1.5 w-44 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl py-2 z-50 text-left animate-in fade-in zoom-in-95 duration-100 text-xs font-sans">
-                            {/* STATUS */}
-                            <div className="px-3.5 py-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                              STATUS
-                            </div>
-                            <button
-                              onClick={() => handleAction('Archive', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Archive
-                            </button>
-
-                            {/* STRATEGY DATA */}
-                            <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                              STRATEGY DATA
-                            </div>
-                            <button
-                              onClick={() => handleAction('Statistics', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Statistics
-                            </button>
-                            <button
-                              onClick={() => handleAction('Payoff', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Payoff
-                            </button>
-                            <button
-                              onClick={() => handleAction('Intraday PNL', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Intraday PNL
-                            </button>
-                            <button
-                              onClick={() => {
-                                setOpenMenuBotId(null);
-                                onOpenLogs(bot.name);
-                              }}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Notification Log
-                            </button>
-                            <button
-                              onClick={() => {
-                                setOpenMenuBotId(null);
-                                onNavigateTab('backtest');
-                              }}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Backtests
-                            </button>
-                            <button
-                              onClick={() => handleAction('Runtime Data', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Runtime Data
-                            </button>
-                            <button
-                              onClick={() => handleAction('Debug', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Debug
-                            </button>
-                            <button
-                              onClick={() => handleAction('User Notes', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              User Notes
-                            </button>
-
-                            {/* OPEN */}
-                            <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                              OPEN
-                            </div>
-                            <button
-                              onClick={() => handleAction('Full detail', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium flex items-center justify-between transition cursor-pointer"
-                            >
-                              <span>Full detail</span>
-                              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                            </button>
-                            <button
-                              onClick={() => handleAction('Download data', bot)}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Download data
-                            </button>
-
-                            {/* ACTIONS */}
-                            <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                              ACTIONS
-                            </div>
-                            <button
-                              onClick={() => {
-                                setOpenMenuBotId(null);
-                                onNavigateTab('builder');
-                              }}
-                              className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
-                            >
-                              Edit template
-                            </button>
-                            <button
-                              onClick={() => handleDeleteBot(bot.id, bot.name)}
-                              className="w-full text-left px-3.5 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-medium transition cursor-pointer"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      {/* 3-Dots More Options Button */}
+                      <button
+                        onClick={e => handleOpenMenu(e, bot)}
+                        className={`p-1.5 rounded-lg border bot-action-menu transition cursor-pointer ${
+                          openMenuBotId === bot.id
+                            ? 'border-[#5B45E0] bg-[#5B45E0]/10 text-[#5B45E0]'
+                            : 'border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
+                        }`}
+                        title="More Options"
+                      >
+                        <MoreHorizontal className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -894,7 +813,135 @@ export default function DashboardView({
         </div>
       )}
 
-      {/* 8. INTERACTIVE MODALS FOR 3-DOTS ACTIONS */}
+      {/* 8. TRADETRON 3-DOTS POPUP MENU (Rendered fixed to avoid any overflow clipping) */}
+      {openMenuBotId && menuCoords && menuBot && (
+        <div
+          style={{
+            position: 'fixed',
+            top: `${menuCoords.top}px`,
+            right: `${menuCoords.right}px`,
+            zIndex: 99999
+          }}
+          className="bot-action-menu w-48 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl py-2 text-left animate-in fade-in zoom-in-95 duration-100 text-xs font-sans"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* STATUS */}
+          <div className="px-3.5 py-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+            STATUS
+          </div>
+          <button
+            onClick={() => handleAction('Archive', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Archive
+          </button>
+
+          {/* STRATEGY DATA */}
+          <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+            STRATEGY DATA
+          </div>
+          <button
+            onClick={() => handleAction('Statistics', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Statistics
+          </button>
+          <button
+            onClick={() => handleAction('Payoff', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Payoff
+          </button>
+          <button
+            onClick={() => handleAction('Intraday PNL', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Intraday PNL
+          </button>
+          <button
+            onClick={() => {
+              setOpenMenuBotId(null);
+              setMenuCoords(null);
+              setMenuBot(null);
+              onOpenLogs(menuBot.name);
+            }}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Notification Log
+          </button>
+          <button
+            onClick={() => {
+              setOpenMenuBotId(null);
+              setMenuCoords(null);
+              setMenuBot(null);
+              onNavigateTab('backtest');
+            }}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Backtests
+          </button>
+          <button
+            onClick={() => handleAction('Runtime Data', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Runtime Data
+          </button>
+          <button
+            onClick={() => handleAction('Debug', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Debug
+          </button>
+          <button
+            onClick={() => handleAction('User Notes', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            User Notes
+          </button>
+
+          {/* OPEN */}
+          <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+            OPEN
+          </div>
+          <button
+            onClick={() => handleAction('Full detail', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium flex items-center justify-between transition cursor-pointer"
+          >
+            <span>Full detail</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+          </button>
+          <button
+            onClick={() => handleAction('Download data', menuBot)}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Download data
+          </button>
+
+          {/* ACTIONS */}
+          <div className="px-3.5 pt-2 pb-1 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+            ACTIONS
+          </div>
+          <button
+            onClick={() => {
+              setOpenMenuBotId(null);
+              setMenuCoords(null);
+              setMenuBot(null);
+              onNavigateTab('builder');
+            }}
+            className="w-full text-left px-3.5 py-1.5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 font-medium transition cursor-pointer"
+          >
+            Edit template
+          </button>
+          <button
+            onClick={() => handleDeleteBot(menuBot.id, menuBot.name)}
+            className="w-full text-left px-3.5 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-medium transition cursor-pointer"
+          >
+            Delete
+          </button>
+        </div>
+      )}
+
+      {/* 9. INTERACTIVE MODALS FOR 3-DOTS ACTIONS */}
       {activeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
           <div
