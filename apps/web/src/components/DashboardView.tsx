@@ -112,13 +112,6 @@ export default function DashboardView({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBotIds, setSelectedBotIds] = useState<string[]>([]);
   const [consoleTab, setConsoleTab] = useState<'market_watch' | 'open_positions' | 'greeks' | 'order_book' | 'notifications' | 'tally_orders'>('tally_orders');
-  const [copiedSid, setCopiedSid] = useState<string | null>(null);
-
-  const handleCopySid = (sid: string) => {
-    navigator.clipboard.writeText(sid);
-    setCopiedSid(sid);
-    setTimeout(() => setCopiedSid(null), 2000);
-  };
 
   const handleToggleLocal = (id: string) => {
     setLocalBots(prev =>
@@ -141,8 +134,7 @@ export default function DashboardView({
   }).filter(b => {
     return (
       b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.broker.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (b.sid && b.sid.includes(searchTerm))
+      b.broker.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
@@ -433,27 +425,10 @@ export default function DashboardView({
                     </div>
                   </td>
 
-                  {/* Broker & SID */}
+                  {/* Broker */}
                   <td className="py-4 px-4">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-1 text-[11px] font-mono text-slate-600 dark:text-slate-400">
-                        <span className="text-slate-400">SID</span>
-                        <span>{bot.sid || '30844042'}</span>
-                        <button
-                          onClick={() => handleCopySid(bot.sid || '30844042')}
-                          className="p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                          title="Copy SID"
-                        >
-                          {copiedSid === (bot.sid || '30844042') ? (
-                            <Check className="w-3 h-3 text-emerald-500" />
-                          ) : (
-                            <Copy className="w-3 h-3" />
-                          )}
-                        </button>
-                      </div>
-                      <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">
-                        {bot.broker}
-                      </div>
+                    <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                      {bot.broker}
                     </div>
                   </td>
 
