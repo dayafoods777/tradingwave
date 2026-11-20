@@ -47,11 +47,11 @@ export default function BacktestView() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-[#131B2E] via-[#17223D] to-[#131B2E] border border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#131B2E] dark:via-[#17223D] dark:to-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">Quantitative Backtesting</span>
-          <h2 className="text-2xl font-black text-white mt-1">Zero-Lookahead Event-Driven Engine</h2>
-          <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">Zero-Lookahead Event-Driven Engine</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
             Simulate every second tick against historical NSE tick data. Accurately accounts for bid-ask slippage, lot-size changes, and Indian regulatory charges (STT, GST, Stamp Duty).
           </p>
         </div>
@@ -66,13 +66,13 @@ export default function BacktestView() {
       </div>
 
       {/* Configuration Grid */}
-      <div className="p-5 rounded-2xl bg-[#131B2E] border border-[#1E293B] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs shadow-xl">
+      <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs shadow-sm dark:shadow-xl transition-colors">
         <div>
-          <label className="block text-slate-400 font-semibold mb-1">Target Strategy</label>
+          <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Target Strategy</label>
           <select
             value={strategy}
             onChange={e => setStrategy(e.target.value)}
-            className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-white font-medium focus:outline-none focus:border-[#FF6600]"
+            className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
           >
             <option value="NIFTY 9:20 Intraday Short Straddle">NIFTY 9:20 Short Straddle</option>
             <option value="BANKNIFTY Supertrend Momentum">BANKNIFTY Supertrend</option>
@@ -81,11 +81,11 @@ export default function BacktestView() {
         </div>
 
         <div>
-          <label className="block text-slate-400 font-semibold mb-1">Underlying Instrument</label>
+          <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Underlying Instrument</label>
           <select
             value={underlying}
             onChange={e => setUnderlying(e.target.value)}
-            className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-white font-medium focus:outline-none focus:border-[#FF6600]"
+            className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
           >
             <option value="NIFTY 50">NIFTY 50</option>
             <option value="BANKNIFTY">BANKNIFTY</option>
@@ -94,28 +94,28 @@ export default function BacktestView() {
         </div>
 
         <div>
-          <label className="block text-slate-400 font-semibold mb-1">Capital Allocated (₹)</label>
+          <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Capital Allocated (₹)</label>
           <input
             type="text"
             value={capital}
             onChange={e => setCapital(e.target.value)}
-            className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-white font-medium focus:outline-none focus:border-[#FF6600]"
+            className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
           />
         </div>
 
         <div>
-          <label className="block text-slate-400 font-semibold mb-1">Slippage Tolerance (%)</label>
+          <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Slippage Tolerance (%)</label>
           <input
             type="text"
             value={slippage}
             onChange={e => setSlippage(e.target.value)}
-            className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-white font-medium focus:outline-none focus:border-[#FF6600]"
+            className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
           />
         </div>
 
         <div>
-          <label className="block text-slate-400 font-semibold mb-1">Regulatory Deductions</label>
-          <label className="flex items-center gap-2 mt-2 cursor-pointer text-slate-300">
+          <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Regulatory Deductions</label>
+          <label className="flex items-center gap-2 mt-2 cursor-pointer text-slate-700 dark:text-slate-300">
             <input
               type="checkbox"
               checked={includeCharges}
@@ -129,58 +129,58 @@ export default function BacktestView() {
 
       {/* Metrics Summary Strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <div className="p-4 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-          <div className="text-[10px] text-slate-400 uppercase font-semibold">Net P&L</div>
-          <div className="text-xl font-black text-emerald-400 font-mono mt-0.5">
+        <div className="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+          <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net P&L</div>
+          <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
             +₹{metrics.netPnl.toLocaleString()}
           </div>
-          <div className="text-[10px] text-emerald-400/80 font-bold">+{metrics.roi}% Return</div>
+          <div className="text-[10px] text-emerald-600 dark:text-emerald-400/80 font-bold">+{metrics.roi}% Return</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-          <div className="text-[10px] text-slate-400 uppercase font-semibold">Win Rate</div>
-          <div className="text-xl font-black text-white font-mono mt-0.5">{metrics.winRate}%</div>
-          <div className="text-[10px] text-slate-400">{metrics.winningTrades}W · {metrics.losingTrades}L</div>
+        <div className="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+          <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Win Rate</div>
+          <div className="text-xl font-black text-slate-900 dark:text-white font-mono mt-0.5">{metrics.winRate}%</div>
+          <div className="text-[10px] text-slate-500 dark:text-slate-400">{metrics.winningTrades}W · {metrics.losingTrades}L</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-          <div className="text-[10px] text-slate-400 uppercase font-semibold">Profit Factor</div>
-          <div className="text-xl font-black text-emerald-400 font-mono mt-0.5">{metrics.profitFactor}</div>
-          <div className="text-[10px] text-slate-400">Gross Win / Gross Loss</div>
+        <div className="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+          <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Profit Factor</div>
+          <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">{metrics.profitFactor}</div>
+          <div className="text-[10px] text-slate-500 dark:text-slate-400">Gross Win / Gross Loss</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-          <div className="text-[10px] text-slate-400 uppercase font-semibold">Max Drawdown</div>
-          <div className="text-xl font-black text-red-400 font-mono mt-0.5">-₹{metrics.maxDrawdown}</div>
-          <div className="text-[10px] text-red-400 font-bold">-{metrics.maxDrawdownPct}% Peak-to-Trough</div>
+        <div className="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+          <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Max Drawdown</div>
+          <div className="text-xl font-black text-red-600 dark:text-red-400 font-mono mt-0.5">-₹{metrics.maxDrawdown}</div>
+          <div className="text-[10px] text-red-600 dark:text-red-400 font-bold">-{metrics.maxDrawdownPct}% Peak-to-Trough</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-          <div className="text-[10px] text-slate-400 uppercase font-semibold">Sharpe Ratio</div>
-          <div className="text-xl font-black text-blue-400 font-mono mt-0.5">{metrics.sharpe}</div>
-          <div className="text-[10px] text-slate-400">Risk-Adjusted Return</div>
+        <div className="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+          <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Sharpe Ratio</div>
+          <div className="text-xl font-black text-blue-600 dark:text-blue-400 font-mono mt-0.5">{metrics.sharpe}</div>
+          <div className="text-[10px] text-slate-500 dark:text-slate-400">Risk-Adjusted Return</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-          <div className="text-[10px] text-slate-400 uppercase font-semibold">STT / Taxes Deducted</div>
-          <div className="text-xl font-black text-slate-300 font-mono mt-0.5">₹{metrics.sttCharges}</div>
-          <div className="text-[10px] text-slate-400">Real net after fees</div>
+        <div className="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+          <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">STT / Taxes Deducted</div>
+          <div className="text-xl font-black text-slate-700 dark:text-slate-300 font-mono mt-0.5">₹{metrics.sttCharges}</div>
+          <div className="text-[10px] text-slate-500 dark:text-slate-400">Real net after fees</div>
         </div>
       </div>
 
       {/* Equity Curve SVG */}
-      <div className="p-5 rounded-2xl bg-[#131B2E] border border-[#1E293B] shadow-xl">
+      <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl transition-colors">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-sm text-white flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Cumulative Backtest Equity Curve</span>
           </h3>
-          <span className="text-xs text-slate-400 font-mono">38 Trades · 2024 Session</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">38 Trades · 2024 Session</span>
         </div>
 
-        <div className="h-44 w-full bg-[#0A0D17] rounded-xl border border-[#1E293B] p-3 flex items-center justify-center">
+        <div className="h-44 w-full bg-slate-900 dark:bg-[#0A0D17] rounded-xl border border-slate-200 dark:border-[#1E293B] p-3 flex items-center justify-center">
           <svg width="100%" height="100%" viewBox="0 0 600 120" className="overflow-visible">
-            <line x1="0" y1="100" x2="600" y2="100" stroke="#1E293B" strokeWidth="1" />
+            <line x1="0" y1="100" x2="600" y2="100" stroke="#334155" strokeWidth="1" />
             <path
               d="M 10 100 Q 80 90, 150 75 T 280 60 T 400 40 T 520 25 T 590 15"
               fill="none"
@@ -204,15 +204,15 @@ export default function BacktestView() {
       </div>
 
       {/* Trade Ledger Table */}
-      <div className="rounded-2xl border border-[#1E293B] bg-[#131B2E] overflow-hidden shadow-xl">
-        <div className="px-5 py-3.5 bg-[#0E1526] border-b border-[#1E293B] flex items-center justify-between">
-          <h3 className="font-bold text-sm text-white">Trade-by-Trade Execution Ledger</h3>
-          <span className="text-xs text-slate-400 font-mono">STT, Exchange GST & Slippage Included</span>
+      <div className="rounded-2xl border border-slate-200 dark:border-[#1E293B] bg-white dark:bg-[#131B2E] overflow-hidden shadow-sm dark:shadow-xl transition-colors">
+        <div className="px-5 py-3.5 bg-slate-50 dark:bg-[#0E1526] border-b border-slate-200 dark:border-[#1E293B] flex items-center justify-between">
+          <h3 className="font-bold text-sm text-slate-900 dark:text-white">Trade-by-Trade Execution Ledger</h3>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">STT, Exchange GST & Slippage Included</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs font-mono">
             <thead>
-              <tr className="bg-[#111827] text-slate-400 text-left border-b border-[#1E293B]">
+              <tr className="bg-slate-100 dark:bg-[#111827] text-slate-600 dark:text-slate-400 text-left border-b border-slate-200 dark:border-[#1E293B]">
                 <th className="py-2.5 px-4">Date</th>
                 <th className="py-2.5 px-4">Contract</th>
                 <th className="py-2.5 px-4">Entry</th>
@@ -223,17 +223,17 @@ export default function BacktestView() {
                 <th className="py-2.5 px-4 text-right">Net P&L</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B]">
+            <tbody className="divide-y divide-slate-200 dark:divide-[#1E293B]">
               {trades.map(t => (
-                <tr key={t.id} className="hover:bg-[#1A2542] transition">
-                  <td className="py-2.5 px-4 text-slate-300 font-sans">{t.date}</td>
-                  <td className="py-2.5 px-4 text-white font-bold">{t.symbol}</td>
-                  <td className="py-2.5 px-4 text-slate-400">{t.entryTime}</td>
-                  <td className="py-2.5 px-4 text-slate-400">{t.exitTime}</td>
-                  <td className="py-2.5 px-4 text-slate-300">{t.entryPrice}</td>
-                  <td className="py-2.5 px-4 text-slate-300">{t.exitPrice}</td>
-                  <td className="py-2.5 px-4 text-slate-400">{t.charges}</td>
-                  <td className={`py-2.5 px-4 text-right font-bold ${t.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-[#1A2542] transition">
+                  <td className="py-2.5 px-4 text-slate-700 dark:text-slate-300 font-sans">{t.date}</td>
+                  <td className="py-2.5 px-4 text-slate-900 dark:text-white font-bold">{t.symbol}</td>
+                  <td className="py-2.5 px-4 text-slate-500 dark:text-slate-400">{t.entryTime}</td>
+                  <td className="py-2.5 px-4 text-slate-500 dark:text-slate-400">{t.exitTime}</td>
+                  <td className="py-2.5 px-4 text-slate-700 dark:text-slate-300">{t.entryPrice}</td>
+                  <td className="py-2.5 px-4 text-slate-700 dark:text-slate-300">{t.exitPrice}</td>
+                  <td className="py-2.5 px-4 text-slate-500 dark:text-slate-400">{t.charges}</td>
+                  <td className={`py-2.5 px-4 text-right font-bold ${t.pnl >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                     {t.pnl >= 0 ? `+₹${t.pnl}` : `-₹${Math.abs(t.pnl)}`}
                   </td>
                 </tr>

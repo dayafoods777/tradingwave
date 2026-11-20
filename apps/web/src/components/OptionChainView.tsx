@@ -40,12 +40,12 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
   return (
     <div className="space-y-6">
       {/* Controls Bar */}
-      <div className="p-4 rounded-2xl bg-[#131B2E] border border-[#1E293B] flex flex-wrap items-center justify-between gap-4">
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-md flex flex-wrap items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3">
           <select
             value={underlying}
             onChange={e => setUnderlying(e.target.value)}
-            className="bg-[#0E1526] border border-[#1E293B] rounded-xl px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-[#FF6600]"
+            className="bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
           >
             <option value="NIFTY 50">NIFTY 50</option>
             <option value="BANKNIFTY">BANKNIFTY</option>
@@ -56,7 +56,7 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
           <select
             value={expiry}
             onChange={e => setExpiry(e.target.value)}
-            className="bg-[#0E1526] border border-[#1E293B] rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#FF6600]"
+            className="bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:outline-none focus:border-[#FF6600]"
           >
             <option value="28-NOV-2024">28 Nov 2024 (Weekly)</option>
             <option value="05-DEC-2024">05 Dec 2024 (Weekly)</option>
@@ -64,42 +64,42 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
           </select>
 
           <div className="text-xs">
-            <span className="text-slate-400">Spot: </span>
-            <span className="font-bold text-emerald-400 font-mono">24,352.40 (+112.50)</span>
+            <span className="text-slate-500 dark:text-slate-400">Spot: </span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">24,352.40 (+112.50)</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>Live WebSocket Feed · Greeks by Black-Scholes</span>
         </div>
       </div>
 
       {/* Symmetric NSE Option Chain Table */}
-      <div className="rounded-2xl border border-[#1E293B] bg-[#131B2E] overflow-hidden shadow-2xl">
+      <div className="rounded-2xl border border-slate-200 dark:border-[#1E293B] bg-white dark:bg-[#131B2E] overflow-hidden shadow-sm dark:shadow-2xl transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-xs font-mono border-collapse text-right">
             <thead>
-              <tr className="bg-[#0E1526] text-slate-400 uppercase text-[10px] tracking-wider border-b border-[#1E293B]">
-                <th colSpan={6} className="py-2.5 px-3 text-center text-emerald-400 bg-emerald-950/20 border-r border-[#1E293B]">
+              <tr className="bg-slate-100 dark:bg-[#0E1526] text-slate-600 dark:text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-200 dark:border-[#1E293B]">
+                <th colSpan={6} className="py-2.5 px-3 text-center text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-r border-slate-200 dark:border-[#1E293B]">
                   CALLS (CE)
                 </th>
-                <th className="py-2.5 px-4 text-center text-white bg-slate-900 border-r border-[#1E293B]">
+                <th className="py-2.5 px-4 text-center text-slate-900 dark:text-white bg-slate-200 dark:bg-slate-900 border-r border-slate-200 dark:border-[#1E293B]">
                   STRIKE
                 </th>
-                <th colSpan={6} className="py-2.5 px-3 text-center text-red-400 bg-red-950/20">
+                <th colSpan={6} className="py-2.5 px-3 text-center text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20">
                   PUTS (PE)
                 </th>
               </tr>
-              <tr className="bg-[#111827] text-slate-400 text-[10px] border-b border-[#1E293B]">
+              <tr className="bg-slate-50 dark:bg-[#111827] text-slate-500 dark:text-slate-400 text-[10px] border-b border-slate-200 dark:border-[#1E293B]">
                 <th className="py-2 px-2 text-left">OI</th>
                 <th className="py-2 px-2">Volume</th>
                 <th className="py-2 px-2">IV%</th>
                 <th className="py-2 px-2">Delta</th>
                 <th className="py-2 px-2">LTP</th>
-                <th className="py-2 px-2 border-r border-[#1E293B]">Action</th>
+                <th className="py-2 px-2 border-r border-slate-200 dark:border-[#1E293B]">Action</th>
 
-                <th className="py-2 px-4 text-center font-bold text-white bg-slate-900 border-r border-[#1E293B]">
+                <th className="py-2 px-4 text-center font-bold text-slate-900 dark:text-white bg-slate-200 dark:bg-slate-900 border-r border-slate-200 dark:border-[#1E293B]">
                   STRIKE
                 </th>
 
@@ -111,31 +111,31 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
                 <th className="py-2 px-2">OI</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B]">
+            <tbody className="divide-y divide-slate-200 dark:divide-[#1E293B]">
               {strikes.map(row => (
                 <tr
                   key={row.strike}
-                  className={`hover:bg-[#1A2542] transition ${
-                    row.isAtm ? 'bg-[#FF6600]/10 font-bold' : ''
+                  className={`hover:bg-slate-50 dark:hover:bg-[#1A2542] transition ${
+                    row.isAtm ? 'bg-orange-50/70 dark:bg-[#FF6600]/10 font-bold' : ''
                   }`}
                 >
                   {/* CALLS */}
-                  <td className="py-2.5 px-2 text-left text-slate-300 font-sans">{row.callOi.toLocaleString()}</td>
-                  <td className="py-2.5 px-2 text-slate-400 font-sans">{row.callVol.toLocaleString()}</td>
-                  <td className="py-2.5 px-2 text-slate-400">{row.callIv}%</td>
-                  <td className="py-2.5 px-2 text-emerald-400 font-semibold">{row.callDelta}</td>
-                  <td className="py-2.5 px-2 text-white font-bold">₹{row.callLtp.toFixed(2)}</td>
-                  <td className="py-2.5 px-2 border-r border-[#1E293B]">
+                  <td className="py-2.5 px-2 text-left text-slate-700 dark:text-slate-300 font-sans">{row.callOi.toLocaleString()}</td>
+                  <td className="py-2.5 px-2 text-slate-500 dark:text-slate-400 font-sans">{row.callVol.toLocaleString()}</td>
+                  <td className="py-2.5 px-2 text-slate-600 dark:text-slate-400">{row.callIv}%</td>
+                  <td className="py-2.5 px-2 text-emerald-600 dark:text-emerald-400 font-semibold">{row.callDelta}</td>
+                  <td className="py-2.5 px-2 text-slate-900 dark:text-white font-bold">₹{row.callLtp.toFixed(2)}</td>
+                  <td className="py-2.5 px-2 border-r border-slate-200 dark:border-[#1E293B]">
                     <div className="flex gap-1 justify-end">
                       <button
                         onClick={() => onAddLeg(row.strike, 'CALL', 'BUY')}
-                        className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold"
+                        className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold"
                       >
                         B
                       </button>
                       <button
                         onClick={() => onAddLeg(row.strike, 'CALL', 'SELL')}
-                        className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[10px] font-bold"
+                        className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white text-[10px] font-bold"
                       >
                         S
                       </button>
@@ -144,8 +144,8 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
 
                   {/* STRIKE (CENTER) */}
                   <td
-                    className={`py-2.5 px-4 text-center font-bold text-white border-r border-[#1E293B] ${
-                      row.isAtm ? 'bg-[#FF6600] text-slate-950 font-black' : 'bg-[#0E1526]'
+                    className={`py-2.5 px-4 text-center font-bold border-r border-slate-200 dark:border-[#1E293B] ${
+                      row.isAtm ? 'bg-[#FF6600] text-white font-black' : 'bg-slate-100 dark:bg-[#0E1526] text-slate-900 dark:text-white'
                     }`}
                   >
                     {row.strike}
@@ -157,23 +157,23 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
                     <div className="flex gap-1">
                       <button
                         onClick={() => onAddLeg(row.strike, 'PUT', 'BUY')}
-                        className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold"
+                        className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold"
                       >
                         B
                       </button>
                       <button
                         onClick={() => onAddLeg(row.strike, 'PUT', 'SELL')}
-                        className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[10px] font-bold"
+                        className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white text-[10px] font-bold"
                       >
                         S
                       </button>
                     </div>
                   </td>
-                  <td className="py-2.5 px-2 text-white font-bold">₹{row.putLtp.toFixed(2)}</td>
-                  <td className="py-2.5 px-2 text-red-400 font-semibold">{row.putDelta}</td>
-                  <td className="py-2.5 px-2 text-slate-400">{row.putIv}%</td>
-                  <td className="py-2.5 px-2 text-slate-400 font-sans">{row.putVol.toLocaleString()}</td>
-                  <td className="py-2.5 px-2 text-right text-slate-300 font-sans">{row.putOi.toLocaleString()}</td>
+                  <td className="py-2.5 px-2 text-slate-900 dark:text-white font-bold">₹{row.putLtp.toFixed(2)}</td>
+                  <td className="py-2.5 px-2 text-red-600 dark:text-red-400 font-semibold">{row.putDelta}</td>
+                  <td className="py-2.5 px-2 text-slate-600 dark:text-slate-400">{row.putIv}%</td>
+                  <td className="py-2.5 px-2 text-slate-500 dark:text-slate-400 font-sans">{row.putVol.toLocaleString()}</td>
+                  <td className="py-2.5 px-2 text-right text-slate-700 dark:text-slate-300 font-sans">{row.putOi.toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>

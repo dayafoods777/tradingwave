@@ -126,7 +126,7 @@ export default function StrategyBuilderView({
   return (
     <div className="space-y-6">
       {/* Header & Meta Bar */}
-      <div className="p-6 rounded-2xl bg-[#131B2E] border border-[#1E293B] shadow-xl space-y-4">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-4 transition-colors">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">
@@ -136,23 +136,23 @@ export default function StrategyBuilderView({
               type="text"
               value={strategyName}
               onChange={e => setStrategyName(e.target.value)}
-              className="text-2xl font-black text-white bg-transparent border-b border-transparent hover:border-slate-700 focus:border-[#FF6600] focus:outline-none transition block mt-1 w-full max-w-xl"
+              className="text-2xl font-black text-slate-900 dark:text-white bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-[#FF6600] focus:outline-none transition block mt-1 w-full max-w-xl"
             />
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleSave}
-              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold flex items-center gap-1.5 transition"
             >
               <Save className="w-3.5 h-3.5" />
               <span>Save Strategy</span>
             </button>
             <button
               onClick={() => onBacktest(strategyName)}
-              className="px-4 py-2 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-4 py-2 rounded-xl border border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition"
             >
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+              <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Backtest</span>
             </button>
             <button
@@ -166,19 +166,19 @@ export default function StrategyBuilderView({
         </div>
 
         {savedBanner && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 flex items-center gap-2">
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>Strategy AST validated successfully with Zero-Eval security parser. Ready for deployment.</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-[#1E293B] text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-slate-200 dark:border-[#1E293B] text-xs">
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Default Underlying</label>
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Default Underlying</label>
             <select
               value={underlying}
               onChange={e => setUnderlying(e.target.value)}
-              className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-1.5 text-white font-medium focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
             >
               <option value="NIFTY 50">NIFTY 50</option>
               <option value="BANKNIFTY">BANKNIFTY</option>
@@ -189,11 +189,11 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Continuous Check Frequency</label>
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Continuous Check Frequency</label>
             <select
               value={checkFrequency}
               onChange={e => setCheckFrequency(e.target.value)}
-              className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-1.5 text-white font-medium focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-1.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-[#FF6600]"
             >
               <option value="Continuous">Continuous (1-second tick)</option>
               <option value="1m">1 minute candle</option>
@@ -205,8 +205,8 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Execution Rule</label>
-            <label className="flex items-center gap-2 mt-2 cursor-pointer text-slate-300">
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Execution Rule</label>
+            <label className="flex items-center gap-2 mt-2 cursor-pointer text-slate-700 dark:text-slate-300">
               <input
                 type="checkbox"
                 checked={checkOnCandleClose}
@@ -218,8 +218,8 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Pre-trade Risk Guard</label>
-            <div className="flex items-center gap-1.5 text-emerald-400 font-bold mt-1.5">
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Pre-trade Risk Guard</label>
+            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold mt-1.5">
               <ShieldCheck className="w-4 h-4" />
               <span>Active · Margin & Collar Collar Guard</span>
             </div>
@@ -228,21 +228,21 @@ export default function StrategyBuilderView({
       </div>
 
       {/* SET 1 CONTAINER */}
-      <div className="rounded-2xl bg-[#131B2E] border border-[#1E293B] shadow-xl overflow-hidden">
+      <div className="rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl overflow-hidden transition-colors">
         {/* Set Header Bar */}
-        <div className="px-6 py-4 bg-[#0E1526] border-b border-[#1E293B] flex items-center justify-between">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-[#0E1526] border-b border-slate-200 dark:border-[#1E293B] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-lg bg-[#FF6600]/20 text-[#FF6600] font-black text-xs flex items-center justify-center">
+            <span className="w-7 h-7 rounded-lg bg-[#FF6600]/15 text-[#FF6600] font-black text-xs flex items-center justify-center">
               1
             </span>
-            <h3 className="font-bold text-base text-white">Strategy Set 1</h3>
-            <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
+            <h3 className="font-bold text-base text-slate-900 dark:text-white">Strategy Set 1</h3>
+            <span className="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">
               Primary Execution Loop
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400">Condition Combinator:</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Condition Combinator:</span>
             <button
               onClick={() => setConditionCombinator(conditionCombinator === 'AND' ? 'OR' : 'AND')}
               className="px-2.5 py-1 rounded bg-[#FF6600] text-white text-xs font-black shadow-sm"
@@ -256,12 +256,12 @@ export default function StrategyBuilderView({
           {/* 1. ENTRY CONDITIONS BLOCK */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
                 <span>Entry Conditions (When all true, take positions below)</span>
               </label>
               <button
                 onClick={handleAddCondition}
-                className="text-xs px-3 py-1.5 rounded-lg bg-[#0E1526] border border-[#FF6600]/40 text-[#FF6600] hover:bg-[#FF6600] hover:text-white font-bold flex items-center gap-1.5 transition"
+                className="text-xs px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-[#0E1526] border border-[#FF6600]/40 text-[#FF6600] hover:bg-[#FF6600] hover:text-white font-bold flex items-center gap-1.5 transition"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Condition via Keyword Modal</span>
@@ -272,15 +272,15 @@ export default function StrategyBuilderView({
               {entryConditions.map((cond, idx) => (
                 <div
                   key={cond.id}
-                  className="p-3 bg-[#0E1526] rounded-xl border border-[#1E293B] flex items-center justify-between gap-3 text-xs font-mono group"
+                  className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] flex items-center justify-between gap-3 text-xs font-mono group"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-slate-500 font-bold">{idx + 1}.</span>
-                    <span className="text-white font-semibold">{cond.text}</span>
+                    <span className="text-slate-900 dark:text-white font-semibold">{cond.text}</span>
                   </div>
                   <button
                     onClick={() => setEntryConditions(entryConditions.filter(c => c.id !== cond.id))}
-                    className="p-1 text-slate-500 hover:text-red-400 transition"
+                    className="p-1 text-slate-400 hover:text-red-500 transition"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -292,22 +292,22 @@ export default function StrategyBuilderView({
           {/* 2. POSITION LEGS TABLE */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 Positions to Take ({legs.length} Legs)
               </label>
               <button
                 onClick={handleAddLeg}
-                className="text-xs px-3 py-1.5 rounded-lg bg-[#0E1526] border border-[#1E293B] text-slate-300 hover:border-[#FF6600] hover:text-white font-semibold flex items-center gap-1.5 transition"
+                className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0E1526] border border-slate-300 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:border-[#FF6600] hover:text-[#FF6600] font-semibold flex items-center gap-1.5 transition"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Position Leg</span>
               </button>
             </div>
 
-            <div className="rounded-xl border border-[#1E293B] overflow-x-auto bg-[#0E1526]">
+            <div className="rounded-xl border border-slate-200 dark:border-[#1E293B] overflow-x-auto bg-slate-50 dark:bg-[#0E1526]">
               <table className="w-full text-xs font-mono text-left">
                 <thead>
-                  <tr className="bg-[#111827] text-slate-400 text-[10px] uppercase border-b border-[#1E293B]">
+                  <tr className="bg-slate-100 dark:bg-[#111827] text-slate-600 dark:text-slate-400 text-[10px] uppercase border-b border-slate-200 dark:border-[#1E293B]">
                     <th className="py-2.5 px-3">Leg</th>
                     <th className="py-2.5 px-3">Action</th>
                     <th className="py-2.5 px-3">Type</th>
@@ -322,10 +322,10 @@ export default function StrategyBuilderView({
                     <th className="py-2.5 px-3"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1E293B]">
+                <tbody className="divide-y divide-slate-200 dark:divide-[#1E293B]">
                   {legs.map((leg, idx) => (
-                    <tr key={leg.id} className="hover:bg-[#131B2E] transition">
-                      <td className="py-2.5 px-3 text-slate-400">{idx + 1}</td>
+                    <tr key={leg.id} className="hover:bg-slate-100/70 dark:hover:bg-[#131B2E] transition">
+                      <td className="py-2.5 px-3 text-slate-500">{idx + 1}</td>
                       <td className="py-2.5 px-3">
                         <select
                           value={leg.action}
@@ -334,8 +334,8 @@ export default function StrategyBuilderView({
                             newLegs[idx].action = e.target.value as any;
                             setLegs(newLegs);
                           }}
-                          className={`bg-slate-900 border border-slate-700 rounded px-2 py-1 font-bold ${
-                            leg.action === 'BUY' ? 'text-emerald-400' : 'text-red-400'
+                          className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 font-bold ${
+                            leg.action === 'BUY' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
                           }`}
                         >
                           <option value="BUY">BUY</option>
@@ -350,7 +350,7 @@ export default function StrategyBuilderView({
                             newLegs[idx].type = e.target.value as any;
                             setLegs(newLegs);
                           }}
-                          className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"
+                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white"
                         >
                           <option value="CALL">CE (Call)</option>
                           <option value="PUT">PE (Put)</option>
@@ -358,7 +358,7 @@ export default function StrategyBuilderView({
                           <option value="EQ">EQ (Equity)</option>
                         </select>
                       </td>
-                      <td className="py-2.5 px-3 text-slate-300 font-sans">{leg.underlying}</td>
+                      <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-sans">{leg.underlying}</td>
                       <td className="py-2.5 px-3">
                         <select
                           value={leg.expiry}
@@ -367,7 +367,7 @@ export default function StrategyBuilderView({
                             newLegs[idx].expiry = e.target.value;
                             setLegs(newLegs);
                           }}
-                          className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 font-sans"
+                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-300 font-sans"
                         >
                           <option value="Current Week">Current Week</option>
                           <option value="Next Week">Next Week</option>
@@ -383,10 +383,10 @@ export default function StrategyBuilderView({
                             newLegs[idx].strike = e.target.value;
                             setLegs(newLegs);
                           }}
-                          className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white w-24"
+                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white w-24"
                         />
                       </td>
-                      <td className="py-2.5 px-3 text-slate-300">{leg.product}</td>
+                      <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300">{leg.product}</td>
                       <td className="py-2.5 px-3">
                         <input
                           type="number"
@@ -396,7 +396,7 @@ export default function StrategyBuilderView({
                             newLegs[idx].lots = Number(e.target.value);
                             setLegs(newLegs);
                           }}
-                          className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white w-14"
+                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-white w-14"
                         />
                       </td>
                       <td className="py-2.5 px-3">
@@ -408,7 +408,7 @@ export default function StrategyBuilderView({
                             newLegs[idx].sl = e.target.value;
                             setLegs(newLegs);
                           }}
-                          className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-red-400 w-16"
+                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-red-600 dark:text-red-400 w-16"
                         />
                       </td>
                       <td className="py-2.5 px-3">
@@ -420,7 +420,7 @@ export default function StrategyBuilderView({
                             newLegs[idx].target = e.target.value;
                             setLegs(newLegs);
                           }}
-                          className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-emerald-400 w-16"
+                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-emerald-600 dark:text-emerald-400 w-16"
                         />
                       </td>
                       <td className="py-2.5 px-3 text-center">
@@ -438,7 +438,7 @@ export default function StrategyBuilderView({
                       <td className="py-2.5 px-3 text-right">
                         <button
                           onClick={() => setLegs(legs.filter(l => l.id !== leg.id))}
-                          className="p-1 text-slate-500 hover:text-red-400 transition"
+                          className="p-1 text-slate-400 hover:text-red-500 transition"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -451,12 +451,12 @@ export default function StrategyBuilderView({
           </div>
 
           {/* 3. REPAIR CONDITIONS BLOCK */}
-          <div className="p-4 rounded-xl bg-[#0E1526] border border-[#1E293B] space-y-3">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
                 <span>Set Repair Logic (Hedges or Strike Adjustments)</span>
               </label>
-              <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-400">
+              <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-600 dark:text-slate-400">
                 <input
                   type="checkbox"
                   checked={hasRepair}
@@ -470,21 +470,21 @@ export default function StrategyBuilderView({
             {hasRepair && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
                 <div>
-                  <span className="text-slate-400 text-[11px] block mb-1">Repair Trigger Condition:</span>
+                  <span className="text-slate-600 dark:text-slate-400 text-[11px] block mb-1">Repair Trigger Condition:</span>
                   <input
                     type="text"
                     value={repairCondition}
                     onChange={e => setRepairCondition(e.target.value)}
-                    className="w-full bg-[#131B2E] border border-[#1E293B] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#FF6600]"
+                    className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
                   />
                 </div>
                 <div>
-                  <span className="text-slate-400 text-[11px] block mb-1">Action when Repair Triggers:</span>
+                  <span className="text-slate-600 dark:text-slate-400 text-[11px] block mb-1">Action when Repair Triggers:</span>
                   <input
                     type="text"
                     value={repairLegAction}
                     onChange={e => setRepairLegAction(e.target.value)}
-                    className="w-full bg-[#131B2E] border border-[#1E293B] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#FF6600]"
+                    className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
                   />
                 </div>
               </div>
@@ -494,12 +494,12 @@ export default function StrategyBuilderView({
           {/* 4. SET EXIT CONDITIONS BLOCK */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 Set Exit Conditions (Square off all Set 1 legs)
               </label>
               <button
                 onClick={handleAddExitCondition}
-                className="text-xs px-3 py-1.5 rounded-lg bg-[#0E1526] border border-[#1E293B] text-slate-300 hover:border-[#FF6600] hover:text-white font-semibold flex items-center gap-1.5 transition"
+                className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0E1526] border border-slate-300 dark:border-[#1E293B] text-slate-700 dark:text-slate-300 hover:border-[#FF6600] hover:text-[#FF6600] font-semibold flex items-center gap-1.5 transition"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Exit Condition</span>
@@ -510,15 +510,15 @@ export default function StrategyBuilderView({
               {exitConditions.map((cond, idx) => (
                 <div
                   key={cond.id}
-                  className="p-3 bg-[#0E1526] rounded-xl border border-[#1E293B] flex items-center justify-between gap-3 text-xs font-mono group"
+                  className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] flex items-center justify-between gap-3 text-xs font-mono group"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-slate-500 font-bold">{idx + 1}.</span>
-                    <span className="text-white font-semibold">{cond.text}</span>
+                    <span className="text-slate-900 dark:text-white font-semibold">{cond.text}</span>
                   </div>
                   <button
                     onClick={() => setExitConditions(exitConditions.filter(c => c.id !== cond.id))}
-                    className="p-1 text-slate-500 hover:text-red-400 transition"
+                    className="p-1 text-slate-400 hover:text-red-500 transition"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -530,55 +530,55 @@ export default function StrategyBuilderView({
       </div>
 
       {/* UNIVERSAL EXIT & TRAILING STOP LOSS BLOCK */}
-      <div className="p-6 rounded-2xl bg-[#131B2E] border border-[#1E293B] shadow-xl space-y-4">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl space-y-4 transition-colors">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-base text-white">Universal Exit & Trailing Stop Loss</h3>
-            <p className="text-xs text-slate-400">Guarantees portfolio protection regardless of set-level conditions</p>
+            <h3 className="font-bold text-base text-slate-900 dark:text-white">Universal Exit & Trailing Stop Loss</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Guarantees portfolio protection regardless of set-level conditions</p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             Global Risk Layer
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 text-xs font-mono">
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Universal Stop Loss (₹)</label>
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Universal Stop Loss (₹)</label>
             <input
               type="text"
               value={universalSl}
               onChange={e => setUniversalSl(e.target.value)}
-              className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-red-400 font-bold focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-red-600 dark:text-red-400 font-bold focus:outline-none focus:border-[#FF6600]"
             />
           </div>
 
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Universal Target (₹)</label>
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Universal Target (₹)</label>
             <input
               type="text"
               value={universalTarget}
               onChange={e => setUniversalTarget(e.target.value)}
-              className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-emerald-400 font-bold focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-emerald-600 dark:text-emerald-400 font-bold focus:outline-none focus:border-[#FF6600]"
             />
           </div>
 
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Trail If Profit Increases By (₹)</label>
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Trail If Profit Increases By (₹)</label>
             <input
               type="text"
               value={trailIfProfit}
               onChange={e => setTrailIfProfit(e.target.value)}
-              className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
             />
           </div>
 
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Trail Stop-Loss By (₹)</label>
+            <label className="block text-slate-600 dark:text-slate-400 font-semibold mb-1">Trail Stop-Loss By (₹)</label>
             <input
               type="text"
               value={trailStopBy}
               onChange={e => setTrailStopBy(e.target.value)}
-              className="w-full bg-[#0E1526] border border-[#1E293B] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#FF6600]"
+              className="w-full bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6600]"
             />
           </div>
         </div>

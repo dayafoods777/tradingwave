@@ -58,22 +58,22 @@ export default function BrokersView({ onConfigure }: { onConfigure: (brokerName:
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-[#131B2E] via-[#15233E] to-[#131B2E] border border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#131B2E] dark:via-[#15233E] dark:to-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">Broker Adapters</span>
-          <h2 className="text-2xl font-black text-white mt-1">38+ Supported Indian & Global Brokers</h2>
-          <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">38+ Supported Indian & Global Brokers</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
             Execute orders directly into your personal broker trading account with zero latency markup. TradingWave provides standardized order reconciliation, automatic token refresh, and universal pre-trade risk checks.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-xl bg-[#0E1526] border border-[#1E293B] text-center">
-            <div className="text-lg font-bold text-emerald-400">2 Active</div>
-            <div className="text-[10px] text-slate-400 uppercase">Connected</div>
+          <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm">
+            <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">2 Active</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Connected</div>
           </div>
-          <div className="px-4 py-2 rounded-xl bg-[#0E1526] border border-[#1E293B] text-center">
-            <div className="text-lg font-bold text-white">38 Total</div>
-            <div className="text-[10px] text-slate-400 uppercase">Available</div>
+          <div className="px-4 py-2 rounded-xl bg-white dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm">
+            <div className="text-lg font-bold text-slate-900 dark:text-white">38 Total</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Available</div>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function BrokersView({ onConfigure }: { onConfigure: (brokerName:
             placeholder="Search brokers (Zerodha, Dhan, Angel One, Groww)..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full bg-[#131B2E] border border-[#1E293B] rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#FF6600]"
+            className="w-full bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-xl pl-9 pr-3 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#FF6600]"
           />
         </div>
 
@@ -97,7 +97,7 @@ export default function BrokersView({ onConfigure }: { onConfigure: (brokerName:
               key={cat}
               onClick={() => setCategory(cat)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                category === cat ? 'bg-[#FF6600] text-white shadow-sm' : 'bg-[#131B2E] border border-[#1E293B] text-slate-400 hover:text-white'
+                category === cat ? 'bg-[#FF6600] text-white shadow-sm' : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {cat}
@@ -111,45 +111,45 @@ export default function BrokersView({ onConfigure }: { onConfigure: (brokerName:
         {filtered.map(broker => (
           <div
             key={broker.name}
-            className="p-5 rounded-2xl bg-[#131B2E] border border-[#1E293B] hover:border-slate-700 transition flex flex-col justify-between shadow-lg"
+            className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] hover:border-slate-300 dark:hover:border-slate-700 transition flex flex-col justify-between shadow-sm dark:shadow-lg"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#0E1526] border border-[#1E293B] flex items-center justify-center font-bold text-white text-sm shadow-inner">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] flex items-center justify-center font-bold text-slate-800 dark:text-white text-sm shadow-inner">
                     {broker.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-white">{broker.name}</h3>
-                    <span className="text-[10px] text-slate-400">{broker.category}</span>
+                    <h3 className="font-bold text-base text-slate-900 dark:text-white">{broker.name}</h3>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400">{broker.category}</span>
                   </div>
                 </div>
 
                 {broker.status === 'CONNECTED' ? (
-                  <span className="text-[11px] px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold flex items-center gap-1">
+                  <span className="text-[11px] px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" /> Connected
                   </span>
                 ) : (
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-medium">
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium">
                     Ready
                   </span>
                 )}
               </div>
 
-              <div className="p-3 bg-[#0E1526] rounded-xl border border-[#1E293B] space-y-1.5 mb-4 text-xs font-mono">
-                <div className="flex justify-between text-slate-400">
+              <div className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] space-y-1.5 mb-4 text-xs font-mono">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span>API Protocol:</span>
-                  <span className="text-white font-sans text-[11px]">{broker.apiName}</span>
+                  <span className="text-slate-900 dark:text-white font-sans text-[11px]">{broker.apiName}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span>Algo Fees:</span>
-                  <span className="text-emerald-400 font-sans text-[11px] font-semibold">{broker.algoCharge}</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-sans text-[11px] font-semibold">{broker.algoCharge}</span>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-1 mb-4">
                 {broker.segments.map(seg => (
-                  <span key={seg} className="text-[10px] px-2 py-0.5 rounded bg-slate-800/80 text-slate-400 font-semibold">
+                  <span key={seg} className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-400 font-semibold">
                     {seg}
                   </span>
                 ))}
@@ -160,7 +160,7 @@ export default function BrokersView({ onConfigure }: { onConfigure: (brokerName:
               onClick={() => onConfigure(broker.name)}
               className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition ${
                 broker.status === 'CONNECTED'
-                  ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
+                  ? 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700'
                   : 'bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
               }`}
             >

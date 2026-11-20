@@ -77,7 +77,7 @@ export default function PricingView() {
     },
     {
       name: 'Retail+',
-      monthlyPrice: '₹5,00,0',
+      monthlyPrice: '₹5,000',
       yearlyPrice: '₹4,200',
       period: '/month',
       description: 'High-frequency and large-margin portfolios demanding zero throttling.',
@@ -135,20 +135,20 @@ export default function PricingView() {
         <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">
           Transparent & Simple Pricing
         </span>
-        <h2 className="text-3xl sm:text-4xl font-black text-white">
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
           Start Free. <span className="text-[#FF6600]">Pay only when you go live.</span>
         </h2>
-        <p className="text-sm text-slate-400 leading-relaxed">
+        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
           Build unlimited strategies and run in Live Offline / Paper Trading for ₹0 — Free for Life. Pick a plan only when you are ready to deploy real capital into your own broker account.
         </p>
 
         {/* Billing Switch */}
         <div className="pt-4 flex items-center justify-center gap-3">
-          <div className="bg-[#131B2E] p-1 rounded-xl border border-[#1E293B] flex items-center gap-1">
+          <div className="bg-slate-100 dark:bg-[#131B2E] p-1 rounded-xl border border-slate-200 dark:border-[#1E293B] flex items-center gap-1 transition-colors">
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition ${
-                billingCycle === 'monthly' ? 'bg-[#FF6600] text-white' : 'text-slate-400 hover:text-white'
+                billingCycle === 'monthly' ? 'bg-[#FF6600] text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Monthly Billing
@@ -156,7 +156,7 @@ export default function PricingView() {
             <button
               onClick={() => setBillingCycle('yearly')}
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-                billingCycle === 'yearly' ? 'bg-[#FF6600] text-white' : 'text-slate-400 hover:text-white'
+                billingCycle === 'yearly' ? 'bg-[#FF6600] text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <span>Yearly Billing</span>
@@ -175,8 +175,8 @@ export default function PricingView() {
             key={plan.name}
             className={`p-6 rounded-2xl border flex flex-col justify-between transition relative ${
               plan.highlight
-                ? 'bg-[#15233E] border-[#FF6600] shadow-xl shadow-orange-500/10'
-                : 'bg-[#131B2E] border-[#1E293B]'
+                ? 'bg-orange-50/50 dark:bg-[#15233E] border-[#FF6600] shadow-md dark:shadow-xl shadow-orange-500/10'
+                : 'bg-white dark:bg-[#131B2E] border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-md'
             }`}
           >
             {plan.badge && (
@@ -185,24 +185,24 @@ export default function PricingView() {
               </span>
             )}
             <div>
-              <h3 className="font-bold text-lg text-white mb-1">{plan.name}</h3>
-              <p className="text-xs text-slate-400 min-h-[36px]">{plan.description}</p>
+              <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-1">{plan.name}</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 min-h-[36px]">{plan.description}</p>
 
-              <div className="my-5 pb-5 border-b border-[#1E293B]">
+              <div className="my-5 pb-5 border-b border-slate-200 dark:border-[#1E293B]">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white">
+                  <span className="text-3xl font-black text-slate-900 dark:text-white">
                     {billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}
                   </span>
-                  <span className="text-xs text-slate-400 font-medium">{plan.period}</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{plan.period}</span>
                 </div>
                 {billingCycle === 'yearly' && plan.name !== 'Free' && (
-                  <span className="text-[11px] text-emerald-400 font-medium mt-1 block">
+                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 block">
                     Billed annually with 16% discount
                   </span>
                 )}
               </div>
 
-              <div className="space-y-2.5 mb-6 text-xs text-slate-300">
+              <div className="space-y-2.5 mb-6 text-xs text-slate-700 dark:text-slate-300">
                 {plan.features.map(f => (
                   <div key={f} className="flex items-start gap-2">
                     <Check className="w-3.5 h-3.5 text-[#FF6600] shrink-0 mt-0.5" />
@@ -216,7 +216,7 @@ export default function PricingView() {
               className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold transition ${
                 plan.highlight
                   ? 'bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
-                  : 'bg-slate-800 hover:bg-slate-700 text-white'
+                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white'
               }`}
             >
               {plan.cta}
@@ -226,27 +226,27 @@ export default function PricingView() {
       </div>
 
       {/* Advanced & Creator Plans Strip */}
-      <div className="p-6 rounded-2xl bg-[#131B2E] border border-[#1E293B] space-y-4">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-md space-y-4 transition-colors">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-lg text-white">Advanced & Creator Tiers</h3>
-            <p className="text-xs text-slate-400">For high-volume traders, quant hedge funds, and marketplace creators</p>
+            <h3 className="font-bold text-lg text-slate-900 dark:text-white">Advanced & Creator Tiers</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400">For high-volume traders, quant hedge funds, and marketplace creators</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {plans.slice(4).map(plan => (
-            <div key={plan.name} className="p-4 rounded-xl bg-[#0E1526] border border-[#1E293B] flex flex-col justify-between">
+            <div key={plan.name} className="p-4 rounded-xl bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-bold text-base text-white">{plan.name}</h4>
+                  <h4 className="font-bold text-base text-slate-900 dark:text-white">{plan.name}</h4>
                   <span className="text-xs font-bold text-[#FF6600]">
                     {billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}
-                    <span className="text-slate-400 text-[10px] font-normal">{plan.period}</span>
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] font-normal">{plan.period}</span>
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 mb-3">{plan.description}</p>
-                <div className="space-y-1.5 mb-4 text-xs text-slate-300">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">{plan.description}</p>
+                <div className="space-y-1.5 mb-4 text-xs text-slate-700 dark:text-slate-300">
                   {plan.features.map(f => (
                     <div key={f} className="flex items-center gap-1.5">
                       <Check className="w-3 h-3 text-[#FF6600] shrink-0" />
@@ -255,7 +255,7 @@ export default function PricingView() {
                   ))}
                 </div>
               </div>
-              <button className="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition">
+              <button className="w-full py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-white transition">
                 {plan.cta}
               </button>
             </div>

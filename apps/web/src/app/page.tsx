@@ -126,6 +126,14 @@ export default function TradingWaveApp() {
     }
   };
 
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
   // Bot actions
   const handleToggleBot = (id: string) => {
     setDeployedBots(prev =>
@@ -182,7 +190,7 @@ export default function TradingWaveApp() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-[#FF6600] selection:text-white">
+    <div className="min-h-screen flex flex-col font-sans selection:bg-[#FF6600] selection:text-white transition-colors duration-200">
       {/* 1. Tradetron Navigation Header */}
       <Header
         activeTab={activeTab}
@@ -195,7 +203,7 @@ export default function TradingWaveApp() {
 
       {/* 2. Global Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#131B2E] border border-[#FF6600] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 bg-white dark:bg-[#131B2E] border border-slate-300 dark:border-[#FF6600] text-slate-900 dark:text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200 transition-colors">
           <span className="w-2.5 h-2.5 rounded-full bg-[#FF6600] animate-pulse"></span>
           <span className="text-xs font-semibold">{toastMessage}</span>
         </div>
@@ -277,23 +285,23 @@ export default function TradingWaveApp() {
       />
 
       {/* 5. Tradetron-Style Clean Footer */}
-      <footer className="border-t border-[#1E293B] bg-[#0E1526] text-slate-400 text-xs py-8 px-6 mt-12">
+      <footer className="border-t border-slate-200 dark:border-[#1E293B] bg-slate-100 dark:bg-[#0E1526] text-slate-600 dark:text-slate-400 text-xs py-8 px-6 mt-12 transition-colors">
         <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#FF6600] to-[#E65C00] flex items-center justify-center font-black text-sm text-white">
               W
             </div>
             <div>
-              <span className="font-bold text-white text-sm">TradingWave</span>
+              <span className="font-bold text-slate-900 dark:text-white text-sm">TradingWave</span>
               <span className="text-[10px] text-slate-500 ml-2 font-mono">TRADE BINDAS · High-Performance Algo SaaS</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-6 text-slate-400">
-            <button onClick={() => setActiveTab('pricing')} className="hover:text-white transition">Pricing</button>
-            <button onClick={() => setActiveTab('brokers')} className="hover:text-white transition">38+ Brokers</button>
-            <button onClick={() => setActiveTab('marketplace')} className="hover:text-white transition">Marketplace</button>
-            <span className="text-slate-600">|</span>
+          <div className="flex items-center gap-6 text-slate-600 dark:text-slate-400">
+            <button onClick={() => setActiveTab('pricing')} className="hover:text-slate-900 dark:hover:text-white transition">Pricing</button>
+            <button onClick={() => setActiveTab('brokers')} className="hover:text-slate-900 dark:hover:text-white transition">38+ Brokers</button>
+            <button onClick={() => setActiveTab('marketplace')} className="hover:text-slate-900 dark:hover:text-white transition">Marketplace</button>
+            <span className="text-slate-300 dark:text-slate-600">|</span>
             <span>Zero-Eval DSL</span>
             <span>SEBI & FinTech Compliant</span>
           </div>

@@ -151,11 +151,11 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-[#131B2E] via-[#1A2542] to-[#131B2E] border border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-50/70 via-slate-50 to-orange-50/70 dark:from-[#131B2E] dark:via-[#1A2542] dark:to-[#131B2E] border border-slate-200 dark:border-[#1E293B] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-[#FF6600]">Options Wizard</span>
-          <h2 className="text-2xl font-black text-white mt-1">Multi-Leg Strategy & Greek Simulator</h2>
-          <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">Multi-Leg Strategy & Greek Simulator</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
             Visually design straddles, strangles, iron condors, and ratio spreads with real-time Black-Scholes Greeks, payoff diagram, and spot price slider.
           </p>
         </div>
@@ -183,7 +183,7 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
             className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
               selectedPreset === p.id
                 ? 'bg-[#FF6600] text-white shadow-md'
-                : 'bg-[#131B2E] border border-[#1E293B] text-slate-400 hover:text-white'
+                : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             {p.label}
@@ -196,26 +196,26 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
         {/* Left: Interactive Payoff Chart & Greeks (7 cols) */}
         <div className="lg:col-span-7 space-y-5">
           {/* Payoff Chart Card */}
-          <div className="p-5 rounded-2xl bg-[#131B2E] border border-[#1E293B] shadow-xl">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] shadow-sm dark:shadow-xl transition-colors">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <BarChart2 className="w-4 h-4 text-[#FF6600]" />
-                <h3 className="font-bold text-sm text-white">Expiration Payoff Curve</h3>
+                <h3 className="font-bold text-sm text-slate-900 dark:text-white">Expiration Payoff Curve</h3>
               </div>
               <div className="flex items-center gap-3 text-xs">
                 <div>
-                  <span className="text-slate-400">Underlying: </span>
-                  <span className="font-bold text-white font-mono">{spotPrice}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Underlying: </span>
+                  <span className="font-bold text-slate-900 dark:text-white font-mono">{spotPrice}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400">Max Profit: </span>
-                  <span className="font-bold text-emerald-400 font-mono">
+                  <span className="text-slate-500 dark:text-slate-400">Max Profit: </span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">
                     {payoffData.maxPnl > 50000 ? 'Unlimited' : `+₹${payoffData.maxPnl.toLocaleString()}`}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400">Max Loss: </span>
-                  <span className="font-bold text-red-400 font-mono">
+                  <span className="text-slate-500 dark:text-slate-400">Max Loss: </span>
+                  <span className="font-bold text-red-600 dark:text-red-400 font-mono">
                     {payoffData.minPnl < -50000 ? 'Undefined' : `₹${payoffData.minPnl.toLocaleString()}`}
                   </span>
                 </div>
@@ -223,7 +223,7 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
             </div>
 
             {/* SVG Visualizer */}
-            <div className="w-full bg-[#0A0D17] rounded-xl border border-[#1E293B] p-2 overflow-hidden flex items-center justify-center">
+            <div className="w-full bg-slate-900 dark:bg-[#0A0D17] rounded-xl border border-slate-200 dark:border-[#1E293B] p-2 overflow-hidden flex items-center justify-center">
               <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
                 {/* Zero PnL Reference Line */}
                 <line x1="0" y1={height / 2} x2={width} y2={height / 2} stroke="#334155" strokeDasharray="3 3" strokeWidth="1" />
@@ -246,7 +246,7 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
               </svg>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 font-mono">
+            <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2 font-mono">
               <span>Low: {spotPrice - 600}</span>
               <span className="text-[#FF6600] font-bold">Spot: {spotPrice}</span>
               <span>High: {spotPrice + 600}</span>
@@ -255,32 +255,32 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
 
           {/* Greeks Bar */}
           <div className="grid grid-cols-4 gap-3">
-            <div className="p-3.5 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">Net Delta (Δ)</div>
-              <div className={`text-base font-black font-mono mt-0.5 ${Number(netGreeks.delta) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Delta (Δ)</div>
+              <div className={`text-base font-black font-mono mt-0.5 ${Number(netGreeks.delta) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                 {netGreeks.delta}
               </div>
-              <div className="text-[10px] text-slate-500">Directional exposure</div>
+              <div className="text-[10px] text-slate-400 dark:text-slate-500">Directional exposure</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">Net Theta (Θ)</div>
-              <div className={`text-base font-black font-mono mt-0.5 ${netGreeks.theta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Theta (Θ)</div>
+              <div className={`text-base font-black font-mono mt-0.5 ${netGreeks.theta >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                 {netGreeks.theta > 0 ? `+₹${netGreeks.theta}` : `₹${netGreeks.theta}`}
               </div>
-              <div className="text-[10px] text-slate-500">Daily time decay</div>
+              <div className="text-[10px] text-slate-400 dark:text-slate-500">Daily time decay</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">Net Gamma (Γ)</div>
-              <div className="text-base font-black font-mono text-blue-400 mt-0.5">{netGreeks.gamma}</div>
-              <div className="text-[10px] text-slate-500">Curvature risk</div>
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Gamma (Γ)</div>
+              <div className="text-base font-black font-mono text-blue-600 dark:text-blue-400 mt-0.5">{netGreeks.gamma}</div>
+              <div className="text-[10px] text-slate-400 dark:text-slate-500">Curvature risk</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#131B2E] border border-[#1E293B] text-center">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">Net Vega (ν)</div>
-              <div className="text-base font-black font-mono text-purple-400 mt-0.5">₹{netGreeks.vega}</div>
-              <div className="text-[10px] text-slate-500">Per 1% IV move</div>
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-center shadow-sm dark:shadow-md transition-colors">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Net Vega (ν)</div>
+              <div className="text-base font-black font-mono text-purple-600 dark:text-purple-400 mt-0.5">₹{netGreeks.vega}</div>
+              <div className="text-[10px] text-slate-400 dark:text-slate-500">Per 1% IV move</div>
             </div>
           </div>
         </div>
@@ -288,12 +288,12 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
         {/* Right: Legs Configuration & Interactive Sliders (5 cols) */}
         <div className="lg:col-span-5 space-y-5">
           {/* Sliders Card */}
-          <div className="p-5 rounded-2xl bg-[#131B2E] border border-[#1E293B] space-y-4 shadow-xl">
-            <h3 className="font-bold text-sm text-white">Market Simulation Sliders</h3>
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] space-y-4 shadow-sm dark:shadow-xl transition-colors">
+            <h3 className="font-bold text-sm text-slate-900 dark:text-white">Market Simulation Sliders</h3>
 
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-slate-400">Simulate Spot Price (NIFTY 50):</span>
+                <span className="text-slate-600 dark:text-slate-400">Simulate Spot Price (NIFTY 50):</span>
                 <span className="font-bold text-[#FF6600] font-mono">{spotPrice}</span>
               </div>
               <input
@@ -309,8 +309,8 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
 
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-slate-400">Days to Expiry (DTE):</span>
-                <span className="font-bold text-white font-mono">{daysToExpiry} Days</span>
+                <span className="text-slate-600 dark:text-slate-400">Days to Expiry (DTE):</span>
+                <span className="font-bold text-slate-900 dark:text-white font-mono">{daysToExpiry} Days</span>
               </div>
               <input
                 type="range"
@@ -325,12 +325,12 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
           </div>
 
           {/* Option Legs Table */}
-          <div className="p-5 rounded-2xl bg-[#131B2E] border border-[#1E293B] space-y-3 shadow-xl">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] space-y-3 shadow-sm dark:shadow-xl transition-colors">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white">Configured Strategy Legs ({legs.length})</h3>
+              <h3 className="font-bold text-sm text-slate-900 dark:text-white">Configured Strategy Legs ({legs.length})</h3>
               <button
                 onClick={() => setLegs([...legs, { id: Date.now(), action: 'BUY', type: 'CE', strike: spotPrice + 100, expiry: 'Current Week', premium: 45.0, lots: 1 }])}
-                className="text-xs px-2.5 py-1 rounded-lg bg-[#0E1526] border border-[#1E293B] text-[#FF6600] hover:border-[#FF6600] font-semibold flex items-center gap-1 transition"
+                className="text-xs px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-[#1E293B] text-[#FF6600] hover:border-[#FF6600] font-semibold flex items-center gap-1 transition"
               >
                 <Plus className="w-3 h-3" /> Add Leg
               </button>
@@ -338,21 +338,21 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
 
             <div className="space-y-2">
               {legs.map(leg => (
-                <div key={leg.id} className="p-3 bg-[#0E1526] rounded-xl border border-[#1E293B] flex items-center justify-between gap-2 text-xs">
+                <div key={leg.id} className="p-3 bg-slate-50 dark:bg-[#0E1526] rounded-xl border border-slate-200 dark:border-[#1E293B] flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${leg.action === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                    <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${leg.action === 'BUY' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/15 text-red-600 dark:text-red-400'}`}>
                       {leg.action}
                     </span>
-                    <span className="font-mono font-bold text-white">{leg.strike}</span>
-                    <span className="text-slate-400 uppercase font-semibold">{leg.type}</span>
+                    <span className="font-mono font-bold text-slate-900 dark:text-white">{leg.strike}</span>
+                    <span className="text-slate-500 dark:text-slate-400 uppercase font-semibold">{leg.type}</span>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-slate-300">₹{leg.premium.toFixed(2)}</span>
-                    <span className="text-slate-400">{leg.lots} lot</span>
+                    <span className="font-mono text-slate-700 dark:text-slate-300">₹{leg.premium.toFixed(2)}</span>
+                    <span className="text-slate-500 dark:text-slate-400">{leg.lots} lot</span>
                     <button
                       onClick={() => setLegs(legs.filter(l => l.id !== leg.id))}
-                      className="p-1 text-slate-500 hover:text-red-400 transition"
+                      className="p-1 text-slate-400 hover:text-red-500 transition"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

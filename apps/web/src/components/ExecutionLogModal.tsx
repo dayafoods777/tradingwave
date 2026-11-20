@@ -27,25 +27,25 @@ export default function ExecutionLogModal({ isOpen, botName, onClose }: Executio
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-[#131B2E] border border-[#1E293B] rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden text-slate-100">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E293B] bg-[#0E1526]">
+      <div className="bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 transition-colors">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#1E293B] bg-slate-50 dark:bg-[#0E1526]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <Terminal className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-base text-white">Execution Logs & Order Audits</h3>
-              <p className="text-xs text-slate-400 font-mono">{botName}</p>
+              <h3 className="font-bold text-base text-slate-900 dark:text-white">Execution Logs & Order Audits</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">{botName}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition">
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4 bg-[#0A0D17] flex-1 overflow-y-auto font-mono text-xs space-y-2 border-b border-[#1E293B]">
+        <div className="p-4 bg-slate-950 dark:bg-[#0A0D17] flex-1 overflow-y-auto font-mono text-xs space-y-2 border-b border-slate-200 dark:border-[#1E293B]">
           {logs.map((log, idx) => (
-            <div key={idx} className="flex items-start gap-2.5 leading-relaxed hover:bg-[#111827] p-1.5 rounded transition">
+            <div key={idx} className="flex items-start gap-2.5 leading-relaxed hover:bg-slate-900 p-1.5 rounded transition">
               <span className="text-slate-500 shrink-0">{log.time}</span>
               <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold shrink-0 ${
                 log.type === 'ORDER' ? 'bg-orange-500/20 text-[#FF6600]' :
@@ -60,12 +60,12 @@ export default function ExecutionLogModal({ isOpen, botName, onClose }: Executio
           ))}
         </div>
 
-        <div className="flex items-center justify-between px-6 py-3 bg-[#0E1526] text-xs text-slate-400">
+        <div className="flex items-center justify-between px-6 py-3 bg-slate-50 dark:bg-[#0E1526] text-xs text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>Continuous Execution Engine · 1-sec Resolution</span>
           </div>
-          <button onClick={onClose} className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition">
+          <button onClick={onClose} className="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-medium transition">
             Close
           </button>
         </div>
