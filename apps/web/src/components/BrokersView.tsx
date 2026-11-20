@@ -108,9 +108,8 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                category === cat ? 'bg-[#FF6600] text-white shadow-sm' : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${category === cat ? 'bg-[#FF6600] text-white shadow-sm' : 'bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
             >
               {cat}
             </button>
@@ -130,11 +129,10 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   {broker.category}
                 </span>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  broker.status === 'CONNECTED'
-                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-                }`}>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${broker.status === 'CONNECTED'
+                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                  }`}>
                   {broker.status === 'CONNECTED' ? '● Connected' : 'Ready to Connect'}
                 </span>
               </div>
@@ -159,11 +157,10 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
             <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-2">
               <button
                 onClick={() => onConfigure(broker.name)}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                  broker.status === 'CONNECTED'
-                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white hover:bg-slate-200'
-                    : 'bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
-                }`}
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${broker.status === 'CONNECTED'
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white hover:bg-slate-200'
+                  : 'bg-gradient-to-r from-[#FF6600] to-[#E65C00] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
+                  }`}
               >
                 <Key className="w-3.5 h-3.5" />
                 <span>{broker.status === 'CONNECTED' ? 'Edit Credentials' : 'Connect Account'}</span>

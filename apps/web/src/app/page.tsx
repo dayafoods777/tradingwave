@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import DashboardView, { BotDeployment } from '../components/DashboardView';
+import MyStrategiesView from '../components/MyStrategiesView';
 import StrategyBuilderView from '../components/StrategyBuilderView';
 import OptionWizardView from '../components/OptionWizardView';
 import OptionChainView from '../components/OptionChainView';
@@ -15,7 +16,7 @@ import BrokerModal from '../components/BrokerModal';
 
 export default function TradingWaveApp() {
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'builder' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
+    'dashboard' | 'mystrategies' | 'builder' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
   >('dashboard');
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
@@ -146,6 +147,15 @@ export default function TradingWaveApp() {
             onSquareOffBot={handleSquareOffBot}
             onOpenLogs={botName => setLogModalBot(botName)}
             onNavigateTab={setActiveTab}
+          />
+        )}
+
+        {activeTab === 'mystrategies' && (
+          <MyStrategiesView
+            onCreateNew={() => setActiveTab('builder')}
+            onEditStrategy={_name => setActiveTab('builder')}
+            onDeployStrategy={name => handleDeployNew(name)}
+            onBacktestStrategy={_name => setActiveTab('backtest')}
           />
         )}
 

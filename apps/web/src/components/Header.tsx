@@ -16,7 +16,9 @@ import {
   ChevronDown,
   ArrowRight,
   BookOpen,
-  FileText
+  FileText,
+  TrendingUp,
+  LayoutGrid
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -244,7 +246,7 @@ export default function Header({
                   setCreateMenuOpen(false);
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition ${
-                  strategiesMenuOpen || ['builder', 'wizard', 'optionchain'].includes(activeTab)
+                  strategiesMenuOpen || ['dashboard', 'mystrategies', 'builder', 'wizard', 'optionchain'].includes(activeTab)
                     ? 'text-[#4F46E5] dark:text-[#818CF8]'
                     : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131B2E]'
                 }`}
@@ -255,49 +257,37 @@ export default function Header({
 
               {strategiesMenuOpen && (
                 <div
-                  className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute left-0 top-full mt-2 w-[480px] bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-[#1E293B] rounded-2xl p-3 shadow-2xl z-50 grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-2 duration-150"
                 >
+                  {/* Deployed */}
                   <button
                     onClick={() => handleSelectStrategiesItem('dashboard')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-center gap-2.5 group"
+                    className="text-left p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:border-[#1E293B] transition group flex flex-col items-start"
                   >
-                    <Bot className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">Deployed Strategies</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Active Live Auto & Paper bots</div>
+                    <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <TrendingUp className="w-5 h-5 stroke-[2.2]" />
+                    </div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#4F46E5] dark:group-hover:text-[#818CF8] transition-colors">
+                      Deployed
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                      Your running deployments, live P&amp;L and positions
                     </div>
                   </button>
 
+                  {/* My Strategies */}
                   <button
-                    onClick={() => handleSelectStrategiesItem('builder')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-center gap-2.5 group"
+                    onClick={() => handleSelectStrategiesItem('mystrategies')}
+                    className="text-left p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-[#0E1526] border border-transparent hover:border-slate-200 dark:border-[#1E293B] transition group flex flex-col items-start"
                   >
-                    <Cpu className="w-4 h-4 text-[#FF6600]" />
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">Strategy Builder</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Conditions, sets & ready templates</div>
+                    <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#4F46E5] dark:text-[#818CF8] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <LayoutGrid className="w-5 h-5 stroke-[2.2]" />
                     </div>
-                  </button>
-
-                  <button
-                    onClick={() => handleSelectStrategiesItem('wizard')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-center gap-2.5 group"
-                  >
-                    <Wand2 className="w-4 h-4 text-indigo-500" />
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">Option Wizard & Greeks</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Straddles, strangles & condors</div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#4F46E5] dark:group-hover:text-[#818CF8] transition-colors">
+                      My Strategies
                     </div>
-                  </button>
-
-                  <button
-                    onClick={() => handleSelectStrategiesItem('optionchain')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#0E1526] transition flex items-center gap-2.5 group"
-                  >
-                    <Layers className="w-4 h-4 text-blue-500" />
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">Live Option Chain</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Symmetric NSE chain with Greeks</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                      Everything you have built and deployed
                     </div>
                   </button>
                 </div>
@@ -408,6 +398,7 @@ export default function Header({
         <div className="max-w-[1440px] mx-auto flex items-center gap-2 overflow-x-auto py-2 no-scrollbar text-xs font-semibold">
           {[
             { id: 'dashboard', label: '⚡ Deployed Bots & Live PnL' },
+            { id: 'mystrategies', label: '📂 My Strategies' },
             { id: 'builder', label: '🛠️ Advanced Strategy Builder' },
             { id: 'wizard', label: '🧙 Option Wizard & Greeks' },
             { id: 'optionchain', label: '📊 Live Option Chain' },
