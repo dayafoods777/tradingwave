@@ -401,29 +401,31 @@ export default function DashboardView({
 
         {/* Card 2: P&L (With subtle rounded highlight border) */}
         <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border-2 border-indigo-100 dark:border-indigo-950/60 shadow-sm flex flex-col justify-between relative overflow-hidden">
-          <div className="flex items-start justify-between">
-            <div>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
                 <TrendingUp className="w-4 h-4 text-slate-400" />
                 <span>P&amp;L</span>
               </div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-mono">
+              <div className="text-xs text-slate-600 dark:text-slate-400 font-mono whitespace-nowrap">
                 - ₹ 1.16 L booked today · +₹ 0.00 open
               </div>
-              <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+              <div className="text-[11px] text-slate-400 font-mono mt-0.5 whitespace-nowrap">
                 Market value of open positions: ₹ 0.00
               </div>
             </div>
 
             {/* Red MTM Negative Value */}
-            <div className="text-right">
-              <div className="flex items-center justify-end gap-1 text-red-600 dark:text-red-400 font-black text-2xl font-mono">
-                <span>▼</span>
-                <span>-₹ 1.16 L</span>
+            <div className="text-right shrink-0">
+              <div className="text-red-600 dark:text-red-400 font-black text-2xl font-mono whitespace-nowrap tracking-tight">
+                -₹ 1.16 L
               </div>
-              <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 text-xs font-bold font-mono">
-                -116.12%
-              </span>
+              <div className="mt-1 flex justify-end">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 text-xs font-bold font-mono whitespace-nowrap">
+                  <span className="text-[10px] leading-none">▼</span>
+                  <span>-116.12%</span>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -562,12 +564,12 @@ export default function DashboardView({
                   </td>
 
                   {/* Capital */}
-                  <td className="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">
+                  <td className="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white whitespace-nowrap">
                     ₹ {(bot.capital / 100000).toFixed(2)} L
                   </td>
 
                   {/* Positions */}
-                  <td className="py-4 px-4 font-mono">
+                  <td className="py-4 px-4 font-mono whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       <span className="text-slate-500 font-bold">•</span>
                       <span className="border-b border-dotted border-slate-400 cursor-pointer text-slate-700 dark:text-slate-300">
@@ -580,12 +582,12 @@ export default function DashboardView({
                   </td>
 
                   {/* P&L (Snapshot) */}
-                  <td className="py-4 px-4 font-mono">
+                  <td className="py-4 px-4 font-mono whitespace-nowrap">
                     <div className="space-y-0.5">
-                      <div className="font-bold text-red-600 dark:text-red-400">
+                      <div className="font-bold text-red-600 dark:text-red-400 whitespace-nowrap">
                         - ₹ {(Math.abs(bot.dailyPnl) / 100000).toFixed(2)} L
                       </div>
-                      <div className="text-[11px] text-red-600 dark:text-red-400">
+                      <div className="text-[11px] text-red-600 dark:text-red-400 whitespace-nowrap">
                         {bot.pnlPercent ? `${bot.pnlPercent.toFixed(2)}%` : '-935.08%'}
                       </div>
                     </div>
