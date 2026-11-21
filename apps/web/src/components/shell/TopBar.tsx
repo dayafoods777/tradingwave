@@ -97,7 +97,7 @@ export default function TopBar({
           <Menu className="h-4 w-4" />
         </button>
 
-        <div className="min-w-0 flex items-center gap-1.5 text-[13px]">
+        <div className="flex min-w-0 items-center gap-1.5 whitespace-nowrap text-[13px]">
           <span className="hidden text-fg-muted sm:inline">algobulls</span>
           <span className="hidden text-fg-muted sm:inline">/</span>
           <span className="truncate font-medium text-fg">{navLabel(active)}</span>
@@ -114,13 +114,13 @@ export default function TopBar({
 
         <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
           {/* Market status + index */}
-          <div className="hidden items-center gap-3 rounded-md px-2 text-[12px] xl:flex">
+          <div className="hidden items-center gap-3 whitespace-nowrap rounded-md px-2 text-[12px] xl:flex">
             <span className="flex items-center gap-1.5 text-fg-secondary">
               <span className={`h-1.5 w-1.5 rounded-full ${status.open ? 'bg-profit' : 'bg-fg-muted'}`} />
               NSE · {status.label}
             </span>
-            {[nifty, bank].map(q => (
-              <span key={q.symbol} className="flex items-baseline gap-1.5">
+            {[nifty, bank].map((q, qi) => (
+              <span key={q.symbol} className={`hidden items-baseline gap-1.5 ${qi === 0 ? "xl:flex" : "2xl:flex"}`}>
                 <span className="text-fg-muted">{q.symbol === 'NIFTY 50' ? 'NIFTY' : q.symbol}</span>
                 <TickNumber value={q.price} className="text-fg" />
                 <span className={`font-mono text-2xs ${q.change >= 0 ? 'text-profit' : 'text-loss'}`}>
@@ -139,7 +139,7 @@ export default function TopBar({
           <button
             onClick={onKillSwitch}
             disabled={isKillSwitchTriggered}
-            className={`tw-btn h-8 border text-[12px] ${
+            className={`tw-btn h-8 whitespace-nowrap border text-[12px] ${
               isKillSwitchTriggered
                 ? 'border-loss/40 bg-loss-soft text-loss disabled:opacity-100'
                 : 'border-loss/30 bg-surface text-loss hover:bg-loss-soft'

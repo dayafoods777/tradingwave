@@ -1,5 +1,6 @@
 'use client';
 
+import PageHeader from './ui/PageHeader';
 import React, { useState } from 'react';
 import { RefreshCw, Filter, Layers, ArrowUpRight } from 'lucide-react';
 
@@ -37,147 +38,137 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
     { callOi: 145000, callOiChg: 9.8, callVol: 310000, callIv: 14.0, callLtp: 28.20, callDelta: 0.18, strike: 24550, putDelta: -0.82, putLtp: 308.20, putIv: 14.2, putVol: 95000, putOiChg: -6.4, putOi: 64000 }
   ];
 
+  const maxOi = Math.max(...strikes.flatMap(r => [r.callOi, r.putOi]));
+  const pcr = strikes.reduce((a, r) => a + r.putOi, 0) / strikes.reduce((a, r) => a + r.callOi, 0);
+  const fmt = (n: number) => n.toLocaleString('en-IN');
+
+  const LegButtons = ({ strike, type }: { strike: number; type: 'CALL' | 'PUT' }) => (
+    <div className={`flex gap-1 ${type === 'CALL' ? 'justify-end' : ''}`}>
+      <button
+        onClick={() => onAddLeg(strike, type, 'BUY')}
+        className="h-5 w-5 rounded border border-profit/30 text-[10px] font-semibold text-profit transition-colors hover:bg-profit hover:text-white"
+        aria-label={`Buy ${strike} ${type === 'CALL' ? 'CE' : 'PE'}`}
+      >
+        B
+      </button>
+      <button
+        onClick={() => onAddLeg(strike, type, 'SELL')}
+        className="h-5 w-5 rounded border border-loss/30 text-[10px] font-semibold text-loss transition-colors hover:bg-loss hover:text-white"
+        aria-label={`Sell ${strike} ${type === 'CALL' ? 'CE' : 'PE'}`}
+      >
+        S
+      </button>
+    </div>
+  );
+
+  const OiCell = ({ value, side }: { value: number; side: 'call' | 'put' }) => (
+    <td className={`relative px-3 py-2 ${side === 'call' ? 'text-left' : 'text-right'}`}>
+      <span
+        className={`absolute inset-y-1.5 ${side === 'call' ? 'left-0 rounded-r-sm bg-profit/10' : 'right-0 rounded-l-sm bg-loss/10'}`}
+        style={{ width: `${(value / maxOi) * 100}%` }}
+      />
+      <span className="relative text-fg-secondary">{fmt(value)}</span>
+    </td>
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Controls Bar */}
-      <div className="p-4 rounded-lg bg-surface border border-border flex flex-wrap items-center justify-between gap-4 transition-colors">
-        <div className="flex items-center gap-3">
-          <select
-            value={underlying}
-            onChange={e => setUnderlying(e.target.value)}
-            className="bg-subtle border border-border rounded-lg px-3 py-1.5 text-xs font-semibold text-fg focus:outline-none focus:border-primary"
-          >
-            <option value="NIFTY 50">NIFTY 50</option>
-            <option value="BANKNIFTY">BANKNIFTY</option>
-            <option value="FINNIFTY">FINNIFTY</option>
-            <option value="SENSEX">SENSEX</option>
-          </select>
+    <div className="space-y-5 pb-8">
+      <PageHeader
+        title="Option chain"
+        description="Strikes around the money with OI, IV and delta. Add a leg to the builder straight from the chain."
+        actions={
+          <>
+            <select value={underlying} onChange={e => setUnderlying(e.target.value)} className="tw-input w-auto font-medium" aria-label="Underlying">
+              <option value="NIFTY 50">NIFTY 50</option>
+              <option value="BANKNIFTY">BANKNIFTY</option>
+              <option value="FINNIFTY">FINNIFTY</option>
+              <option value="SENSEX">SENSEX</option>
+            </select>
+            <select value={expiry} onChange={e => setExpiry(e.target.value)} className="tw-input w-auto" aria-label="Expiry">
+              <option value="28-NOV-2024">28 Nov · weekly</option>
+              <option value="05-DEC-2024">05 Dec · weekly</option>
+              <option value="26-DEC-2024">26 Dec · monthly</option>
+            </select>
+            <button className="tw-btn-secondary h-8 w-8 px-0" aria-label="Refresh"><RefreshCw className="h-3.5 w-3.5" /></button>
+          </>
+        }
+      />
 
-          <select
-            value={expiry}
-            onChange={e => setExpiry(e.target.value)}
-            className="bg-subtle border border-border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary"
-          >
-            <option value="28-NOV-2024">28 Nov 2024 (Weekly)</option>
-            <option value="05-DEC-2024">05 Dec 2024 (Weekly)</option>
-            <option value="26-DEC-2024">26 Dec 2024 (Monthly)</option>
-          </select>
-
-          <div className="text-xs">
-            <span className="text-fg-muted">Spot: </span>
-            <span className="font-semibold text-profit font-mono">24,352.40 (+112.50)</span>
+      <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-border bg-surface sm:grid-cols-4">
+        {[
+          ['Spot', <span key="s" className="text-fg">{fmt(24352.4)}<span className="ml-1.5 text-[12px] text-profit">+112.50</span></span>],
+          ['ATM strike', <span key="a">{fmt(spotPrice)}</span>],
+          ['PCR (OI)', <span key="p">{pcr.toFixed(2)}</span>],
+          ['Feed', <span key="f" className="flex items-center gap-1.5 font-sans text-[13px] text-fg-secondary"><span className="h-1.5 w-1.5 rounded-full bg-profit" /> Live · Black-Scholes</span>],
+        ].map(([k, v], i) => (
+          <div key={k as string} className={`px-4 py-3 ${i % 2 ? 'border-l' : ''} ${i > 1 ? 'border-t sm:border-l sm:border-t-0' : ''} border-border`}>
+            <div className="tw-label">{k}</div>
+            <div className="mt-1 font-mono tnum text-[16px] font-medium text-fg">{v}</div>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-fg-muted">
-          <span className="w-2 h-2 rounded-full bg-profit animate-pulse"></span>
-          <span>Live WebSocket Feed · Greeks by Black-Scholes</span>
-        </div>
+        ))}
       </div>
 
-      {/* Symmetric NSE Option Chain Table */}
-      <div className="rounded-lg border border-border bg-surface overflow-hidden transition-colors">
+      <div className="overflow-hidden rounded-lg border border-border bg-surface">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs font-mono border-collapse text-right">
+          <table className="w-full min-w-[920px] border-collapse font-mono tnum text-[12.5px]">
             <thead>
-              <tr className="bg-muted text-fg-secondary uppercase text-[10px] tracking-wider border-b border-border">
-                <th colSpan={6} className="py-2.5 px-3 text-center text-profit bg-profit-soft border-r border-border">
-                  CALLS (CE)
+              <tr className="border-b border-border text-[11px]">
+                <th colSpan={6} className="px-3 py-2 text-left font-sans font-medium text-fg-secondary">
+                  <span className="mr-1.5 inline-block h-2 w-2 rounded-sm bg-profit/60" />Calls
                 </th>
-                <th className="py-2.5 px-4 text-center text-fg bg-muted border-r border-border">
-                  STRIKE
-                </th>
-                <th colSpan={6} className="py-2.5 px-3 text-center text-loss bg-loss-soft">
-                  PUTS (PE)
+                <th className="border-x border-border px-3 py-2 font-sans font-medium text-fg">{expiry.slice(0, 6).replace('-', ' ')}</th>
+                <th colSpan={6} className="px-3 py-2 text-right font-sans font-medium text-fg-secondary">
+                  Puts<span className="ml-1.5 inline-block h-2 w-2 rounded-sm bg-loss/60" />
                 </th>
               </tr>
-              <tr className="bg-subtle text-fg-muted text-[10px] border-b border-border">
-                <th className="py-2 px-2 text-left">OI</th>
-                <th className="py-2 px-2">Volume</th>
-                <th className="py-2 px-2">IV%</th>
-                <th className="py-2 px-2">Delta</th>
-                <th className="py-2 px-2">LTP</th>
-                <th className="py-2 px-2 border-r border-border">Action</th>
-
-                <th className="py-2 px-4 text-center font-semibold text-fg bg-muted border-r border-border">
-                  STRIKE
-                </th>
-
-                <th className="py-2 px-2 text-left">Action</th>
-                <th className="py-2 px-2">LTP</th>
-                <th className="py-2 px-2">Delta</th>
-                <th className="py-2 px-2">IV%</th>
-                <th className="py-2 px-2">Volume</th>
-                <th className="py-2 px-2">OI</th>
+              <tr className="border-b border-border bg-subtle font-sans text-[11px] text-fg-muted">
+                <th className="px-3 py-1.5 text-left font-medium">OI</th>
+                <th className="px-3 py-1.5 text-right font-medium">Volume</th>
+                <th className="px-3 py-1.5 text-right font-medium">IV</th>
+                <th className="px-3 py-1.5 text-right font-medium">Δ</th>
+                <th className="px-3 py-1.5 text-right font-medium">LTP</th>
+                <th className="px-3 py-1.5 font-medium" />
+                <th className="border-x border-border px-3 py-1.5 text-center font-medium">Strike</th>
+                <th className="px-3 py-1.5 font-medium" />
+                <th className="px-3 py-1.5 text-right font-medium">LTP</th>
+                <th className="px-3 py-1.5 text-right font-medium">Δ</th>
+                <th className="px-3 py-1.5 text-right font-medium">IV</th>
+                <th className="px-3 py-1.5 text-right font-medium">Volume</th>
+                <th className="px-3 py-1.5 text-right font-medium">OI</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
-              {strikes.map(row => (
-                <tr
-                  key={row.strike}
-                  className={`hover:bg-subtle transition ${
-                    row.isAtm ? 'bg-primary-soft font-semibold' : ''
-                  }`}
-                >
-                  {/* CALLS */}
-                  <td className="py-2.5 px-2 text-left text-fg-secondary font-sans">{row.callOi.toLocaleString()}</td>
-                  <td className="py-2.5 px-2 text-fg-muted font-sans">{row.callVol.toLocaleString()}</td>
-                  <td className="py-2.5 px-2 text-fg-secondary">{row.callIv}%</td>
-                  <td className="py-2.5 px-2 text-profit font-semibold">{row.callDelta}</td>
-                  <td className="py-2.5 px-2 text-fg font-semibold">₹{row.callLtp.toFixed(2)}</td>
-                  <td className="py-2.5 px-2 border-r border-border">
-                    <div className="flex gap-1 justify-end">
-                      <button
-                        onClick={() => onAddLeg(row.strike, 'CALL', 'BUY')}
-                        className="px-1.5 py-0.5 rounded bg-profit-soft text-profit hover:bg-profit hover:text-white text-[10px] font-semibold"
-                      >
-                        B
-                      </button>
-                      <button
-                        onClick={() => onAddLeg(row.strike, 'CALL', 'SELL')}
-                        className="px-1.5 py-0.5 rounded bg-loss-soft text-loss hover:bg-loss hover:text-white text-[10px] font-semibold"
-                      >
-                        S
-                      </button>
-                    </div>
-                  </td>
-
-                  {/* STRIKE (CENTER) */}
-                  <td
-                    className={`py-2.5 px-4 text-center font-semibold border-r border-border ${
-                      row.isAtm ? 'bg-primary text-primary-fg font-semibold' : 'bg-muted text-fg'
-                    }`}
-                  >
-                    {row.strike}
-                    {row.isAtm && <span className="text-[9px] block uppercase font-mono tracking-wider">ATM</span>}
-                  </td>
-
-                  {/* PUTS */}
-                  <td className="py-2.5 px-2 text-left">
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => onAddLeg(row.strike, 'PUT', 'BUY')}
-                        className="px-1.5 py-0.5 rounded bg-profit-soft text-profit hover:bg-profit hover:text-white text-[10px] font-semibold"
-                      >
-                        B
-                      </button>
-                      <button
-                        onClick={() => onAddLeg(row.strike, 'PUT', 'SELL')}
-                        className="px-1.5 py-0.5 rounded bg-loss-soft text-loss hover:bg-loss hover:text-white text-[10px] font-semibold"
-                      >
-                        S
-                      </button>
-                    </div>
-                  </td>
-                  <td className="py-2.5 px-2 text-fg font-semibold">₹{row.putLtp.toFixed(2)}</td>
-                  <td className="py-2.5 px-2 text-loss font-semibold">{row.putDelta}</td>
-                  <td className="py-2.5 px-2 text-fg-secondary">{row.putIv}%</td>
-                  <td className="py-2.5 px-2 text-fg-muted font-sans">{row.putVol.toLocaleString()}</td>
-                  <td className="py-2.5 px-2 text-right text-fg-secondary font-sans">{row.putOi.toLocaleString()}</td>
-                </tr>
-              ))}
+            <tbody>
+              {strikes.map(row => {
+                const callItm = row.strike < spotPrice;
+                const putItm = row.strike > spotPrice;
+                return (
+                  <tr key={row.strike} className={`group border-b border-border last:border-0 transition-colors hover:bg-subtle ${row.isAtm ? 'bg-accent-soft/50' : ''}`}>
+                    <OiCell value={row.callOi} side="call" />
+                    <td className={`px-3 py-2 text-right text-fg-muted ${callItm ? 'bg-subtle/70' : ''}`}>{fmt(row.callVol)}</td>
+                    <td className={`px-3 py-2 text-right text-fg-secondary ${callItm ? 'bg-subtle/70' : ''}`}>{row.callIv.toFixed(1)}</td>
+                    <td className={`px-3 py-2 text-right text-fg-secondary ${callItm ? 'bg-subtle/70' : ''}`}>{row.callDelta.toFixed(2)}</td>
+                    <td className={`px-3 py-2 text-right font-medium text-fg ${callItm ? 'bg-subtle/70' : ''}`}>{row.callLtp.toFixed(2)}</td>
+                    <td className={`px-2 py-2 ${callItm ? 'bg-subtle/70' : ''}`}><LegButtons strike={row.strike} type="CALL" /></td>
+                    <td className={`relative border-x border-border px-4 py-2 text-center font-medium ${row.isAtm ? 'text-fg' : 'text-fg-secondary'}`}>
+                      {row.isAtm && <span className="absolute inset-y-0 left-0 w-[2px] bg-accent" />}
+                      {fmt(row.strike)}
+                      {row.isAtm && <span className="ml-1.5 align-middle font-sans text-[9.5px] font-semibold uppercase tracking-wider text-accent-fg">ATM</span>}
+                    </td>
+                    <td className={`px-2 py-2 ${putItm ? 'bg-subtle/70' : ''}`}><LegButtons strike={row.strike} type="PUT" /></td>
+                    <td className={`px-3 py-2 text-right font-medium text-fg ${putItm ? 'bg-subtle/70' : ''}`}>{row.putLtp.toFixed(2)}</td>
+                    <td className={`px-3 py-2 text-right text-fg-secondary ${putItm ? 'bg-subtle/70' : ''}`}>{row.putDelta.toFixed(2)}</td>
+                    <td className={`px-3 py-2 text-right text-fg-secondary ${putItm ? 'bg-subtle/70' : ''}`}>{row.putIv.toFixed(1)}</td>
+                    <td className={`px-3 py-2 text-right text-fg-muted ${putItm ? 'bg-subtle/70' : ''}`}>{fmt(row.putVol)}</td>
+                    <OiCell value={row.putOi} side="put" />
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2 text-[11.5px] text-fg-muted">
+          <span>Shaded cells are in the money. Bars show open interest relative to the largest strike.</span>
+          <span className="font-mono">Lot size 75 · Prices in ₹</span>
         </div>
       </div>
     </div>

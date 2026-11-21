@@ -877,7 +877,7 @@ export default function StrategyBuilderView({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-border text-xs">
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Default Underlying</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Default Underlying</label>
             <select
               value={underlying}
               onChange={e => setUnderlying(e.target.value)}
@@ -892,7 +892,7 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Continuous Check Frequency</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Continuous Check Frequency</label>
             <select
               value={checkFrequency}
               onChange={e => setCheckFrequency(e.target.value)}
@@ -908,7 +908,7 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Execution Rule</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Execution Rule</label>
             <label className="flex items-center gap-2 mt-2 cursor-pointer text-fg-secondary">
               <input
                 type="checkbox"
@@ -921,7 +921,7 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Pre-trade Risk Guard</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Pre-trade Risk Guard</label>
             <div className="flex items-center gap-1.5 text-profit font-semibold mt-1.5">
               <ShieldCheck className="w-4 h-4" />
               <span>Active · Margin & Collar Guard</span>
@@ -1257,7 +1257,7 @@ export default function StrategyBuilderView({
             {hasRepair && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
                 <div>
-                  <span className="text-fg-secondary text-[11px] block mb-1">Repair Trigger Condition:</span>
+                  <span className="font-sans text-fg-secondary text-[12px] block mb-1">Repair Trigger Condition:</span>
                   <input
                     type="text"
                     value={repairCondition}
@@ -1266,7 +1266,7 @@ export default function StrategyBuilderView({
                   />
                 </div>
                 <div>
-                  <span className="text-fg-secondary text-[11px] block mb-1">Action when Repair Triggers:</span>
+                  <span className="font-sans text-fg-secondary text-[12px] block mb-1">Action when Repair Triggers:</span>
                   <input
                     type="text"
                     value={repairLegAction}
@@ -1328,9 +1328,9 @@ export default function StrategyBuilderView({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 text-xs font-mono">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 text-xs">
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Universal Stop Loss (₹)</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Universal Stop Loss (₹)</label>
             <input
               type="text"
               value={universalSl}
@@ -1340,7 +1340,7 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Universal Target (₹)</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Universal Target (₹)</label>
             <input
               type="text"
               value={universalTarget}
@@ -1350,7 +1350,7 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Trail If Profit Increases By (₹)</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Trail If Profit Increases By (₹)</label>
             <input
               type="text"
               value={trailIfProfit}
@@ -1360,7 +1360,7 @@ export default function StrategyBuilderView({
           </div>
 
           <div>
-            <label className="block text-fg-secondary font-semibold mb-1">Trail Stop-Loss By (₹)</label>
+            <label className="block text-[12px] text-fg-secondary font-medium mb-1">Trail Stop-Loss By (₹)</label>
             <input
               type="text"
               value={trailStopBy}
@@ -1405,7 +1405,7 @@ export default function StrategyBuilderView({
             onClick={() => onDeploy(strategyName || 'My Strategy')}
             className="px-5 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 flex items-center gap-1.5 transition"
           >
-            <Play className="w-3.5 h-3.5 fill-white" />
+            <Play className="w-3.5 h-3.5 fill-current" />
             <span>Deploy 1-Click</span>
           </button>
         </div>

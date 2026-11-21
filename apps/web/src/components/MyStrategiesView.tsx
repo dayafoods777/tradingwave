@@ -320,7 +320,7 @@ export default function MyStrategiesView({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 pb-8">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-surface border border-primary text-fg px-5 py-3 rounded-lg shadow-pop flex items-center gap-3 duration-150">
@@ -329,154 +329,67 @@ export default function MyStrategiesView({
         </div>
       )}
 
-      {/* 1. TOP BANNER - Tradetron Signature Header */}
-      <div className="relative p-6 sm:p-7 rounded-lg bg-subtle border-2 border-primary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      {/* Page header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          {/* Eyebrow */}
-          <div className="flex items-center gap-1.5 text-primary font-semibold text-[11px] tracking-widest uppercase mb-1">
-            <span className="w-3.5 h-[2px] bg-primary inline-block rounded-full"></span>
-            <span className="w-3.5 h-[2px] bg-primary inline-block rounded-full"></span>
-            <span>STRATEGIES</span>
-          </div>
-
-          {/* Title */}
-          <h2 className="text-2xl sm:text-3xl font-semibold text-fg tracking-tight">
-            My Strategies
-          </h2>
-
-          {/* Subtitle */}
-          <p className="text-xs sm:text-sm text-fg-muted mt-1">
-            Everything you&apos;ve built and subscribed to, ready to deploy.
-          </p>
+          <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-fg">My strategies</h1>
+          <p className="mt-0.5 text-[13px] text-fg-muted">Everything you have built or subscribed to, ready to test and deploy.</p>
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleBulkDelete}
             disabled={selectedIds.length === 0}
-            className={`px-4 py-2 rounded-full border text-xs font-semibold transition flex items-center gap-2 ${
-              selectedIds.length > 0
-                ? 'border-loss/30 bg-loss-soft text-loss hover:bg-loss-soft cursor-pointer'
-                : 'border-border bg-surface text-loss/50 cursor-not-allowed'
-            }`}
+            className="tw-btn-secondary text-loss hover:bg-loss-soft"
           >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Bulk delete {selectedIds.length > 0 ? `(${selectedIds.length})` : ''}</span>
+            <Trash2 className="h-3.5 w-3.5" /> Delete{selectedIds.length > 0 ? ` (${selectedIds.length})` : ''}
           </button>
-
-          <button
-            onClick={onCreateNew}
-            className="px-4 py-2 rounded-full border border-border bg-surface text-fg hover:bg-subtle text-xs font-semibold transition flex items-center gap-1.5"
-          >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>New strategy</span>
+          <button onClick={onCreateNew} className="tw-btn-primary">
+            <Plus className="h-3.5 w-3.5" /> New strategy
           </button>
         </div>
       </div>
 
-      {/* 2. SUB-NAVIGATION TABS STRIP (Ready Strategies after My Strategies - SS1) */}
-      <div className="flex items-center gap-8 border-b border-border text-sm font-semibold">
-        <button
-          onClick={() => onNavigateTab && onNavigateTab('dashboard')}
-          className="pb-3 text-fg-muted hover:text-fg transition"
-        >
-          Deployed
-        </button>
-        <button
-          className="pb-3 text-primary border-b-2 border-primary font-semibold"
-        >
-          My Strategies
-        </button>
-        <button
-          onClick={() => onNavigateTab && onNavigateTab('readystrategies')}
-          className="pb-3 text-fg-muted hover:text-fg transition"
-        >
-          Ready Strategies
-        </button>
-        <button
-          onClick={() => onNavigateTab && onNavigateTab('backtest')}
-          className="pb-3 text-fg-muted hover:text-fg transition"
-        >
-          Backtest
-        </button>
+      {/* Counters */}
+      <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-border bg-surface sm:grid-cols-4">
+        {[
+          ['Private', strategies.filter(s => s.visibility === 'PRIVATE').length],
+          ['Private link', strategies.filter(s => s.visibility === 'PRIVATE_LINK').length],
+          ['Option wizard', strategies.filter(s => s.type === 'Option Wizard').length],
+          ['Subscribed', 0],
+        ].map(([label, n], i) => (
+          <div key={label as string} className={`px-4 py-3 ${i % 2 ? 'border-l' : ''} ${i > 1 ? 'border-t sm:border-l sm:border-t-0' : ''} border-border`}>
+            <div className="tw-label">{label}</div>
+            <div className="mt-1 font-mono tnum text-[20px] font-medium text-fg">{n}</div>
+          </div>
+        ))}
       </div>
 
-      {/* 3. METRIC COUNTERS STRIP (Marketplace excluded) */}
-      <div className="rounded-lg border border-border bg-surface overflow-hidden grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border transition-colors">
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
-            Private
-          </span>
-          <div className="text-2xl font-semibold text-fg font-mono mt-1">
-            {strategies.filter(s => s.visibility === 'PRIVATE').length}
-          </div>
-        </div>
-
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
-            Private Link
-          </span>
-          <div className="text-2xl font-semibold text-fg font-mono mt-1">
-            {strategies.filter(s => s.visibility === 'PRIVATE_LINK').length}
-          </div>
-        </div>
-
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
-            Option Wizard
-          </span>
-          <div className="text-2xl font-semibold text-fg font-mono mt-1">
-            {strategies.filter(s => s.type === 'Option Wizard').length}
-          </div>
-        </div>
-
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
-            Subscribed
-          </span>
-          <div className="text-2xl font-semibold text-fg font-mono mt-1">
-            0
-          </div>
-        </div>
-      </div>
-
-      {/* 4. MAIN SPLIT LAYOUT: LEFT SIDEBAR FILTERS + RIGHT STRATEGIES LIST */}
-      <div className="flex flex-col lg:flex-row items-start gap-6">
-        {/* LEFT SIDEBAR: FILTERS */}
-        <aside className="w-full lg:w-72 shrink-0 space-y-6">
-          {/* Search Box */}
+      <div className="flex flex-col items-start gap-5 lg:flex-row">
+        {/* Filters */}
+        <aside className="w-full shrink-0 space-y-5 lg:sticky lg:top-16 lg:w-56">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-fg-muted" />
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-fg-muted" />
             <input
               type="text"
-              placeholder="Search name..."
+              placeholder="Search strategies"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-surface border border-border rounded-lg pl-10 pr-4 py-2.5 text-xs text-fg placeholder:text-fg-muted focus:outline-none focus:border-primary transition"
+              className="tw-input pl-8"
             />
           </div>
 
-          {/* TYPE Filters */}
-          <div className="space-y-2.5">
-            <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-fg-muted">
-              <span>Type</span>
-              <button
-                onClick={clearAllFilters}
-                className="text-primary hover:underline font-semibold capitalize tracking-normal text-xs"
-              >
-                Clear all
-              </button>
+          <div>
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="tw-label">Type</span>
+              <button onClick={clearAllFilters} className="text-[12px] text-primary hover:underline">Clear</button>
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1 lg:flex-col lg:gap-px">
               {typeFilters.map(type => (
                 <button
                   key={type}
                   onClick={() => setSelectedType(type)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                    selectedType === type
-                      ? 'bg-primary text-primary-fg'
-                      : 'bg-surface border border-border text-fg-secondary hover:bg-subtle'
+                  className={`flex h-7 items-center justify-between rounded-md px-2 text-left text-[13px] transition-colors lg:w-full ${
+                    selectedType === type ? 'bg-surface font-medium text-fg shadow-hairline' : 'text-fg-secondary hover:bg-subtle hover:text-fg'
                   }`}
                 >
                   {type}
@@ -485,49 +398,32 @@ export default function MyStrategiesView({
             </div>
           </div>
 
-          {/* VISIBILITY Filters */}
-          <div className="space-y-2.5">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-fg-muted">
-              Visibility
-            </div>
+          <div>
+            <div className="tw-label mb-1.5">Visibility</div>
             <div className="flex flex-wrap gap-1.5">
-              <button
-                onClick={() => setSelectedVisibility(selectedVisibility === 'Private' ? 'All' : 'Private')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                  selectedVisibility === 'Private'
-                    ? 'bg-primary text-primary-fg'
-                    : 'bg-surface border border-border text-fg-secondary hover:bg-subtle'
-                }`}
-              >
-                Private {strategies.filter(s => s.visibility === 'PRIVATE').length}
-              </button>
-              <button
-                onClick={() => setSelectedVisibility(selectedVisibility === 'Private Link' ? 'All' : 'Private Link')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                  selectedVisibility === 'Private Link'
-                    ? 'bg-primary text-primary-fg'
-                    : 'bg-surface border border-border text-fg-secondary hover:bg-subtle'
-                }`}
-              >
-                Private Link {strategies.filter(s => s.visibility === 'PRIVATE_LINK').length}
-              </button>
+              {([['Private', 'PRIVATE'], ['Private Link', 'PRIVATE_LINK']] as const).map(([label, key]) => (
+                <button
+                  key={label}
+                  onClick={() => setSelectedVisibility(selectedVisibility === label ? 'All' : label)}
+                  className={`tw-badge h-6 border px-2 text-[12px] ${
+                    selectedVisibility === label ? 'border-primary/40 bg-primary-soft text-primary' : 'border-border text-fg-secondary hover:bg-subtle'
+                  }`}
+                >
+                  {label} <span className="font-mono text-fg-muted">{strategies.filter(s => s.visibility === key).length}</span>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* EXCHANGES Filters */}
-          <div className="space-y-2.5">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-fg-muted">
-              Exchanges
-            </div>
+          <div>
+            <div className="tw-label mb-1.5">Exchange</div>
             <div className="flex flex-wrap gap-1.5">
               {exchangeFilters.map(ex => (
                 <button
                   key={ex}
                   onClick={() => setSelectedExchange(selectedExchange === ex ? 'All' : ex)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition ${
-                    selectedExchange === ex
-                      ? 'bg-primary text-primary-fg'
-                      : 'bg-surface border border-border text-fg-secondary hover:bg-subtle'
+                  className={`tw-badge h-6 border px-2 font-mono text-[11px] ${
+                    selectedExchange === ex ? 'border-primary/40 bg-primary-soft text-primary' : 'border-border text-fg-secondary hover:bg-subtle'
                   }`}
                 >
                   {ex}
@@ -537,177 +433,132 @@ export default function MyStrategiesView({
           </div>
         </aside>
 
-        {/* RIGHT MAIN AREA: STRATEGIES LIST */}
-        <div className="flex-1 w-full space-y-4">
-          {/* Header Bar: Count + Sort */}
-          <div className="flex items-center justify-between pb-2">
-            <span className="text-xs font-semibold text-fg-secondary font-mono">
-              {filteredStrategies.length} strategies
+        {/* List */}
+        <div className="w-full min-w-0 flex-1 overflow-hidden rounded-lg border border-border bg-surface">
+          <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-2.5">
+            <span className="text-[13px] text-fg-secondary">
+              <span className="font-mono tnum text-fg">{filteredStrategies.length}</span> strategies
             </span>
-
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as any)}
-              className="bg-surface border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-fg-secondary focus:outline-none focus:border-primary cursor-pointer"
+              className="tw-input h-7 w-auto cursor-pointer pr-7 text-[12px]"
+              aria-label="Sort"
             >
               <option value="NEWEST">Newest first</option>
               <option value="OLDEST">Oldest first</option>
-              <option value="NAME">Name (A-Z)</option>
-              <option value="CAPITAL_ASC">Min Capital: Low to High</option>
-              <option value="CAPITAL_DESC">Min Capital: High to Low</option>
+              <option value="NAME">Name (A–Z)</option>
+              <option value="CAPITAL_ASC">Min capital: low to high</option>
+              <option value="CAPITAL_DESC">Min capital: high to low</option>
             </select>
           </div>
 
-          {/* Strategies Rows matching Tradetron Card Strip */}
-          <div className="space-y-3">
-            {filteredStrategies.map(strat => {
-              return (
-                <div
-                  key={strat.id}
-                  className="p-4 sm:p-5 rounded-lg bg-surface border border-border hover:shadow-sm hover:border-border-strong transition flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4"
-                >
-                  {/* Left: Badges + Title + Metadata */}
-                  <div className="space-y-1.5 min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-soft text-primary text-[10px] font-semibold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                        <span>{strat.type}</span>
-                      </span>
-
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-border text-fg-muted text-[10px] font-semibold uppercase tracking-wider">
-                        <Lock className="w-2.5 h-2.5" />
-                        <span>{strat.visibility}</span>
-                      </span>
-                    </div>
-
-                    <h3 className="text-base font-semibold text-fg truncate">
-                      {strat.name}
-                    </h3>
-
-                    <div className="text-xs text-fg-muted flex items-center gap-2">
-                      <span>by <strong className="text-fg-secondary">{strat.author}</strong></span>
-                      <span>·</span>
-                      <span>created {strat.createdAgo}</span>
-                      <span>·</span>
-                      <span>{strat.liveDeploys} live deploys</span>
-                    </div>
-                  </div>
-
-                  {/* Middle: Segment & Min Capital */}
-                  <div className="flex items-center gap-8 px-2 xl:px-6 shrink-0">
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold tracking-wider text-fg-muted block mb-0.5">
-                        Segment
-                      </span>
-                      <span className="text-xs font-semibold text-fg font-mono uppercase">
-                        {strat.segment}
-                      </span>
-                    </div>
-
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold tracking-wider text-fg-muted block mb-0.5">
-                        Min Capital
-                      </span>
-                      <span className="text-sm font-semibold text-fg font-mono">
-                        {strat.minCapitalDisplay}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Right Action Icons Strip & Deploy Button */}
-                  <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 self-end xl:self-center">
-                    {/* Favorite Button */}
-                    <button
-                      onClick={() => toggleFavorite(strat.id)}
-                      className={`p-2 rounded-lg border transition ${
-                        strat.isFavorite
-                          ? 'border-loss/30 bg-loss-soft text-loss'
-                          : 'border-border text-fg-muted hover:text-fg-secondary hover:bg-subtle'
-                      }`}
-                      title="Favorite"
-                    >
-                      <Heart className={`w-3.5 h-3.5 ${strat.isFavorite ? 'fill-loss' : ''}`} />
-                    </button>
-
-                    {/* Copy / Duplicate Button */}
-                    <button
-                      onClick={() => handleDuplicate(strat)}
-                      className="p-2 rounded-lg border border-border text-fg-muted hover:text-fg-secondary hover:bg-subtle transition"
-                      title="Duplicate Strategy"
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Edit Button */}
-                    <button
-                      onClick={() => onEditStrategy(strat.name)}
-                      className="p-2 rounded-lg border border-border text-fg-muted hover:text-fg-secondary hover:bg-subtle transition"
-                      title="Edit in Strategy Builder"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* BackTest Button */}
-                    <button
-                      onClick={() => onBacktestStrategy(strat.name)}
-                      className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-fg-secondary hover:bg-subtle transition"
-                    >
-                      BackTest
-                    </button>
-
-                    {/* Share Button */}
-                    <button
-                      onClick={() => handleShare(strat)}
-                      className="p-2 rounded-lg border border-border text-fg-muted hover:text-fg-secondary hover:bg-subtle transition"
-                      title="Share Private Link"
-                    >
-                      <Share2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Delete Button */}
-                    <button
-                      onClick={() => handleDeleteSingle(strat.id, strat.name)}
-                      className="p-2 rounded-lg border border-border text-fg-muted hover:text-loss hover:bg-loss-soft transition"
-                      title="Delete Strategy"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* API Pill Button */}
-                    <button
-                      onClick={() => setApiModalStrategy(strat)}
-                      className="px-2.5 py-1.5 rounded-lg border border-border text-xs font-semibold text-fg-secondary hover:bg-subtle font-mono transition"
-                      title="API Webhooks & PineBridge"
-                    >
-                      API
-                    </button>
-
-                    {/* Deploy Button */}
-                    <button
-                      onClick={() => setDeployModalStrategy(strat)}
-                      className="px-5 py-1.5 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold active:scale-95 transition flex items-center gap-1.5"
-                    >
-                      <span>Deploy</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-
-            {filteredStrategies.length === 0 && (
-              <div className="p-12 text-center rounded-lg bg-surface border border-border">
-                <p className="text-xs text-fg-muted">
-                  No strategies match your filter criteria.
-                </p>
-                <button
-                  onClick={clearAllFilters}
-                  className="mt-3 text-xs text-primary font-semibold hover:underline"
-                >
-                  Clear all filters
-                </button>
-              </div>
-            )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-[13px]">
+              <thead className="border-b border-border bg-subtle text-[11px] text-fg-muted">
+                <tr>
+                  <th className="w-10 px-4 py-2">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all"
+                      className="accent-primary"
+                      checked={filteredStrategies.length > 0 && filteredStrategies.every(s => selectedIds.includes(s.id))}
+                      onChange={e => setSelectedIds(e.target.checked ? filteredStrategies.map(s => s.id) : [])}
+                    />
+                  </th>
+                  <th className="px-2 py-2 font-medium">Strategy</th>
+                  <th className="px-3 py-2 font-medium">Segment</th>
+                  <th className="px-3 py-2 text-right font-medium">Min capital</th>
+                  <th className="px-3 py-2 text-right font-medium">Live</th>
+                  <th className="px-4 py-2 text-right font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filteredStrategies.map(strat => (
+                  <tr key={strat.id} className={`group transition-colors hover:bg-subtle ${selectedIds.includes(strat.id) ? 'bg-primary-soft/40' : ''}`}>
+                    <td className="px-4 py-2.5 align-top">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${strat.name}`}
+                        className="mt-1 accent-primary"
+                        checked={selectedIds.includes(strat.id)}
+                        onChange={() =>
+                          setSelectedIds(prev => (prev.includes(strat.id) ? prev.filter(x => x !== strat.id) : [...prev, strat.id]))
+                        }
+                      />
+                    </td>
+                    <td className="min-w-[240px] px-2 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="truncate font-medium text-fg">{strat.name}</span>
+                      </div>
+                      <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11.5px] text-fg-muted">
+                        <span className="tw-badge bg-primary-soft text-primary">{strat.type}</span>
+                        <span className="tw-badge border border-border text-fg-muted">
+                          <Lock className="h-2.5 w-2.5" /> {strat.visibility === 'PRIVATE_LINK' ? 'Link' : 'Private'}
+                        </span>
+                        <span>{strat.author} · {strat.createdAgo}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2.5 font-mono text-[12px] text-fg-secondary">{strat.segment}</td>
+                    <td className="whitespace-nowrap px-3 py-2.5 text-right font-mono tnum text-fg">{strat.minCapitalDisplay}</td>
+                    <td className="px-3 py-2.5 text-right font-mono tnum text-fg-secondary">{strat.liveDeploys}</td>
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center justify-end gap-0.5">
+                        <button
+                          onClick={() => toggleFavorite(strat.id)}
+                          className={`tw-btn-ghost h-7 w-7 px-0 ${strat.isFavorite ? 'text-accent' : ''}`}
+                          title="Favourite"
+                          aria-label="Favourite"
+                        >
+                          <Heart className={`h-3.5 w-3.5 ${strat.isFavorite ? 'fill-current' : ''}`} />
+                        </button>
+                        <button onClick={() => handleDuplicate(strat)} className="tw-btn-ghost h-7 w-7 px-0" title="Duplicate" aria-label="Duplicate">
+                          <Copy className="h-3.5 w-3.5" />
+                        </button>
+                        <button onClick={() => onEditStrategy(strat.name)} className="tw-btn-ghost h-7 w-7 px-0" title="Edit in builder" aria-label="Edit">
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button onClick={() => handleShare(strat)} className="tw-btn-ghost h-7 w-7 px-0" title="Copy private link" aria-label="Share">
+                          <Share2 className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSingle(strat.id, strat.name)}
+                          className="tw-btn-ghost h-7 w-7 px-0 hover:bg-loss-soft hover:text-loss"
+                          title="Delete"
+                          aria-label="Delete"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                        <button onClick={() => setApiModalStrategy(strat)} className="tw-btn-ghost h-7 px-2 font-mono text-[11px]" title="API webhooks">
+                          API
+                        </button>
+                        <button onClick={() => onBacktestStrategy(strat.name)} className="tw-btn-secondary ml-1 h-7 px-2.5 text-[12px]">
+                          Backtest
+                        </button>
+                        <button onClick={() => setDeployModalStrategy(strat)} className="tw-btn-primary ml-1 h-7 px-3 text-[12px]">
+                          Deploy
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+
+          {filteredStrategies.length === 0 && (
+            <div className="flex flex-col items-center px-4 py-14 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-subtle">
+                <Search className="h-4 w-4 text-fg-muted" />
+              </div>
+              <div className="mt-3 text-[14px] font-medium text-fg">No strategies match these filters</div>
+              <p className="mt-1 text-[13px] text-fg-muted">Try a different type or exchange, or start a new strategy.</p>
+              <div className="mt-4 flex gap-2">
+                <button onClick={clearAllFilters} className="tw-btn-secondary">Clear filters</button>
+                <button onClick={onCreateNew} className="tw-btn-primary">New strategy</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

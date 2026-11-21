@@ -150,7 +150,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         {/* Main Heading & Subtitle */}
         <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-fg leading-tight">
           Describe the strategy.{' '}
-          <span className="text-primary italic font-serif font-normal">
+          <span className="text-fg-muted font-semibold">
             Pick who builds it.
           </span>
         </h1>
@@ -325,7 +325,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         </div>
         <h2 className="text-2xl sm:text-4xl font-semibold text-fg">
           You describe it once.{' '}
-          <span className="italic font-serif font-normal">Cookie does the rest.</span>
+          <span className="text-fg-muted">Cookie does the rest.</span>
         </h2>
 
         {/* 4 Steps Grid */}

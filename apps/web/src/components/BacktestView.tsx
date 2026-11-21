@@ -189,7 +189,7 @@ export default function BacktestView() {
             disabled={isRunning}
             className="px-5 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 flex items-center gap-2 transition disabled:opacity-50"
           >
-            {isRunning ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-white" />}
+            {isRunning ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-current" />}
             <span>{isRunning ? 'Simulating Ticks...' : 'Execute Backtest'}</span>
           </button>
         </div>
@@ -271,7 +271,7 @@ export default function BacktestView() {
             onClick={handleRun}
             className="mt-6 px-6 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 inline-flex items-center gap-2 transition"
           >
-            <Play className="w-4 h-4 fill-white" />
+            <Play className="w-4 h-4 fill-current" />
             <span>Execute Backtest</span>
           </button>
         </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import PageHeader from './ui/PageHeader';
 import React, { useState, useMemo } from 'react';
 import { Wand2, Activity, Play, Plus, Trash2, ShieldAlert, ArrowRight, RefreshCw, BarChart2 } from 'lucide-react';
 
@@ -149,27 +150,19 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
   }, [legs]);
 
   return (
-    <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="p-6 rounded-lg bg-primary-soft border border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Options Wizard</span>
-          <h2 className="text-2xl font-semibold text-fg mt-1">Multi-Leg Strategy & Greek Simulator</h2>
-          <p className="text-sm text-fg-secondary mt-1 max-w-2xl">
-            Visually design straddles, strangles, iron condors, and ratio spreads with real-time Black-Scholes Greeks, payoff diagram, and spot price slider.
-          </p>
-        </div>
-        <button
-          onClick={() => onDeployToLive(`${underlying} ${selectedPreset}`)}
-          className="px-5 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 flex items-center gap-2 transition"
-        >
-          <Play className="w-4 h-4 fill-white" />
-          <span>Deploy Wizard Strategy</span>
-        </button>
-      </div>
+    <div className="space-y-5 pb-8">
+      <PageHeader
+        title="Option wizard"
+        description="Design straddles, strangles, condors and spreads. Payoff, breakevens and net Greeks update as you move strikes and spot."
+        actions={
+          <button onClick={() => onDeployToLive(`${underlying} ${selectedPreset}`)} className="tw-btn-primary">
+            <Play className="h-3.5 w-3.5" /> Deploy strategy
+          </button>
+        }
+      />
 
       {/* Preset Selector Strip */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="no-scrollbar inline-flex max-w-full overflow-x-auto rounded-md border border-border bg-subtle p-0.5">
         {[
           { id: 'SHORT_STRADDLE', label: 'Short Straddle' },
           { id: 'LONG_STRADDLE', label: 'Long Straddle' },
@@ -180,10 +173,8 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
           <button
             key={p.id}
             onClick={() => applyPreset(p.id as any)}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
-              selectedPreset === p.id
-                ? 'bg-primary text-primary-fg'
-                : 'bg-surface border border-border text-fg-secondary hover:text-fg'
+            className={`h-7 whitespace-nowrap rounded px-3 text-[12.5px] font-medium transition-colors ${
+              selectedPreset === p.id ? 'bg-surface text-fg shadow-hairline' : 'text-fg-muted hover:text-fg'
             }`}
           >
             {p.label}
@@ -223,15 +214,25 @@ export default function OptionWizardView({ onDeployToLive }: { onDeployToLive: (
             </div>
 
             {/* SVG Visualizer */}
-            <div className="w-full bg-ink rounded-lg border border-ink-line p-2 overflow-hidden flex items-center justify-center">
+            <div className="h-grid-bg w-full overflow-hidden rounded-md border border-border bg-surface p-2">
               <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
                 {/* Zero PnL Reference Line */}
                 <line x1="0" y1={height / 2} x2={width} y2={height / 2} className="stroke-border-strong" strokeDasharray="3 3" strokeWidth="1" />
                 {/* Current Spot Price Reference Line */}
                 <line x1={width / 2} y1="0" x2={width / 2} y2={height} className="stroke-accent" strokeDasharray="2 2" strokeWidth="1" />
 
-                {/* Payoff Curve */}
-                <path d={svgPath} fill="none" className="stroke-primary" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <defs>
+                  <clipPath id="wz-above"><rect x="0" y="0" width={width} height={height / 2} /></clipPath>
+                  <clipPath id="wz-below"><rect x="0" y={height / 2} width={width} height={height / 2} /></clipPath>
+                </defs>
+                {svgPath && (
+                  <>
+                    <path d={`${svgPath} L ${width - padding} ${height / 2} L ${padding} ${height / 2} Z`} className="fill-profit/10" clipPath="url(#wz-above)" />
+                    <path d={`${svgPath} L ${width - padding} ${height / 2} L ${padding} ${height / 2} Z`} className="fill-loss/10" clipPath="url(#wz-below)" />
+                    <path d={svgPath} fill="none" className="stroke-profit" strokeWidth="2" strokeLinejoin="round" clipPath="url(#wz-above)" />
+                    <path d={svgPath} fill="none" className="stroke-loss" strokeWidth="2" strokeLinejoin="round" clipPath="url(#wz-below)" />
+                  </>
+                )}
 
                 {/* Breakeven points markers */}
                 {payoffData.breakevens.map((be, idx) => (

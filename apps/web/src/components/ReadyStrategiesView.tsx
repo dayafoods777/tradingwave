@@ -1,5 +1,6 @@
 'use client';
 
+import PageHeader from './ui/PageHeader';
 import React, { useState } from 'react';
 import DeployModal, { DeployConfig } from './DeployModal';
 import {
@@ -200,101 +201,51 @@ export default function ReadyStrategiesView({
 
   return (
     <div className="space-y-6">
-      {/* 1. TOP BANNER - Exact Tradetron Signature Header */}
-      <div className="relative p-6 sm:p-7 rounded-lg bg-subtle border-2 border-primary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
-        <div>
-          {/* Eyebrow */}
-          <div className="flex items-center gap-1.5 text-primary font-semibold text-[11px] tracking-widest uppercase mb-1">
-            <span className="w-3.5 h-[2px] bg-primary inline-block rounded-full"></span>
-            <span className="w-3.5 h-[2px] bg-primary inline-block rounded-full"></span>
-            <span>STRATEGIES</span>
-          </div>
-
-          {/* Title */}
-          <h2 className="text-2xl sm:text-3xl font-semibold text-fg tracking-tight">
-            Ready Strategies
-          </h2>
-
-          {/* Subtitle */}
-          <p className="text-xs sm:text-sm text-fg-muted mt-1">
-            Pre-built quantitative strategies with proven backtested rules, ready for 1-click Live or Paper deployment.
-          </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            onClick={() => onNavigateTab('builder')}
-            className="px-4 py-2 rounded-full border border-border bg-surface text-fg hover:bg-subtle text-xs font-semibold transition flex items-center gap-1.5"
-          >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Custom Strategy</span>
+      <PageHeader
+        title="Marketplace"
+        description="Pre-built rule sets with published entry, leg and exit logic. Deploy to paper first, then live."
+        actions={
+          <button onClick={() => onNavigateTab('builder')} className="tw-btn-secondary">
+            <Plus className="h-3.5 w-3.5" /> Custom strategy
           </button>
-        </div>
-      </div>
-
-      {/* 2. SUB-NAVIGATION TABS STRIP (Ready Strategies after My Strategies - SS1) */}
-      <div className="flex items-center gap-8 border-b border-border text-sm font-semibold">
-        <button
-          onClick={() => onNavigateTab('dashboard')}
-          className="pb-3 text-fg-muted hover:text-fg transition"
-        >
-          Deployed
-        </button>
-        <button
-          onClick={() => onNavigateTab('mystrategies')}
-          className="pb-3 text-fg-muted hover:text-fg transition"
-        >
-          My Strategies
-        </button>
-        <button
-          className="pb-3 text-primary border-b-2 border-primary font-semibold"
-        >
-          Ready Strategies
-        </button>
-        <button
-          onClick={() => onNavigateTab('backtest')}
-          className="pb-3 text-fg-muted hover:text-fg transition"
-        >
-          Backtest
-        </button>
-      </div>
+        }
+      />
 
       {/* 3. METRIC COUNTERS STRIP */}
       <div className="rounded-lg border border-border bg-surface overflow-hidden grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border transition-colors">
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
+        <div className="px-4 py-3">
+          <span className="tw-label">
             Ready Setups
           </span>
-          <div className="text-2xl font-semibold text-fg font-mono mt-1">
+          <div className="text-[20px] font-medium text-fg font-mono tnum mt-1">
             {READY_STRATEGIES_CATALOG.length}
           </div>
         </div>
 
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
+        <div className="px-4 py-3">
+          <span className="tw-label">
             Asset Classes
           </span>
-          <div className="text-2xl font-semibold text-fg font-mono mt-1">
+          <div className="text-[20px] font-medium text-fg font-mono tnum mt-1">
             5 Markets
           </div>
         </div>
 
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
+        <div className="px-4 py-3">
+          <span className="tw-label">
             Execution Latency
           </span>
-          <div className="text-2xl font-semibold text-profit font-mono mt-1">
+          <div className="text-[20px] font-medium text-fg font-mono tnum mt-1">
             &lt; 50ms
           </div>
         </div>
 
-        <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
-            Compliance
+        <div className="px-4 py-3">
+          <span className="tw-label">
+            Default mode
           </span>
-          <div className="text-2xl font-semibold text-primary font-mono mt-1">
-            100% Safe
+          <div className="text-[20px] font-medium text-primary font-mono tnum mt-1">
+            Paper first
           </div>
         </div>
       </div>
@@ -389,7 +340,7 @@ export default function ReadyStrategiesView({
                 onClick={() => setDeployModalStrategy(strat)}
                 className="flex-1 py-2.5 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold active:scale-95 transition flex items-center justify-center gap-1.5"
               >
-                <Play className="w-3.5 h-3.5 fill-white" />
+                <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Deploy 1-Click</span>
               </button>
 
