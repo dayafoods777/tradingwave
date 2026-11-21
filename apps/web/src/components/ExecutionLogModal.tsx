@@ -80,7 +80,7 @@ export default function ExecutionLogModal({ isOpen, botName, logs, onClose }: Ex
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4">
+    <div className="fixed inset-0 z-50 !m-0 flex items-center justify-center bg-ink/50 p-4">
       <div className="bg-surface border border-border rounded-lg w-full max-w-4xl max-h-[88vh] flex flex-col shadow-pop overflow-hidden text-fg transition-colors duration-150">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-subtle">

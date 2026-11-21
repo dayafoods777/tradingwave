@@ -323,9 +323,9 @@ export default function MyStrategiesView({
     <div className="space-y-5 pb-8">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-surface border border-primary text-fg px-5 py-3 rounded-lg shadow-pop flex items-center gap-3 duration-150">
-          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
-          <span className="text-xs font-semibold">{toastMessage}</span>
+        <div className="fixed bottom-4 right-4 z-[70] !m-0 flex animate-fade-up items-center gap-2.5 rounded-md border border-border bg-surface px-3 py-2 text-[13px] text-fg shadow-pop">
+          <span className="h-1.5 w-1.5 rounded-full bg-profit"></span>
+          <span>{toastMessage}</span>
         </div>
       )}
 
@@ -564,7 +564,7 @@ export default function MyStrategiesView({
 
       {/* 5. API WEBHOOK MODAL */}
       {apiModalStrategy && (
-        <div className="fixed inset-0 z-50 bg-ink/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 !m-0 bg-ink/50 flex items-center justify-center p-4">
           <div className="max-w-xl w-full bg-surface border border-border rounded-lg p-6 shadow-pop space-y-4 duration-150">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">

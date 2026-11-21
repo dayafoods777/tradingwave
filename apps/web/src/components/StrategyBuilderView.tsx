@@ -860,7 +860,7 @@ export default function StrategyBuilderView({
               onChange={e => setDescription(e.target.value)}
               placeholder="Description"
               className={`w-full p-4 text-sm text-fg placeholder:text-fg-muted bg-transparent focus:outline-none resize-y ${
-                isFullscreen ? 'fixed inset-0 z-50 bg-surface p-6' : 'min-h-[160px]'
+                isFullscreen ? 'fixed inset-0 z-50 !m-0 bg-surface p-6' : 'min-h-[160px]'
               }`}
             />
           </div>

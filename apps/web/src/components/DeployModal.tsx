@@ -89,7 +89,7 @@ export default function DeployModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 duration-200">
+    <div className="fixed inset-0 z-50 !m-0 flex items-center justify-center p-4 bg-ink/50 duration-200">
       <div
         className="bg-surface w-full max-w-lg rounded-lg shadow-pop border border-border overflow-hidden text-fg transition-all"
         onClick={e => e.stopPropagation()}

@@ -496,7 +496,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* MODAL 1: COOKIE AI STRATEGY BUILDER DIALOG */}
       {/* ========================================================= */}
       {cookieModalOpen && (
-        <div className="fixed inset-0 z-50 bg-ink/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 !m-0 bg-ink/50 flex items-center justify-center p-4">
           <div className="bg-surface border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-pop duration-150">
             {/* Header */}
             <div className="p-5 border-b border-border flex items-center justify-between bg-subtle">
@@ -652,7 +652,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* MODAL 2: TALK TO A QUANT */}
       {/* ========================================================= */}
       {quantModalOpen && (
-        <div className="fixed inset-0 z-50 bg-ink/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 !m-0 bg-ink/50 flex items-center justify-center p-4">
           <div className="bg-surface border border-border rounded-xl w-full max-w-lg p-6 shadow-pop duration-150">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-fg flex items-center gap-2">
@@ -720,7 +720,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* MODAL 3: CONNECT YOUR OWN AI (DOOR 3) */}
       {/* ========================================================= */}
       {connectAiModalOpen && (
-        <div className="fixed inset-0 z-50 bg-ink/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 !m-0 bg-ink/50 flex items-center justify-center p-4">
           <div className="bg-surface border border-border rounded-xl w-full max-w-xl p-6 shadow-pop duration-150">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-fg flex items-center gap-2">

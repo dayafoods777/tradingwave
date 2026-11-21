@@ -626,7 +626,7 @@ export default function DashboardView({
 
       {/* 7. GLOBAL TOAST NOTIFICATION */}
       {toastMsg && (
-        <div className="fixed bottom-6 right-6 z-50 bg-ink text-ink-fg px-4 py-2.5 rounded-lg shadow-pop text-xs font-semibold flex items-center gap-2 slide-in-from-bottom-2 duration-200">
+        <div className="fixed bottom-4 right-4 z-[70] !m-0 flex animate-fade-up items-center gap-2.5 rounded-md border border-border bg-surface px-3 py-2 text-[13px] text-fg shadow-pop">
           <Check className="w-4 h-4 text-profit" />
           <span>{toastMsg}</span>
         </div>
@@ -641,7 +641,7 @@ export default function DashboardView({
             right: `${menuCoords.right}px`,
             zIndex: 99999
           }}
-          className="bot-action-menu w-48 bg-surface border border-border rounded-lg shadow-pop py-2 text-left duration-100 text-xs font-sans"
+          className="bot-action-menu !m-0 w-48 bg-surface border border-border rounded-lg shadow-pop py-2 text-left duration-100 text-xs font-sans"
           onClick={e => e.stopPropagation()}
         >
           {/* STATUS */}
@@ -762,7 +762,7 @@ export default function DashboardView({
 
       {/* 9. INTERACTIVE MODALS FOR 3-DOTS ACTIONS */}
       {activeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 duration-150">
+        <div className="fixed inset-0 z-50 !m-0 flex items-center justify-center p-4 bg-ink/50 duration-150">
           <div
             className="bg-surface w-full max-w-lg rounded-lg shadow-pop border border-border overflow-hidden text-fg"
             onClick={e => e.stopPropagation()}

@@ -64,7 +64,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4">
+    <div className="fixed inset-0 z-50 !m-0 flex items-center justify-center bg-ink/50 p-4">
       <div className="bg-surface border border-border rounded-lg w-full max-w-lg shadow-pop overflow-hidden text-fg transition-colors">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-subtle">
           <div className="flex items-center gap-3">
