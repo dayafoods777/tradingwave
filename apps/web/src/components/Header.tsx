@@ -19,7 +19,11 @@ import {
   LogOut,
   User,
   Check,
-  X
+  X,
+  ShieldCheck,
+  FileCode,
+  Radio,
+  ExternalLink
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -29,6 +33,9 @@ interface HeaderProps {
   isKillSwitchTriggered: boolean;
   theme: 'dark' | 'light';
   toggleTheme: () => void;
+  market?: 'IND' | 'USA';
+  onMarketChange?: (m: 'IND' | 'USA') => void;
+  userRole?: string;
 }
 
 export default function Header({
@@ -37,7 +44,10 @@ export default function Header({
   onKillSwitch,
   isKillSwitchTriggered,
   theme,
-  toggleTheme
+  toggleTheme,
+  market = 'IND',
+  onMarketChange,
+  userRole = 'SUPERADMIN'
 }: HeaderProps) {
   // Dropdown states
   const [createMenuOpen, setCreateMenuOpen] = useState(false);
@@ -49,8 +59,45 @@ export default function Header({
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [market, setMarket] = useState<'IND' | 'USA'>('IND');
+  const [activeMarket, setActiveMarket] = useState<'IND' | 'USA'>(market);
   const [lang, setLang] = useState<'English' | 'हिन्दी'>('English');
+  const [unreadNotifsCount, setUnreadNotifsCount] = useState(18);
+
+  // Notifications List
+  const [notifications, setNotifications] = useState([
+    { id: '1', title: 'TradingWave Nifty OHOL 3M', desc: 'Continuous live check completed (0 error).', time: '1 min ago', unread: true },
+    { id: '2', title: 'Angel One Broker API', desc: 'Static IP 13.235.122.84 active and verified.', time: '5 mins ago', unread: true },
+    { id: '3', title: 'Paper Trading Filled', desc: 'Order filled at ₹846.00 for HDFCBANK.', time: '12 mins ago', unread: true },
+    { id: '4', title: 'Black-Scholes Greek Engine', desc: 'Real-time IV curve recalculated for 28-NOV expiry.', time: '18 mins ago', unread: true },
+    { id: '5', title: 'Zero-Eval AST Sandbox', desc: 'Pre-trade risk audit passed for all 18 active rules.', time: '25 mins ago', unread: true }
+  ]);
+
+  // Search Results
+  const SEARCH_ITEMS = [
+    { title: 'Dashboard', category: 'Navigation', tab: 'dashboard' },
+    { title: 'Strategy Builder', category: 'Create', tab: 'builder' },
+    { title: 'Using AI (Cookie Quant)', category: 'Create', tab: 'usingai' },
+    { title: 'Option Wizard & Greeks', category: 'Create', tab: 'wizard' },
+    { title: 'Pine Script Bridge (TradingView)', category: 'Create', tab: 'pinebridge' },
+    { title: 'My Strategies', category: 'Strategies', tab: 'mystrategies' },
+    { title: 'Ready Strategies (Marketplace)', category: 'Strategies', tab: 'readystrategies' },
+    { title: 'Live Option Chain', category: 'Strategies', tab: 'optionchain' },
+    { title: 'Backtest Studio (Zero-Lookahead)', category: 'Reports', tab: 'backtest' },
+    { title: '38 Connected Brokers', category: 'Settings', tab: 'brokers' },
+    { title: 'Subscription Plans & Pricing', category: 'Account', tab: 'pricing' },
+    { title: 'SuperAdmin Control Panel', category: 'Admin', tab: 'admin' },
+    { title: 'Zerodha Kite Connect', category: 'Brokers', tab: 'brokers' },
+    { title: 'DhanHQ Gateway', category: 'Brokers', tab: 'brokers' },
+    { title: 'NIFTY 9:20 Intraday Short Straddle', category: 'Strategies', tab: 'readystrategies' },
+    { title: 'BANKNIFTY Supertrend Breakout', category: 'Strategies', tab: 'readystrategies' }
+  ];
+
+  const searchResults = searchQuery.trim()
+    ? SEARCH_ITEMS.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   // Refs for outside click handling
   const createRef = useRef<HTMLDivElement>(null);
@@ -95,9 +142,19 @@ export default function Header({
     closeAllMenus();
   };
 
+  const handleMarketSelect = (m: 'IND' | 'USA') => {
+    setActiveMarket(m);
+    if (onMarketChange) onMarketChange(m);
+    closeAllMenus();
+  };
+
+  const handleMarkAllNotifsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
+    setUnreadNotifsCount(0);
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 dark:border-[#334155] bg-white/95 dark:bg-[#0B1220]/95 backdrop-blur-md text-slate-800 dark:text-slate-100 transition-colors">
-      {/* Clean Single Row Tradetron Header (SS1 Parity) */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Left: Brand Logo + Navigation Links */}
         <div className="flex items-center gap-4 lg:gap-7">
@@ -118,18 +175,18 @@ export default function Header({
             />
           </div>
 
-          {/* Tradetron Clean Nav: Dashboard | Create ▾ | Strategies ▾ | Reports | Creator Hub ▾ | Services ▾ */}
+          {/* Tradetron Clean Nav: Dashboard | Create ▾ | Strategies ▾ | Reports | Admin */}
           <nav className="flex items-center gap-1 sm:gap-2">
-            {/* 1. Dashboard (Active Purple Pill) */}
+            {/* 1. Dashboard */}
             <button
               onClick={() => handleSelectTab('dashboard')}
-              className={`px-3.5 py-1.5 rounded-xl text-sm font-semibold transition ${
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-semibold transition cursor-pointer ${
                 activeTab === 'dashboard'
                   ? 'bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] shadow-sm'
                   : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
               }`}
             >
-              Dashboard
+              {lang === 'हिन्दी' ? 'डैशबोर्ड' : 'Dashboard'}
             </button>
 
             {/* 2. Create ▾ */}
@@ -140,13 +197,13 @@ export default function Header({
                   closeAllMenus();
                   setCreateMenuOpen(state);
                 }}
-                className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
-                  createMenuOpen || ['builder', 'usingai', 'wizard'].includes(activeTab)
+                className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition cursor-pointer ${
+                  createMenuOpen || ['builder', 'usingai', 'wizard', 'pinebridge'].includes(activeTab)
                     ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
                     : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
                 }`}
               >
-                <span>Create</span>
+                <span>{lang === 'हिन्दी' ? 'बनाएं' : 'Create'}</span>
                 <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${createMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -154,24 +211,24 @@ export default function Header({
                 <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => handleSelectTab('usingai')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Sparkles className="w-4 h-4" />
                     </div>
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#5B45E0] dark:group-hover:text-[#818CF8]">
-                        Using AI
+                        Using AI (Cookie Quant)
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                        Connect Claude, ChatGPT and AI tools
+                        Connect Claude, ChatGPT and free AI tools
                       </div>
                     </div>
                   </button>
 
                   <button
                     onClick={() => handleSelectTab('builder')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <LayoutGrid className="w-4 h-4" />
@@ -188,27 +245,27 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('wizard')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Wand2 className="w-4 h-4" />
                     </div>
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#5B45E0] dark:group-hover:text-[#818CF8]">
-                        Option Wizard & Greeks
+                        Option Wizard &amp; Greeks
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                        Straddles, strangles, spreads & Greeks
+                        Straddles, strangles, spreads &amp; Greeks
                       </div>
                     </div>
                   </button>
 
                   <button
-                    onClick={() => handleSelectTab('builder')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    onClick={() => handleSelectTab('pinebridge')}
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
-                      <LineChart className="w-4 h-4" />
+                      <Radio className="w-4 h-4" />
                     </div>
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#5B45E0] dark:group-hover:text-[#818CF8]">
@@ -231,13 +288,13 @@ export default function Header({
                   closeAllMenus();
                   setStrategiesMenuOpen(state);
                 }}
-                className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition ${
+                className={`px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1 transition cursor-pointer ${
                   strategiesMenuOpen || ['mystrategies', 'readystrategies', 'optionchain'].includes(activeTab)
                     ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-100 dark:bg-[#1F2937]'
                     : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
                 }`}
               >
-                <span>Strategies</span>
+                <span>{lang === 'हिन्दी' ? 'रणनीतियां' : 'Strategies'}</span>
                 <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${strategiesMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -245,7 +302,7 @@ export default function Header({
                 <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => handleSelectTab('dashboard')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <TrendingUp className="w-4 h-4" />
@@ -262,7 +319,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('mystrategies')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <LayoutGrid className="w-4 h-4" />
@@ -279,7 +336,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('readystrategies')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Sparkles className="w-4 h-4" />
@@ -296,7 +353,7 @@ export default function Header({
 
                   <button
                     onClick={() => handleSelectTab('optionchain')}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group"
+                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] flex items-center gap-3 transition group cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
                       <Layers className="w-4 h-4" />
@@ -314,23 +371,36 @@ export default function Header({
               )}
             </div>
 
-            {/* 4. Reports */}
+            {/* 4. Reports (Backtest) */}
             <button
               onClick={() => handleSelectTab('backtest')}
-              className={`px-3 py-1.5 rounded-xl text-sm font-semibold transition ${
+              className={`px-3 py-1.5 rounded-xl text-sm font-semibold transition cursor-pointer ${
                 activeTab === 'backtest'
                   ? 'bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] shadow-sm'
                   : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
               }`}
             >
-              Reports
+              {lang === 'हिन्दी' ? 'रिपोर्ट्स' : 'Reports'}
+            </button>
+
+            {/* 5. Admin Panel (Dedicated Direct Tab) */}
+            <button
+              onClick={() => handleSelectTab('admin')}
+              className={`px-3 py-1.5 rounded-xl text-sm font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                activeTab === 'admin'
+                  ? 'bg-[#FF6B00]/15 text-[#FF6B00] border border-[#FF6B00]/30 shadow-sm'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1F2937]'
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4 text-[#FF6B00]" />
+              <span>Admin</span>
             </button>
           </nav>
         </div>
 
-        {/* Right Side: Exact SS1 Parity (Bell with '18' badge, Search, IND, Lang, algobulls, Moon) */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          {/* 1. Notification Bell with '18' Badge */}
+        {/* Right Side: Bell, Search, IND, Lang, Profile, Theme */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* 1. Notification Bell */}
           <div className="relative" ref={notifRef}>
             <button
               onClick={() => {
@@ -338,43 +408,45 @@ export default function Header({
                 closeAllMenus();
                 setNotificationsOpen(state);
               }}
-              className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
               title="Notifications"
             >
               <Bell className="w-5 h-5 stroke-[1.8]" />
-              <span className="absolute top-0.5 right-0.5 bg-[#E11D48] text-white font-bold text-[9px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center leading-none shadow-sm">
-                18
-              </span>
+              {unreadNotifsCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 bg-[#E11D48] text-white font-bold text-[9px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center leading-none shadow-sm">
+                  {unreadNotifsCount}
+                </span>
+              )}
             </button>
 
             {notificationsOpen && (
               <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl shadow-2xl z-50 p-3 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <span className="font-bold text-xs text-slate-900 dark:text-white">Notifications (18)</span>
-                  <span className="text-[10px] text-[#5B45E0] dark:text-[#818CF8] font-semibold cursor-pointer">Mark all as read</span>
+                  <span className="font-bold text-xs text-slate-900 dark:text-white">Notifications ({unreadNotifsCount})</span>
+                  <button
+                    onClick={handleMarkAllNotifsRead}
+                    className="text-[10px] text-[#5B45E0] dark:text-[#818CF8] font-semibold cursor-pointer hover:underline"
+                  >
+                    Mark all as read
+                  </button>
                 </div>
                 <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-64 overflow-y-auto no-scrollbar text-xs">
-                  <div className="py-2.5">
-                    <div className="font-semibold text-slate-900 dark:text-white">TradingWave Nifty OHOL 3M</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Continuous live check completed (0 error).</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">1 min ago</div>
-                  </div>
-                  <div className="py-2.5">
-                    <div className="font-semibold text-slate-900 dark:text-white">Angel One Broker API</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Static IP 13.235.122.84 active and verified.</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">5 mins ago</div>
-                  </div>
-                  <div className="py-2.5">
-                    <div className="font-semibold text-slate-900 dark:text-white">Paper Trading Filled</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Order filled at ₹846.00 for HDFCBANK.</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">12 mins ago</div>
-                  </div>
+                  {notifications.map(n => (
+                    <div key={n.id} className="py-2.5">
+                      <div className="font-semibold text-slate-900 dark:text-white flex items-center justify-between">
+                        <span>{n.title}</span>
+                        {n.unread && <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>}
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{n.desc}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5">{n.time}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
           </div>
 
-          {/* 2. Search Icon Button */}
+          {/* 2. Global Search Button & Working Search Drawer */}
           <div className="relative" ref={searchRef}>
             <button
               onClick={() => {
@@ -382,37 +454,63 @@ export default function Header({
                 closeAllMenus();
                 setSearchOpen(state);
               }}
-              className="p-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
-              title="Search"
+              className="p-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition cursor-pointer"
+              title="Search everything"
             >
               <Search className="w-4 h-4" />
             </button>
 
             {searchOpen && (
-              <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2.5 shadow-2xl z-50">
-                <div className="relative">
+              <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-3 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="relative mb-2">
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search strategy, stock, broker..."
+                    placeholder="Search strategy, broker, tool, or admin..."
                     autoFocus
-                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white outline-none focus:border-[#5B45E0]"
+                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white outline-none focus:border-[#5B45E0]"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-2 top-2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
+
+                {searchQuery.trim() ? (
+                  <div className="max-h-60 overflow-y-auto space-y-1">
+                    {searchResults.length === 0 ? (
+                      <div className="text-xs text-slate-400 text-center py-4">No matching results found.</div>
+                    ) : (
+                      searchResults.map((item, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleSelectTab(item.tab)}
+                          className="p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] cursor-pointer flex items-center justify-between transition"
+                        >
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 dark:text-white">{item.title}</div>
+                            <div className="text-[10px] text-slate-400">{item.category}</div>
+                          </div>
+                          <span className="text-[10px] text-[#5B45E0] dark:text-[#818CF8] font-bold">Open →</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                ) : (
+                  <div className="p-2 text-[11px] text-slate-400">
+                    Quick suggestions: Option Wizard, Backtest Studio, 38 Brokers, Admin Panel, NIFTY 9:20
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* 3. Market Dropdown (🌐 IND ▾) */}
+          {/* 3. Market Dropdown */}
           <div className="relative" ref={marketRef}>
             <button
               onClick={() => {
@@ -420,44 +518,38 @@ export default function Header({
                 closeAllMenus();
                 setMarketMenuOpen(state);
               }}
-              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
               title="Market Region"
             >
-              <span>🌐 {market}</span>
+              <span>🌐 {activeMarket}</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {marketMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-1.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <button
-                  onClick={() => {
-                    setMarket('IND');
-                    closeAllMenus();
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
-                    market === 'IND' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
+                  onClick={() => handleMarketSelect('IND')}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
+                    activeMarket === 'IND' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
-                  <span>🇮🇳 India (NSE/BSE)</span>
-                  {market === 'IND' && <Check className="w-3.5 h-3.5" />}
+                  <span>🇮🇳 India (NSE/BSE/MCX)</span>
+                  {activeMarket === 'IND' && <Check className="w-3.5 h-3.5" />}
                 </button>
                 <button
-                  onClick={() => {
-                    setMarket('USA');
-                    closeAllMenus();
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
-                    market === 'USA' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
+                  onClick={() => handleMarketSelect('USA')}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
+                    activeMarket === 'USA' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
                   <span>🇺🇸 USA (CBOE/NYSE)</span>
-                  {market === 'USA' && <Check className="w-3.5 h-3.5" />}
+                  {activeMarket === 'USA' && <Check className="w-3.5 h-3.5" />}
                 </button>
               </div>
             )}
           </div>
 
-          {/* 4. Language Dropdown (अ/A English ▾) */}
+          {/* 4. Language Dropdown */}
           <div className="relative" ref={langRef}>
             <button
               onClick={() => {
@@ -465,7 +557,7 @@ export default function Header({
                 closeAllMenus();
                 setLangMenuOpen(state);
               }}
-              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
               title="Language"
             >
               <span>अ/A {lang}</span>
@@ -479,7 +571,7 @@ export default function Header({
                     setLang('English');
                     closeAllMenus();
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
                     lang === 'English' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
@@ -491,7 +583,7 @@ export default function Header({
                     setLang('हिन्दी');
                     closeAllMenus();
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition ${
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
                     lang === 'हिन्दी' ? 'text-[#5B45E0] dark:text-[#818CF8] bg-slate-50 dark:bg-[#0B1220]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
                   }`}
                 >
@@ -502,7 +594,7 @@ export default function Header({
             )}
           </div>
 
-          {/* 5. User Profile (A algobulls ▾) */}
+          {/* 5. User Profile Dropdown (With Admin Panel & Account links) */}
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => {
@@ -510,7 +602,7 @@ export default function Header({
                 closeAllMenus();
                 setProfileOpen(state);
               }}
-              className="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
               title="User Account"
             >
               <div className="w-7 h-7 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] font-bold text-xs flex items-center justify-center border border-indigo-200 dark:border-indigo-900">
@@ -523,37 +615,49 @@ export default function Header({
             </button>
 
             {profileOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute right-0 top-full mt-2 w-60 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">algobulls</div>
-                  <div className="text-[10px] text-slate-400 font-mono">ID: 83794997 · Live Quant</div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-900 dark:text-white">algobulls</span>
+                    <span className="px-1.5 py-0.2 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-[9px] uppercase border border-purple-500/20">
+                      SUPERADMIN
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono mt-0.5">ID: 83794997 · Live Institutional</div>
                 </div>
 
                 <div className="pt-1.5 space-y-0.5">
                   <button
+                    onClick={() => handleSelectTab('admin')}
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 text-xs font-bold text-[#FF6B00] flex items-center gap-2 transition cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-[#FF6B00]" />
+                    <span>Admin Panel</span>
+                  </button>
+                  <button
                     onClick={() => handleSelectTab('dashboard')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2 transition cursor-pointer"
                   >
                     <TrendingUp className="w-4 h-4 text-slate-400" />
                     <span>My Dashboard</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('mystrategies')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2 transition cursor-pointer"
                   >
                     <LayoutGrid className="w-4 h-4 text-slate-400" />
                     <span>My Strategies</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('brokers')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2 transition cursor-pointer"
                   >
                     <Key className="w-4 h-4 text-slate-400" />
-                    <span>Connected Brokers</span>
+                    <span>Connected Brokers (38)</span>
                   </button>
                   <button
                     onClick={() => handleSelectTab('pricing')}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#0B1220] text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2 transition cursor-pointer"
                   >
                     <CreditCard className="w-4 h-4 text-slate-400" />
                     <span>Subscription Plan</span>
@@ -564,20 +668,20 @@ export default function Header({
                       closeAllMenus();
                       onKillSwitch();
                     }}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-2 transition cursor-pointer"
                   >
                     <ShieldAlert className="w-4 h-4" />
-                    <span>Kill Switch</span>
+                    <span>Universal Kill Switch</span>
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* 6. Theme Toggle (Moon / Sun) */}
+          {/* 6. Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
+            className="p-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition cursor-pointer"
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
           >
             {theme === 'dark' ? (

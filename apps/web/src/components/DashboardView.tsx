@@ -29,7 +29,8 @@ import {
   Bell,
   Scale,
   FileSpreadsheet,
-  Activity
+  Activity,
+  Trash2
 } from 'lucide-react';
 
 export interface BotDeployment {
@@ -131,6 +132,24 @@ export default function DashboardView({
   } | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [notes, setNotes] = useState<{ [id: string]: string }>({});
+
+  // Interactive controls state
+  const [alertsModalOpen, setAlertsModalOpen] = useState(false);
+  const [popoutPnlOpen, setPopoutPnlOpen] = useState(false);
+  const [timeRange, setTimeRange] = useState<'Today' | 'Yesterday' | 'This Week' | 'This Month' | 'All Time'>('Today');
+  const [timeRangeDropdownOpen, setTimeRangeDropdownOpen] = useState(false);
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<'default' | 'name' | 'pnl_desc' | 'capital_desc' | 'run_count'>('default');
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [selectedBrokerFilter, setSelectedBrokerFilter] = useState<string>('ALL');
+  const [expandedAll, setExpandedAll] = useState(false);
+  const [alertsList, setAlertsList] = useState([
+    { id: 'alt_1', strategy: 'NIFTY 9:20 Intraday Short Straddle', condition: 'Max Loss Threshold ₹ -4,000', status: 'ACTIVE', time: '09:20 AM' },
+    { id: 'alt_2', strategy: 'BANKNIFTY Multi-Timeframe Supertrend', condition: 'Trailing SL Trigger at ₹ 51,920', status: 'ACTIVE', time: '10:15 AM' },
+    { id: 'alt_3', strategy: 'NIFTY Weekly Iron Condor', condition: 'Delta Imbalance > 0.30', status: 'MONITORING', time: 'Continuous' }
+  ]);
+  const [newAlertStrategy, setNewAlertStrategy] = useState('');
+  const [newAlertCondition, setNewAlertCondition] = useState('');
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -239,16 +258,27 @@ export default function DashboardView({
     onSquareOffBot(id);
   };
 
-  const filteredBots = localBots.filter(b => {
-    if (activeFilterPill === 'Deployed') return b.status === 'ACTIVE';
-    if (activeFilterPill === 'Archived') return b.status === 'SQUARED_OFF';
-    return true;
-  }).filter(b => {
-    return (
-      b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.broker.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredBots = localBots
+    .filter(b => {
+      if (activeFilterPill === 'Deployed') return b.status === 'ACTIVE';
+      if (activeFilterPill === 'Archived') return b.status === 'SQUARED_OFF';
+      if (activeFilterPill === 'Shared') return b.author !== 'algobulls';
+      return true;
+    })
+    .filter(b => {
+      if (selectedBrokerFilter !== 'ALL' && b.broker !== selectedBrokerFilter) return false;
+      return (
+        b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        b.broker.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name') return a.name.localeCompare(b.name);
+      if (sortBy === 'pnl_desc') return b.dailyPnl - a.dailyPnl;
+      if (sortBy === 'capital_desc') return b.capital - a.capital;
+      if (sortBy === 'run_count') return (b.runCount ?? 0) - (a.runCount ?? 0);
+      return 0;
+    });
 
   // Dynamic metrics calculated from live deployments (zero fake data)
   const totalDeployedCount = filteredBots.length;
@@ -340,20 +370,48 @@ export default function DashboardView({
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
+          <button
+            onClick={() => setAlertsModalOpen(true)}
+            className="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+          >
             <Megaphone className="w-3.5 h-3.5 text-slate-500" />
-            <span>Alerts</span>
+            <span>Alerts ({alertsList.length})</span>
           </button>
-          <button className="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
+          <button
+            onClick={() => setPopoutPnlOpen(true)}
+            className="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+          >
             <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
             <span>Pop out P&amp;L</span>
           </button>
-          <div className="flex items-center gap-2 text-xs">
+          <div className="relative flex items-center gap-2 text-xs">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">SHOWING</span>
-            <button className="px-4 py-1 rounded-full border border-[#5B45E0] dark:border-[#818CF8] bg-white dark:bg-[#1F2937] text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-              <span>Today</span>
+            <button
+              onClick={() => setTimeRangeDropdownOpen(!timeRangeDropdownOpen)}
+              className="px-4 py-1 rounded-full border border-[#5B45E0] dark:border-[#818CF8] bg-white dark:bg-[#1F2937] text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+            >
+              <span>{timeRange}</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
+            {timeRangeDropdownOpen && (
+              <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-700 rounded-xl p-1.5 shadow-xl z-30">
+                {(['Today', 'Yesterday', 'This Week', 'This Month', 'All Time'] as const).map(tr => (
+                  <button
+                    key={tr}
+                    onClick={() => {
+                      setTimeRange(tr);
+                      setTimeRangeDropdownOpen(false);
+                      showToast(`Showing metric window: ${tr}`);
+                    }}
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                      timeRange === tr ? 'bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#0B1220]'
+                    }`}
+                  >
+                    {tr}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -468,19 +526,106 @@ export default function DashboardView({
               />
             </div>
 
-            <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-              Expand all
+            <button
+              onClick={() => setExpandedAll(!expandedAll)}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-semibold transition ${
+                expandedAll
+                  ? 'border-[#5B45E0] bg-[#5B45E0]/10 text-[#5B45E0] dark:text-[#818CF8]'
+                  : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+              }`}
+            >
+              {expandedAll ? 'Collapse all' : 'Expand all'}
             </button>
 
-            <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
-              <span>My order</span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
-            </button>
+            {/* Sort Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setSortDropdownOpen(!sortDropdownOpen);
+                  setFilterDropdownOpen(false);
+                }}
+                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1"
+              >
+                <span>
+                  {sortBy === 'default'
+                    ? 'Sort: Default'
+                    : sortBy === 'name'
+                    ? 'Sort: Name'
+                    : sortBy === 'pnl_desc'
+                    ? 'Sort: P&L'
+                    : sortBy === 'capital_desc'
+                    ? 'Sort: Capital'
+                    : 'Sort: Runs'}
+                </span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+              {sortDropdownOpen && (
+                <div className="absolute right-0 mt-1 w-44 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1 z-30 text-xs">
+                  {[
+                    { id: 'default', label: 'Default' },
+                    { id: 'name', label: 'Strategy Name (A-Z)' },
+                    { id: 'pnl_desc', label: 'P&L: High to Low' },
+                    { id: 'capital_desc', label: 'Capital: High to Low' },
+                    { id: 'run_count', label: 'Most Executions' }
+                  ].map(opt => (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        setSortBy(opt.id as any);
+                        setSortDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700/60 flex items-center justify-between ${
+                        sortBy === opt.id ? 'font-bold text-[#5B45E0] dark:text-[#818CF8]' : 'text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      <span>{opt.label}</span>
+                      {sortBy === opt.id && <span className="text-[10px] text-[#5B45E0] dark:text-[#818CF8]">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
-            <button className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
-              <span>Filter</span>
-            </button>
+            {/* Filter Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setFilterDropdownOpen(!filterDropdownOpen);
+                  setSortDropdownOpen(false);
+                }}
+                className={`px-3 py-1.5 rounded-xl border text-xs font-semibold transition flex items-center gap-1.5 ${
+                  selectedBrokerFilter !== 'ALL'
+                    ? 'border-[#5B45E0] bg-[#5B45E0]/10 text-[#5B45E0] dark:text-[#818CF8]'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+              >
+                <Filter className="w-3.5 h-3.5 text-slate-400" />
+                <span>{selectedBrokerFilter === 'ALL' ? 'Filter' : selectedBrokerFilter}</span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+              {filterDropdownOpen && (
+                <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1 z-30 text-xs">
+                  <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-slate-400 border-b border-slate-100 dark:border-slate-700/60">
+                    Filter by Broker
+                  </div>
+                  {['ALL', 'TT Paper Trading', 'Zerodha Kite', 'Dhan', 'Angel One', 'Finvasia (Shoonya)', 'Fyers', 'ICICI Direct'].map(b => (
+                    <button
+                      key={b}
+                      onClick={() => {
+                        setSelectedBrokerFilter(b);
+                        setFilterDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700/60 flex items-center justify-between ${
+                        selectedBrokerFilter === b ? 'font-bold text-[#5B45E0] dark:text-[#818CF8]' : 'text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      <span className="truncate">{b}</span>
+                      {selectedBrokerFilter === b && <span className="text-[10px] text-[#5B45E0] dark:text-[#818CF8]">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -531,8 +676,8 @@ export default function DashboardView({
                 </tr>
               ) : (
                 filteredBots.map((bot, idx) => (
+                <React.Fragment key={bot.id}>
                 <tr
-                  key={bot.id}
                   className={`hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition ${
                     bot.status === 'SQUARED_OFF' ? 'opacity-60 bg-slate-50/30' : ''
                   }`}
@@ -655,6 +800,33 @@ export default function DashboardView({
                     </div>
                   </td>
                 </tr>
+                {expandedAll && (
+                  <tr key={`${bot.id}_expanded`} className="bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800">
+                    <td colSpan={9} className="px-6 py-3">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Strategy Legs</span>
+                          <span className="text-slate-700 dark:text-slate-300">
+                            {bot.legs && bot.legs.length > 0 ? bot.legs.join(' | ') : 'ATM Long / Short Straddle Pair'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Execution Engine</span>
+                          <span className="text-slate-700 dark:text-slate-300">Frequency: {bot.frequency} · Last check: {bot.lastCheck}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Engine SID</span>
+                          <span className="text-slate-700 dark:text-slate-300">#{bot.sid || '82947192'}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Risk Envelope</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">Defined Collars (SL & TP active)</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
               )))}
             </tbody>
           </table>
@@ -1135,6 +1307,295 @@ export default function DashboardView({
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 7. ALERTS MODAL / DRAWER */}
+      {alertsModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-[#5B45E0]/10 text-[#5B45E0] dark:text-[#818CF8]">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-900 dark:text-white">
+                    Strategy Alerts &amp; Watchdogs
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Real-time execution collars, delta imbalances, and MTM limits
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setAlertsModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+              {/* Create New Alert Form */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                  Add New Trigger Alert
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 mb-1">Target Strategy</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. NIFTY 9:20 Straddle or Global"
+                      value={newAlertStrategy}
+                      onChange={e => setNewAlertStrategy(e.target.value)}
+                      className="w-full bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 mb-1">Trigger Condition</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. MTM falls below -₹ 5,000"
+                      value={newAlertCondition}
+                      onChange={e => setNewAlertCondition(e.target.value)}
+                      className="w-full bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end pt-1">
+                  <button
+                    onClick={() => {
+                      if (!newAlertCondition.trim()) {
+                        showToast('Please enter an alert condition');
+                        return;
+                      }
+                      const strat = newAlertStrategy.trim() || 'Global Portfolio Watchdog';
+                      setAlertsList(prev => [
+                        {
+                          id: 'alt_' + Date.now(),
+                          strategy: strat,
+                          condition: newAlertCondition.trim(),
+                          status: 'ACTIVE',
+                          time: 'Just now'
+                        },
+                        ...prev
+                      ]);
+                      setNewAlertStrategy('');
+                      setNewAlertCondition('');
+                      showToast(`Alert created for ${strat}!`);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-[#5B45E0] hover:bg-[#4E38D0] text-white text-xs font-bold transition flex items-center gap-1.5"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Create Alert</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Active Alerts List */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Configured Strategy Alerts ({alertsList.length})
+                </div>
+                {alertsList.map(item => (
+                  <div
+                    key={item.id}
+                    className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1E293B] flex items-center justify-between gap-4"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">
+                          {item.strategy}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                            item.status === 'ACTIVE'
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                              : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-500 font-mono">
+                        Condition: <span className="text-slate-700 dark:text-slate-300 font-semibold">{item.condition}</span>
+                        {' · '}
+                        <span>{item.time}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          showToast(`🔔 TEST ALERT FIRED: [${item.strategy}] ${item.condition}`);
+                        }}
+                        className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        title="Simulate Trigger"
+                      >
+                        Test
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAlertsList(prev =>
+                            prev.map(a =>
+                              a.id === item.id
+                                ? { ...a, status: a.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE' }
+                                : a
+                            )
+                          );
+                        }}
+                        className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                        title={item.status === 'ACTIVE' ? 'Pause Alert' : 'Activate Alert'}
+                      >
+                        {item.status === 'ACTIVE' ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 text-emerald-500 fill-current" />}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAlertsList(prev => prev.filter(a => a.id !== item.id));
+                          showToast('Alert removed');
+                        }}
+                        className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                        title="Delete Alert"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3 bg-slate-50 dark:bg-[#0B1220] border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs text-slate-400">
+              <span>All watchdogs evaluate on 1-second continuous tick intervals</span>
+              <button
+                onClick={() => setAlertsModalOpen(false)}
+                className="px-4 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8. POP OUT P&L HUD MODAL */}
+      {popoutPnlOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            {/* Header */}
+            <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                <span className="text-xs font-mono font-bold tracking-wider uppercase text-slate-300">
+                  LIVE PORTFOLIO HUD
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                  {timeRange}
+                </span>
+                <button
+                  onClick={() => setPopoutPnlOpen(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-6">
+              {/* Primary P&L Gauge */}
+              <div className="text-center py-4 bg-slate-50 dark:bg-[#0B1220] rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Net Real-Time MTM
+                </div>
+                <div className="text-4xl font-black font-mono tracking-tight text-red-600 dark:text-red-400">
+                  - ₹ {(Math.abs(totalPnl) / 100000).toFixed(2)} L
+                </div>
+                <div className="text-xs font-mono text-red-500 font-bold mt-1">
+                  -0.84% ROI on Allocated Capital
+                </div>
+              </div>
+
+              {/* Grid Metrics */}
+              <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
+                  <div className="text-slate-400 text-[10px] uppercase font-bold">Realized P&amp;L</div>
+                  <div className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">₹ +12,450.00</div>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
+                  <div className="text-slate-400 text-[10px] uppercase font-bold">Unrealized MTM</div>
+                  <div className="text-sm font-bold text-red-500 mt-0.5">- ₹ 48,200.00</div>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
+                  <div className="text-slate-400 text-[10px] uppercase font-bold">Peak High MTM</div>
+                  <div className="text-sm font-bold text-emerald-500 mt-0.5">+ ₹ 24,100.00</div>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800">
+                  <div className="text-slate-400 text-[10px] uppercase font-bold">Max Drawdown</div>
+                  <div className="text-sm font-bold text-red-500 mt-0.5">- ₹ 52,000.00</div>
+                </div>
+              </div>
+
+              {/* Intraday SVG Curve Visualization */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                  <span>Intraday Cumulative Trajectory</span>
+                  <span>9:15 AM - 3:30 PM</span>
+                </div>
+                <div className="h-24 bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 rounded-xl p-2 flex items-center justify-center">
+                  <svg className="w-full h-full" viewBox="0 0 300 60" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="pnlGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#EF4444" stopOpacity="0.4" />
+                        <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d="M0,25 Q40,15 80,30 T160,20 T240,45 T300,40 L300,60 L0,60 Z"
+                      fill="url(#pnlGrad)"
+                    />
+                    <path
+                      d="M0,25 Q40,15 80,30 T160,20 T240,45 T300,40"
+                      fill="none"
+                      stroke="#EF4444"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const csvContent = `Timestamp,Realized_PnL,Unrealized_MTM,Net_PnL\n${new Date().toISOString()},12450,-48200,-35750\n`;
+                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `TradingWave_PnL_${Date.now()}.csv`;
+                    a.click();
+                    showToast('P&L Audit CSV downloaded.');
+                  }}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                >
+                  Download CSV
+                </button>
+                <button
+                  onClick={() => setPopoutPnlOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-[#5B45E0] text-white text-xs font-bold hover:bg-[#4E38D0] transition"
+                >
+                  Close HUD
+                </button>
+              </div>
             </div>
           </div>
         </div>

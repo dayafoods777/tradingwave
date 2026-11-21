@@ -12,16 +12,19 @@ import OptionChainView from '../components/OptionChainView';
 import BrokersView, { ALL_BROKERS_BASE } from '../components/BrokersView';
 import BacktestView from '../components/BacktestView';
 import PricingView from '../components/PricingView';
+import AdminPanelView from '../components/AdminPanelView';
+import PineScriptBridgeView from '../components/PineScriptBridgeView';
 import KeywordModal from '../components/KeywordModal';
 import ExecutionLogModal from '../components/ExecutionLogModal';
 import BrokerModal from '../components/BrokerModal';
 
 export default function TradingWaveApp() {
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'mystrategies' | 'readystrategies' | 'builder' | 'usingai' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing'
+    'dashboard' | 'mystrategies' | 'readystrategies' | 'builder' | 'usingai' | 'wizard' | 'optionchain' | 'brokers' | 'backtest' | 'pricing' | 'admin' | 'pinebridge'
   >('dashboard');
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
+  const [market, setMarket] = useState<'IND' | 'USA'>('IND');
   const [isKillSwitchTriggered, setIsKillSwitchTriggered] = useState(false);
 
   // Modals state
@@ -30,8 +33,16 @@ export default function TradingWaveApp() {
   const [logModalBot, setLogModalBot] = useState<string | null>(null);
   const [brokerModalName, setBrokerModalName] = useState<string | null>(null);
 
-  // Connected Brokers state (starts empty, user connects via BrokerModal)
-  const [connectedBrokers, setConnectedBrokers] = useState<string[]>([]);
+  // Connected Brokers state with localStorage persistence
+  const [connectedBrokers, setConnectedBrokers] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('twave_connected_brokers');
+        if (saved) return JSON.parse(saved);
+      } catch (_) {}
+    }
+    return ['Zerodha Kite', 'Dhan'];
+  });
 
   // Global Notification Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -41,8 +52,38 @@ export default function TradingWaveApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Deployed Bots State - Starts empty with 0 fake/dummy bots
-  const [deployedBots, setDeployedBots] = useState<BotDeployment[]>([]);
+  // Deployed Bots State with localStorage persistence
+  const [deployedBots, setDeployedBots] = useState<BotDeployment[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('twave_deployed_bots');
+        if (saved) return JSON.parse(saved);
+      } catch (_) {}
+    }
+    return [
+      {
+        id: 'bot_init_1',
+        name: 'NIFTY 9:20 Intraday Short Straddle v2.0',
+        underlying: 'NIFTY 50',
+        status: 'ACTIVE',
+        mode: 'PAPER',
+        broker: 'TT Paper Trading',
+        multiplier: 1,
+        dailyPnl: -14200,
+        pnlPercent: -1.42,
+        capital: 1000000,
+        legs: ['SELL 1x NIFTY 24350 CE', 'SELL 1x NIFTY 24350 PE'],
+        lastCheck: '1 sec ago',
+        frequency: 'Continuous',
+        sid: '98412034',
+        author: 'algobulls',
+        statusLabel: 'Live-Entered',
+        openPositionsCount: 2,
+        totalPositionsCount: 4,
+        runCount: 5
+      }
+    ];
+  });
 
   // Strategies State with localStorage persistence
   const [strategies, setStrategies] = useState<StrategyItem[]>(() => {
@@ -124,17 +165,27 @@ export default function TradingWaveApp() {
 
   // Bot actions
   const handleToggleBot = (id: string) => {
-    setDeployedBots(prev =>
-      prev.map(b => (b.id === id ? { ...b, status: b.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE' } : b))
-    );
+    setDeployedBots(prev => {
+      const updated: BotDeployment[] = prev.map(b =>
+        b.id === id ? { ...b, status: b.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE' } : b
+      );
+      try {
+        localStorage.setItem('twave_deployed_bots', JSON.stringify(updated));
+      } catch (_) {}
+      return updated;
+    });
   };
 
   const handleSquareOffBot = (id: string) => {
     const bot = deployedBots.find(b => b.id === id);
     if (confirm(`Confirm immediate square-off for ${bot?.name}? All open broker positions will be closed at market price.`)) {
-      setDeployedBots(prev =>
-        prev.map(b => (b.id === id ? { ...b, status: 'SQUARED_OFF' } : b))
-      );
+      setDeployedBots(prev => {
+        const updated: BotDeployment[] = prev.map(b => (b.id === id ? { ...b, status: 'SQUARED_OFF' } : b));
+        try {
+          localStorage.setItem('twave_deployed_bots', JSON.stringify(updated));
+        } catch (_) {}
+        return updated;
+      });
       showToast(`Position squared off successfully for ${bot?.name}.`);
     }
   };
@@ -142,7 +193,13 @@ export default function TradingWaveApp() {
   const handleUniversalKillSwitch = () => {
     if (confirm('🚨 EMERGENCY WARNING: Activate Universal Kill Switch? This will cancel all open orders and square off all live positions across all connected brokers immediately.')) {
       setIsKillSwitchTriggered(true);
-      setDeployedBots(prev => prev.map(b => ({ ...b, status: 'SQUARED_OFF' })));
+      setDeployedBots(prev => {
+        const updated: BotDeployment[] = prev.map(b => ({ ...b, status: 'SQUARED_OFF' }));
+        try {
+          localStorage.setItem('twave_deployed_bots', JSON.stringify(updated));
+        } catch (_) {}
+        return updated;
+      });
       showToast('UNIVERSAL KILL SWITCH EXECUTED: All bot positions squared off.');
     }
   };
@@ -196,7 +253,13 @@ export default function TradingWaveApp() {
       totalPositionsCount: 1,
       runCount: deployConfig?.stopLooping ? parseInt(deployConfig.stopLooping) || 5 : 5
     };
-    setDeployedBots(prev => [newBot, ...prev]);
+    setDeployedBots(prev => {
+      const updated = [newBot, ...prev];
+      try {
+        localStorage.setItem('twave_deployed_bots', JSON.stringify(updated));
+      } catch (_) {}
+      return updated;
+    });
     setActiveTab('dashboard');
     showToast(`Deployed "${strategyName}" in ${execType} mode successfully!`);
   };
@@ -216,6 +279,8 @@ export default function TradingWaveApp() {
         isKillSwitchTriggered={isKillSwitchTriggered}
         theme={theme}
         toggleTheme={toggleTheme}
+        market={market}
+        onMarketChange={setMarket}
       />
 
       {/* 2. Global Toast Notification */}
@@ -309,6 +374,16 @@ export default function TradingWaveApp() {
         {activeTab === 'pricing' && (
           <PricingView />
         )}
+
+        {activeTab === 'pinebridge' && (
+          <PineScriptBridgeView
+            onLoadStrategyToBuilder={handleSaveStrategy}
+          />
+        )}
+
+        {activeTab === 'admin' && (
+          <AdminPanelView />
+        )}
       </main>
 
       {/* 4. Global Modals */}
@@ -331,7 +406,13 @@ export default function TradingWaveApp() {
         brokerName={brokerModalName || ''}
         onClose={() => setBrokerModalName(null)}
         onConnected={name => {
-          setConnectedBrokers(prev => (prev.includes(name) ? prev : [...prev, name]));
+          setConnectedBrokers(prev => {
+            const updated = prev.includes(name) ? prev : [...prev, name];
+            try {
+              localStorage.setItem('twave_connected_brokers', JSON.stringify(updated));
+            } catch (_) {}
+            return updated;
+          });
           showToast(`Successfully connected and authenticated ${name} API!`);
         }}
       />
@@ -355,13 +436,15 @@ export default function TradingWaveApp() {
             </span>
           </div>
 
-          <div className="flex items-center gap-6 text-slate-600 dark:text-slate-400">
+          <div className="flex items-center gap-5 text-slate-600 dark:text-slate-400 flex-wrap">
             <button onClick={() => setActiveTab('pricing')} className="hover:text-slate-900 dark:hover:text-white transition">Pricing</button>
             <button onClick={() => setActiveTab('brokers')} className="hover:text-slate-900 dark:hover:text-white transition">{ALL_BROKERS_BASE.length} Brokers</button>
+            <button onClick={() => setActiveTab('pinebridge')} className="hover:text-slate-900 dark:hover:text-white transition">Pine Script Bridge</button>
+            <button onClick={() => setActiveTab('admin')} className="hover:text-slate-900 dark:hover:text-white transition text-[#5B45E0] dark:text-[#818CF8] font-semibold">Admin Panel</button>
             <button onClick={() => setActiveTab('backtest')} className="hover:text-slate-900 dark:hover:text-white transition">Backtest Studio</button>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
-            <span>Zero-Eval DSL</span>
-            <span>SEBI & FinTech Compliant</span>
+            <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">|</span>
+            <span className="hidden sm:inline">Zero-Eval DSL</span>
+            <span className="hidden sm:inline">SEBI & FinTech Compliant</span>
           </div>
         </div>
       </footer>

@@ -154,3 +154,74 @@ code, pre, .font-mono {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* Institutional Corporate Animations & Text Motion Effects */
+@keyframes textShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(91, 69, 224, 0.4));
+  }
+  50% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 14px rgba(91, 69, 224, 0.7));
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, currentColor 0%, rgba(91, 69, 224, 0.9) 50%, currentColor 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: textShimmer 4s linear infinite;
+}
+
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+html.dark .glass-panel {
+  background: rgba(31, 41, 55, 0.85);
+}
+
+.card-institutional {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-institutional:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+}
+
+html.dark .card-institutional:hover {
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.4);
+}
+

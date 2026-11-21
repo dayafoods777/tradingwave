@@ -21,31 +21,70 @@ interface StrikeRow {
 }
 
 export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: number, type: 'CALL' | 'PUT', action: 'BUY' | 'SELL') => void }) {
-  const [underlying, setUnderlying] = useState('NIFTY 50');
+  const [underlying, setUnderlying] = useState<'NIFTY 50' | 'BANKNIFTY' | 'FINNIFTY' | 'SENSEX'>('NIFTY 50');
   const [expiry, setExpiry] = useState('28-NOV-2024');
-  const [spotPrice, setSpotPrice] = useState(24350);
+  const [lastUpdated, setLastUpdated] = useState('Just now');
+  const [tickCount, setTickCount] = useState(0);
 
-  const strikes: StrikeRow[] = [
-    { callOi: 42100, callOiChg: 12.4, callVol: 182000, callIv: 13.8, callLtp: 312.40, callDelta: 0.78, strike: 24150, putDelta: -0.22, putLtp: 42.10, putIv: 14.1, putVol: 98000, putOiChg: -4.2, putOi: 92400 },
-    { callOi: 68500, callOiChg: 8.5, callVol: 245000, callIv: 13.6, callLtp: 248.80, callDelta: 0.71, strike: 24200, putDelta: -0.29, putLtp: 58.40, putIv: 13.9, putVol: 142000, putOiChg: 2.5, putOi: 115000 },
-    { callOi: 89400, callOiChg: 15.2, callVol: 310000, callIv: 13.5, callLtp: 194.20, callDelta: 0.62, strike: 24250, putDelta: -0.38, putLtp: 79.50, putIv: 13.7, putVol: 195000, putOiChg: 8.1, putOi: 134000 },
-    { callOi: 142000, callOiChg: 22.0, callVol: 520000, callIv: 13.4, callLtp: 152.00, callDelta: 0.54, strike: 24300, putDelta: -0.46, putLtp: 104.20, putIv: 13.6, putVol: 340000, putOiChg: 14.8, putOi: 168000 },
-    { callOi: 198000, callOiChg: 31.4, callVol: 890000, callIv: 13.2, callLtp: 125.40, callDelta: 0.50, strike: 24350, putDelta: -0.50, putLtp: 118.20, putIv: 13.5, putVol: 820000, putOiChg: 28.5, putOi: 215000, isAtm: true },
-    { callOi: 245000, callOiChg: 28.9, callVol: 780000, callIv: 13.3, callLtp: 88.60, callDelta: 0.42, strike: 24400, putDelta: -0.58, putLtp: 148.50, putIv: 13.7, putVol: 410000, putOiChg: 11.2, putOi: 148000 },
-    { callOi: 182000, callOiChg: 14.5, callVol: 490000, callIv: 13.5, callLtp: 62.40, callDelta: 0.33, strike: 24450, putDelta: -0.67, putLtp: 192.10, putIv: 13.8, putVol: 280000, putOiChg: 5.4, putOi: 98000 },
-    { callOi: 310000, callOiChg: 45.2, callVol: 920000, callIv: 13.7, callLtp: 44.50, callDelta: 0.25, strike: 24500, putDelta: -0.75, putLtp: 245.00, putIv: 14.0, putVol: 180000, putOiChg: -2.1, putOi: 82000 },
-    { callOi: 145000, callOiChg: 9.8, callVol: 310000, callIv: 14.0, callLtp: 28.20, callDelta: 0.18, strike: 24550, putDelta: -0.82, putLtp: 308.20, putIv: 14.2, putVol: 95000, putOiChg: -6.4, putOi: 64000 }
-  ];
+  const underlyingConfigs = {
+    'NIFTY 50': { spot: 24352.40, step: 50, change: '+112.50' },
+    'BANKNIFTY': { spot: 52180.60, step: 100, change: '+245.80' },
+    'FINNIFTY': { spot: 24125.80, step: 50, change: '+88.20' },
+    'SENSEX': { spot: 79840.20, step: 100, change: '+340.50' }
+  };
+
+  const currentCfg = underlyingConfigs[underlying];
+  const atmStrike = Math.round(currentCfg.spot / currentCfg.step) * currentCfg.step;
+
+  // Generate 9 dynamic strikes around ATM
+  const strikes: StrikeRow[] = React.useMemo(() => {
+    const list: StrikeRow[] = [];
+    const offsets = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+    for (const offset of offsets) {
+      const strike = atmStrike + offset * currentCfg.step;
+      const isAtm = offset === 0;
+      const dist = (strike - currentCfg.spot) / currentCfg.spot;
+      
+      const callDelta = Math.max(0.05, Math.min(0.95, parseFloat((0.50 - dist * 8).toFixed(2))));
+      const putDelta = parseFloat((callDelta - 1).toFixed(2));
+      
+      const callLtp = Math.max(2.5, parseFloat((Math.max(0, currentCfg.spot - strike) + (5 - Math.abs(offset)) * (currentCfg.step * 0.45) + (Math.sin(tickCount + offset) * 2)).toFixed(2)));
+      const putLtp = Math.max(2.5, parseFloat((Math.max(0, strike - currentCfg.spot) + (5 - Math.abs(offset)) * (currentCfg.step * 0.42) + (Math.cos(tickCount + offset) * 2)).toFixed(2)));
+
+      list.push({
+        strike,
+        isAtm,
+        callOi: Math.floor(80000 + (10 - Math.abs(offset)) * 25000 + Math.sin(offset) * 5000),
+        callOiChg: parseFloat(((offset + 2) * 4.2).toFixed(1)),
+        callVol: Math.floor(150000 + (10 - Math.abs(offset)) * 70000),
+        callIv: parseFloat((13.2 + Math.abs(offset) * 0.2).toFixed(1)),
+        callDelta,
+        callLtp,
+        putDelta,
+        putLtp,
+        putIv: parseFloat((13.5 + Math.abs(offset) * 0.2).toFixed(1)),
+        putVol: Math.floor(120000 + (10 - Math.abs(offset)) * 65000),
+        putOiChg: parseFloat(((2 - offset) * 3.8).toFixed(1)),
+        putOi: Math.floor(75000 + (10 - Math.abs(offset)) * 22000)
+      });
+    }
+    return list;
+  }, [underlying, atmStrike, tickCount, currentCfg.spot, currentCfg.step]);
+
+  const handleRefreshTicks = () => {
+    setTickCount(c => c + 1);
+    setLastUpdated(new Date().toLocaleTimeString());
+  };
 
   return (
     <div className="space-y-6">
       {/* Controls Bar */}
       <div className="p-4 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm dark:shadow-md flex flex-wrap items-center justify-between gap-4 transition-colors">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <select
             value={underlying}
-            onChange={e => setUnderlying(e.target.value)}
-            className="bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
+            onChange={e => setUnderlying(e.target.value as any)}
+            className="bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
           >
             <option value="NIFTY 50">NIFTY 50</option>
             <option value="BANKNIFTY">BANKNIFTY</option>
@@ -56,22 +95,33 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
           <select
             value={expiry}
             onChange={e => setExpiry(e.target.value)}
-            className="bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:outline-none focus:border-[#FF6B00]"
+            className="bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:outline-none focus:border-[#5B45E0]"
           >
             <option value="28-NOV-2024">28 Nov 2024 (Weekly)</option>
             <option value="05-DEC-2024">05 Dec 2024 (Weekly)</option>
             <option value="26-DEC-2024">26 Dec 2024 (Monthly)</option>
           </select>
 
-          <div className="text-xs">
-            <span className="text-slate-500 dark:text-slate-400">Spot: </span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">24,352.40 (+112.50)</span>
+          <div className="text-xs flex items-center gap-1.5 font-mono">
+            <span className="text-slate-500 dark:text-slate-400">Spot:</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+              ₹ {currentCfg.spot.toLocaleString('en-IN', { minimumFractionDigits: 2 })} ({currentCfg.change})
+            </span>
           </div>
+
+          <button
+            onClick={handleRefreshTicks}
+            className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1"
+            title="Fetch Fresh Option Chain Ticks"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+            <span>Refresh Ticks</span>
+          </button>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Live WebSocket Feed · Greeks by Black-Scholes</span>
+          <span>Live WebSocket Feed · Greeks by Black-Scholes · {lastUpdated}</span>
         </div>
       </div>
 
