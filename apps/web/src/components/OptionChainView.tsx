@@ -125,9 +125,14 @@ export default function OptionChainView({ onAddLeg }: { onAddLeg: (strike: numbe
         </div>
       </div>
 
+      {/* Mobile Swipe Hint */}
+      <div className="text-[11px] text-slate-400 lg:hidden flex items-center justify-between px-2 font-mono">
+        <span>← Swipe horizontally to view all Calls, Strikes &amp; Puts →</span>
+      </div>
+
       {/* Symmetric NSE Option Chain Table */}
       <div className="rounded-2xl border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1F2937] overflow-hidden shadow-sm dark:shadow-2xl transition-colors">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-scroll">
           <table className="w-full text-xs font-mono border-collapse text-right">
             <thead>
               <tr className="bg-slate-100 dark:bg-[#0B1220] text-slate-600 dark:text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-200 dark:border-[#334155]">

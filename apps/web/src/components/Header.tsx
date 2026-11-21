@@ -23,7 +23,9 @@ import {
   ShieldCheck,
   FileCode,
   Radio,
-  ExternalLink
+  ExternalLink,
+  Menu,
+  Activity
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -58,6 +60,7 @@ export default function Header({
   const [profileOpen, setProfileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [activeMarket, setActiveMarket] = useState<'IND' | 'USA'>(market);
   const [lang, setLang] = useState<'English' | 'हिन्दी'>('English');
@@ -176,7 +179,7 @@ export default function Header({
           </div>
 
           {/* Tradetron Clean Nav: Dashboard | Create ▾ | Strategies ▾ | Reports | Admin */}
-          <nav className="flex items-center gap-1 sm:gap-2">
+          <nav className="hidden lg:flex items-center gap-1 sm:gap-2">
             {/* 1. Dashboard */}
             <button
               onClick={() => handleSelectTab('dashboard')}
@@ -510,8 +513,8 @@ export default function Header({
             )}
           </div>
 
-          {/* 3. Market Dropdown */}
-          <div className="relative" ref={marketRef}>
+          {/* 3. Market Dropdown (Desktop / Tablet) */}
+          <div className="relative hidden sm:block" ref={marketRef}>
             <button
               onClick={() => {
                 const state = !marketMenuOpen;
@@ -549,8 +552,8 @@ export default function Header({
             )}
           </div>
 
-          {/* 4. Language Dropdown */}
-          <div className="relative" ref={langRef}>
+          {/* 4. Language Dropdown (Desktop / Tablet) */}
+          <div className="relative hidden sm:block" ref={langRef}>
             <button
               onClick={() => {
                 const state = !langMenuOpen;
@@ -690,8 +693,243 @@ export default function Header({
               <Moon className="w-4 h-4 text-slate-700" />
             )}
           </button>
+
+          {/* 7. Mobile Menu Hamburger Toggle (lg:hidden) */}
+          <button
+            onClick={() => {
+              closeAllMenus();
+              setMobileMenuOpen(!mobileMenuOpen);
+            }}
+            className="p-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition cursor-pointer lg:hidden"
+            title="Toggle Mobile Navigation"
+          >
+            {mobileMenuOpen ? <X className="w-4 h-4 text-[#FF6B00]" /> : <Menu className="w-4 h-4" />}
+          </button>
         </div>
       </div>
+
+      {/* 8. Mobile Slide-down Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t border-slate-200 dark:border-[#334155] bg-white/98 dark:bg-[#0B1220]/98 backdrop-blur-xl px-4 py-4 space-y-4 max-h-[calc(100vh-4.5rem)] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 shadow-2xl">
+          {/* Quick Actions */}
+          <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
+            <button
+              onClick={() => {
+                handleSelectTab('dashboard');
+                setMobileMenuOpen(false);
+              }}
+              className={`p-3 rounded-2xl flex items-center gap-2.5 transition ${
+                activeTab === 'dashboard'
+                  ? 'bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] font-bold shadow-sm'
+                  : 'bg-slate-50 dark:bg-[#1F2937] text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4 text-[#5B45E0]" />
+              <span>Dashboard</span>
+            </button>
+
+            <button
+              onClick={() => {
+                handleSelectTab('admin');
+                setMobileMenuOpen(false);
+              }}
+              className={`p-3 rounded-2xl flex items-center gap-2.5 transition ${
+                activeTab === 'admin'
+                  ? 'bg-orange-500/15 text-[#FF6B00] border border-orange-500/30 font-bold shadow-sm'
+                  : 'bg-slate-50 dark:bg-[#1F2937] text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4 text-[#FF6B00]" />
+              <span>Admin Panel</span>
+            </button>
+          </div>
+
+          {/* Section: Create */}
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
+              Create Algorithms
+            </div>
+            <div className="space-y-1">
+              {[
+                { id: 'usingai', label: 'Using AI (Cookie Quant)', icon: Sparkles, desc: 'Natural language quant synthesizer' },
+                { id: 'builder', label: 'Strategy Builder', icon: LayoutGrid, desc: 'Multi-leg rule sets & keywords' },
+                { id: 'wizard', label: 'Option Wizard & Greeks', icon: Wand2, desc: 'Black-Scholes Greek payoffs' },
+                { id: 'pinebridge', label: 'Pine Script Bridge', icon: Radio, desc: 'TradingView webhook alert listener' }
+              ].map(item => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      handleSelectTab(item.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full text-left p-2.5 rounded-xl flex items-center gap-3 transition ${
+                      activeTab === item.id
+                        ? 'bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] font-bold'
+                        : 'hover:bg-slate-50 dark:hover:bg-[#1F2937] text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-indigo-500/10 text-[#5B45E0] dark:text-[#818CF8] flex items-center justify-center shrink-0">
+                      <Icon className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white">{item.label}</div>
+                      <div className="text-[10px] text-slate-400">{item.desc}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section: Strategies & Execution */}
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
+              Strategies &amp; Execution
+            </div>
+            <div className="space-y-1">
+              {[
+                { id: 'mystrategies', label: 'My Strategies', icon: LayoutGrid },
+                { id: 'readystrategies', label: 'Ready Strategies (Marketplace)', icon: Sparkles },
+                { id: 'optionchain', label: 'Live Option Chain', icon: Layers },
+                { id: 'backtest', label: 'Backtest Studio', icon: LineChart },
+                { id: 'brokers', label: 'Connected Brokers (38)', icon: Key },
+                { id: 'pricing', label: 'Plans & Pricing', icon: CreditCard }
+              ].map(item => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      handleSelectTab(item.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition ${
+                      activeTab === item.id
+                        ? 'bg-[#EEF2FF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8] font-bold'
+                        : 'hover:bg-slate-50 dark:hover:bg-[#1F2937] text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section: Settings & Emergency */}
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-3">
+            <div className="flex items-center justify-between text-xs font-semibold px-1">
+              <span className="text-slate-400">Market Region:</span>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => handleMarketSelect('IND')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition ${activeMarket === 'IND' ? 'bg-[#5B45E0] text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                >
+                  🇮🇳 IND
+                </button>
+                <button
+                  onClick={() => handleMarketSelect('USA')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition ${activeMarket === 'USA' ? 'bg-[#5B45E0] text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                >
+                  🇺🇸 USA
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onKillSwitch();
+              }}
+              className="w-full py-2.5 rounded-xl bg-red-600/10 text-red-600 dark:text-red-400 border border-red-500/20 text-xs font-bold flex items-center justify-center gap-2 hover:bg-red-600/20 transition"
+            >
+              <ShieldAlert className="w-4 h-4" />
+              <span>Universal Kill Switch</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 9. Mobile Bottom Navigation Bar (Fixed for phones & small tablets) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0B1220]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 lg:hidden flex items-center justify-around py-2 px-1 safe-area-pb shadow-lg">
+        <button
+          onClick={() => {
+            handleSelectTab('dashboard');
+            setMobileMenuOpen(false);
+          }}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+            activeTab === 'dashboard'
+              ? 'text-[#5B45E0] dark:text-[#818CF8] font-bold'
+              : 'text-slate-500 dark:text-slate-400'
+          }`}
+        >
+          <TrendingUp className="w-4 h-4" />
+          <span className="text-[10px] leading-none">Dashboard</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleSelectTab('mystrategies');
+            setMobileMenuOpen(false);
+          }}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+            activeTab === 'mystrategies' || activeTab === 'readystrategies'
+              ? 'text-[#5B45E0] dark:text-[#818CF8] font-bold'
+              : 'text-slate-500 dark:text-slate-400'
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span className="text-[10px] leading-none">Strategies</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleSelectTab('usingai');
+            setMobileMenuOpen(false);
+          }}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+            activeTab === 'usingai'
+              ? 'text-[#5B45E0] dark:text-[#818CF8] font-bold'
+              : 'text-slate-500 dark:text-slate-400'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-[#FF6B00]" />
+          <span className="text-[10px] leading-none">AI Quant</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleSelectTab('optionchain');
+            setMobileMenuOpen(false);
+          }}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+            activeTab === 'optionchain'
+              ? 'text-[#5B45E0] dark:text-[#818CF8] font-bold'
+              : 'text-slate-500 dark:text-slate-400'
+          }`}
+        >
+          <Activity className="w-4 h-4" />
+          <span className="text-[10px] leading-none">Options</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleSelectTab('admin');
+            setMobileMenuOpen(false);
+          }}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+            activeTab === 'admin'
+              ? 'text-[#FF6B00] font-bold'
+              : 'text-slate-500 dark:text-slate-400'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4 text-[#FF6B00]" />
+          <span className="text-[10px] leading-none">Admin</span>
+        </button>
+      </nav>
     </header>
   );
 }

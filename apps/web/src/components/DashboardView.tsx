@@ -515,8 +515,8 @@ export default function DashboardView({
           </div>
 
           {/* Right: Search & Actions */}
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="relative w-64">
+          <div className="flex items-center gap-2.5 flex-wrap w-full lg:w-auto">
+            <div className="relative w-full sm:w-64">
               <input
                 type="text"
                 placeholder="Filter name / broker / status..."
@@ -835,9 +835,9 @@ export default function DashboardView({
 
       {/* 6. BOTTOM CONSOLE SECTION (Split View matching screenshot media_1795188402398_176d78f2.png) */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pt-2">
-        {/* Left Console Sidebar (vertical tabs) */}
-        <div className="md:col-span-3 space-y-1">
-          <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2">
+        {/* Left Console Sidebar (vertical on desktop, horizontal scroll on mobile) */}
+        <div className="md:col-span-3 flex md:flex-col gap-1.5 overflow-x-auto no-scrollbar pb-2 md:pb-0">
+          <div className="hidden md:block text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2">
             CONSOLE
           </div>
 
@@ -855,10 +855,10 @@ export default function DashboardView({
               <button
                 key={tab.id}
                 onClick={() => setConsoleTab(tab.id as any)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition text-left ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition text-left whitespace-nowrap shrink-0 md:w-full ${
                   isActive
-                    ? 'bg-slate-100 dark:bg-[#334155] text-[#5B45E0] dark:text-[#818CF8] font-bold border-l-4 border-[#5B45E0] dark:border-[#818CF8]'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-slate-100 dark:bg-[#334155] text-[#5B45E0] dark:text-[#818CF8] font-bold border-b-2 md:border-b-0 md:border-l-4 border-[#5B45E0] dark:border-[#818CF8]'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white bg-slate-50/50 md:bg-transparent dark:bg-[#0B1220]/40 md:dark:bg-transparent'
                 }`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-[#5B45E0] dark:text-[#818CF8]' : 'text-slate-400'}`} />

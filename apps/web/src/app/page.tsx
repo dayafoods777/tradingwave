@@ -292,7 +292,7 @@ export default function TradingWaveApp() {
       )}
 
       {/* 3. Main Workspace Content Area */}
-      <main className="flex-1 max-w-[1440px] w-full mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
         {activeTab === 'dashboard' && (
           <DashboardView
             bots={deployedBots}
