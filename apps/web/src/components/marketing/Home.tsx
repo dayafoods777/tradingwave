@@ -415,7 +415,7 @@ function Showcase() {
               );
             })}
           </div>
-          <div className="min-h-[360px] overflow-hidden rounded-lg border border-border bg-subtle">
+          <div className="overflow-hidden rounded-lg border border-border bg-subtle">
             <div className="flex h-9 items-center justify-between border-b border-border bg-surface px-4 text-[12px]">
               <span className="font-medium text-fg">{tabs.find(t => t.id === active)?.title}</span>
               <Link href="/app/" className="flex items-center gap-1 text-fg-muted hover:text-fg">

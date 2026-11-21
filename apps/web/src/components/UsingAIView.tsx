@@ -640,7 +640,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
 
               {chatStep === 'delivered' && (
                 <div className="text-center text-xs font-semibold text-profit py-1">
-                  ✓ Strategy delivered to your account as a Strategy Template!
+                  Strategy delivered to your account as a template.
                 </div>
               )}
             </div>

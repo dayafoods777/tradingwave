@@ -628,7 +628,7 @@ export default function StrategyBuilderView({
             {/* 1. TOP HEADER: Create Strategy & Import / Export */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-fg">Create Strategy</h1>
+          <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-fg">Create strategy</h1>
         </div>
         <div className="flex items-center gap-2">
           <button

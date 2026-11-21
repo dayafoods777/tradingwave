@@ -125,7 +125,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
               <Code className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-fg">Tradetron Keyword Catalogue (214 Built-in)</h3>
+              <h3 className="font-semibold text-lg text-fg">Keyword catalogue · 214 built-in</h3>
               <p className="text-xs text-fg-muted">Select an indicator, market metric, or position keyword to build conditions</p>
             </div>
           </div>
@@ -308,7 +308,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-subtle">
           <span className="text-xs text-fg-muted font-mono">
-            Tradetron AST Engine · Zero-Eval Safe
+            TradingWave rule engine · sandboxed evaluation
           </span>
           <div className="flex items-center gap-3">
             <button

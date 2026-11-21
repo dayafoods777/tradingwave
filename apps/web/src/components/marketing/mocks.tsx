@@ -62,12 +62,12 @@ export function PayoffChart({ spot, className = '', compact = false }: { spot: n
       <line x1={x(spot)} x2={x(spot)} y1="6" y2={H - 18} className="stroke-accent" strokeWidth="1" strokeDasharray="3 3" />
       <circle cx={x(spot)} cy={y(pnlNow)} r="3.5" className="fill-accent stroke-surface" strokeWidth="1.5" />
       {[LO, 24000, STRIKE, 24600, HI].map(s => (
-        <text key={s} x={x(s)} y={H - 4} textAnchor={s === LO ? 'start' : s === HI ? 'end' : 'middle'} className="fill-fg-muted font-mono" fontSize="10">
+        <text key={s} x={x(s)} y={H - 4} textAnchor={s === LO ? 'start' : s === HI ? 'end' : 'middle'} className="fill-fg-muted font-mono" fontSize="8.5">
           {s.toLocaleString('en-IN')}
         </text>
       ))}
-      <text x={x(be1) - 4} y={zeroY - 6} textAnchor="end" className="fill-fg-muted font-mono" fontSize="10">BE {fmtINR(be1, 0)}</text>
-      <text x={x(be2) + 4} y={zeroY - 6} className="fill-fg-muted font-mono" fontSize="10">BE {fmtINR(be2, 0)}</text>
+      <text x={x(be1) - 4} y={zeroY - 6} textAnchor="end" className="fill-fg-muted font-mono" fontSize="8.5">BE {fmtINR(be1, 0)}</text>
+      <text x={x(be2) + 4} y={zeroY - 6} className="fill-fg-muted font-mono" fontSize="8.5">BE {fmtINR(be2, 0)}</text>
     </svg>
   );
 }
