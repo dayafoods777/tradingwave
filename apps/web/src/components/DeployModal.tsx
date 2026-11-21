@@ -89,7 +89,7 @@ export default function DeployModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 duration-200">
       <div
         className="bg-surface w-full max-w-lg rounded-lg shadow-pop border border-border overflow-hidden text-fg transition-all"
         onClick={e => e.stopPropagation()}
@@ -265,7 +265,7 @@ export default function DeployModal({
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold shadow-pop active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 rounded-lg bg-primary hover:bg-primary-hover text-primary-fg text-xs font-semibold shadow-pop active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Deploy</span>
             </button>

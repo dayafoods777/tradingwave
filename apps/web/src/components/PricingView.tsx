@@ -132,11 +132,11 @@ export default function PricingView() {
     <div className="space-y-8">
       {/* Pricing Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+        <span className="tw-label">
           Transparent & Simple Pricing
         </span>
         <h2 className="text-3xl sm:text-4xl font-semibold text-fg">
-          Start Free. <span className="text-primary">Pay only when you go live.</span>
+          Start Free. <span className="text-fg-muted">Pay only when you go live.</span>
         </h2>
         <p className="text-sm text-fg-secondary leading-relaxed">
           Build unlimited strategies and run in Live Offline / Paper Trading for ₹0 — Free for Life. Pick a plan only when you are ready to deploy real capital into your own broker account.
@@ -215,7 +215,7 @@ export default function PricingView() {
             <button
               className={`w-full py-2.5 px-4 rounded-lg text-xs font-semibold transition ${
                 plan.highlight
-                  ? 'bg-primary text-primary-fg hover:brightness-110'
+                  ? 'bg-primary text-primary-fg hover:opacity-90'
                   : 'bg-muted hover:bg-muted text-fg'
               }`}
             >

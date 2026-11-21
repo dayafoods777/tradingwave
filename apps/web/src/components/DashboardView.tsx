@@ -307,7 +307,7 @@ export default function DashboardView({
       <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-border bg-surface lg:grid-cols-4">
         {[
           { label: 'Deployed capital', icon: CreditCard, value: totalDeployedCapital > 0 ? fmtL(totalDeployedCapital) : '₹0.00', sub: `Across ${totalDeployedCount} deployment${totalDeployedCount === 1 ? '' : 's'}`, tone: 'text-fg' },
-          { label: 'Day P&L', icon: TrendingUp, value: `${totalPnl >= 0 ? '+' : '−'}${fmtL(totalPnl)}`, sub: `Open market value ₹${openMarketValue.toFixed(2)}`, tone: pnlTone },
+          { label: 'Day P&L', icon: TrendingUp, value: totalPnl === 0 ? '₹0.00' : `${totalPnl > 0 ? '+' : '−'}${fmtL(totalPnl)}`, sub: `Open market value ₹${openMarketValue.toFixed(2)}`, tone: pnlTone },
           { label: 'Open positions', icon: Layers, value: String(totalOpenPositions), sub: `${activeStrategiesCount} strateg${activeStrategiesCount === 1 ? 'y' : 'ies'} running`, tone: 'text-fg' },
           { label: 'Brokers connected', icon: ShieldCheck, value: `${connectedBrokersCount}`, sub: connectedBrokersCount ? 'API sessions healthy' : 'Connect one to go live', tone: 'text-fg' },
         ].map((k, i) => (
@@ -379,25 +379,7 @@ export default function DashboardView({
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredBots.length === 0 ? (
-                <tr>
-                  <td colSpan={9} className="px-4 py-14">
-                    <div className="mx-auto flex max-w-sm flex-col items-center text-center">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-subtle">
-                        <Layers className="h-4 w-4 text-fg-muted" />
-                      </div>
-                      <div className="mt-3 text-[14px] font-medium text-fg">No deployments yet</div>
-                      <p className="mt-1 text-[13px] text-fg-muted">
-                        Deploy a saved strategy or pick one from the marketplace. New deployments start in paper mode.
-                      </p>
-                      <div className="mt-4 flex gap-2">
-                        <button onClick={() => onNavigateTab('mystrategies')} className="tw-btn-primary">My strategies</button>
-                        <button onClick={() => onNavigateTab('readystrategies')} className="tw-btn-secondary">Browse marketplace</button>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
+              {filteredBots.length === 0 ? null : (
                 filteredBots.map((bot, idx) => (
                   <tr key={bot.id} className={`transition-colors hover:bg-subtle ${bot.status === 'SQUARED_OFF' ? 'opacity-60' : ''}`}>
                     <td className="px-4 py-2.5 font-mono tnum text-[12px] text-fg-muted">{idx + 1}</td>
@@ -471,6 +453,23 @@ export default function DashboardView({
             </tbody>
           </table>
         </div>
+        {filteredBots.length === 0 && (
+          <div className="px-4 py-14">
+            <div className="mx-auto flex max-w-sm flex-col items-center text-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-subtle">
+                        <Layers className="h-4 w-4 text-fg-muted" />
+                      </div>
+                      <div className="mt-3 text-[14px] font-medium text-fg">No deployments yet</div>
+                      <p className="mt-1 text-[13px] text-fg-muted">
+                        Deploy a saved strategy or pick one from the marketplace. New deployments start in paper mode.
+                      </p>
+                      <div className="mt-4 flex gap-2">
+                        <button onClick={() => onNavigateTab('mystrategies')} className="tw-btn-primary">My strategies</button>
+                        <button onClick={() => onNavigateTab('readystrategies')} className="tw-btn-secondary">Browse marketplace</button>
+                      </div>
+                    </div>
+          </div>
+        )}
       </div>
 
       {/* Console */}
@@ -763,7 +762,7 @@ export default function DashboardView({
 
       {/* 9. INTERACTIVE MODALS FOR 3-DOTS ACTIONS */}
       {activeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 duration-150">
           <div
             className="bg-surface w-full max-w-lg rounded-lg shadow-pop border border-border overflow-hidden text-fg"
             onClick={e => e.stopPropagation()}
@@ -868,7 +867,7 @@ export default function DashboardView({
               )}
 
               {activeModal.type === 'debug' && (
-                <pre className="p-3 bg-ink text-profit rounded-lg font-mono text-[11px] overflow-x-auto max-h-56">
+                <pre className="p-3 bg-ink text-ink-fg/85 rounded-lg font-mono text-[11px] overflow-x-auto max-h-56">
 {`[${new Date().toISOString()}] Strategy runner initialized.
 [INFO] Broker adapter connected: ${activeModal.bot.broker}
 [INFO] Mode: ${activeModal.bot.mode} | Multiplier: ${activeModal.bot.multiplier}x

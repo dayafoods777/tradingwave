@@ -624,7 +624,7 @@ export default function StrategyBuilderView({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 pb-8">
             {/* 1. TOP HEADER: Create Strategy & Import / Export */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -995,7 +995,7 @@ export default function StrategyBuilderView({
                 <button
                   onClick={() => handleAddCustomCondition(typingInput)}
                   disabled={!typingInput.trim()}
-                  className="absolute right-2 px-3 py-1 rounded-lg bg-primary text-primary-fg text-xs font-semibold disabled:opacity-40 transition hover:brightness-110"
+                  className="absolute right-2 px-3 py-1 rounded-lg bg-primary text-primary-fg text-xs font-semibold disabled:opacity-40 transition hover:opacity-90"
                 >
                   Add Condition
                 </button>
@@ -1384,7 +1384,7 @@ export default function StrategyBuilderView({
           <button
             type="button"
             onClick={handleSaveAndRedirect}
-            className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold flex items-center gap-2 transition"
+            className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-primary-fg text-xs font-semibold flex items-center gap-2 transition"
           >
             <Save className="w-4 h-4" />
             <span>Save Strategy</span>
@@ -1403,7 +1403,7 @@ export default function StrategyBuilderView({
           <button
             type="button"
             onClick={() => onDeploy(strategyName || 'My Strategy')}
-            className="px-5 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 flex items-center gap-1.5 transition"
+            className="px-5 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:opacity-90 flex items-center gap-1.5 transition"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Deploy 1-Click</span>

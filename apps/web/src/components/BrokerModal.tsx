@@ -64,7 +64,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4">
       <div className="bg-surface border border-border rounded-lg w-full max-w-lg shadow-pop overflow-hidden text-fg transition-colors">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-subtle">
           <div className="flex items-center gap-3">
@@ -227,7 +227,7 @@ export default function BrokerModal({ isOpen, brokerName, onClose, onConnected }
               <button
                 onClick={handleTestAndConnect}
                 disabled={isTesting}
-                className="px-5 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:opacity-90 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
               >
                 {isTesting ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Key className="w-3.5 h-3.5" />}
                 <span>{isTesting ? 'Authenticating...' : 'Connect & Verify API'}</span>

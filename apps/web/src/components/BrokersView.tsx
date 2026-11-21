@@ -1,5 +1,6 @@
 'use client';
 
+import PageHeader from './ui/PageHeader';
 import React, { useState } from 'react';
 import { Search, ShieldCheck, CheckCircle2, Key, ExternalLink, Zap, Server } from 'lucide-react';
 
@@ -74,108 +75,103 @@ export default function BrokersView({ onConfigure, connectedBrokers = [] }: Brok
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="p-6 rounded-lg bg-primary-soft border border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Broker Adapters</span>
-          <h2 className="text-2xl font-semibold text-fg mt-1">{ALL_BROKERS_BASE.length} Supported Indian & Global Brokers</h2>
-          <p className="text-sm text-fg-secondary mt-1 max-w-2xl">
-            Execute orders directly into your personal broker trading account with zero latency markup. TradingWave provides standardized order reconciliation, automatic token refresh, and universal pre-trade risk checks.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-lg bg-surface border border-border text-center">
-            <div className={`text-lg font-semibold ${connectedBrokers.length > 0 ? 'text-profit' : 'text-fg-muted'}`}>
-              {connectedBrokers.length} Active
-            </div>
-            <div className="text-[10px] text-fg-muted uppercase">Connected</div>
+    <div className="space-y-5 pb-8">
+      <PageHeader
+        title="Brokers"
+        description="Orders go straight into your own broker account through its official API. Token refresh, reconciliation and pre-trade risk checks are handled for every adapter."
+        actions={
+          <div className="flex items-center gap-4 rounded-md border border-border bg-surface px-3 py-1.5 text-[12px]">
+            <span className="text-fg-muted">Connected <span className={`ml-1 font-mono tnum ${connectedBrokers.length ? 'text-profit' : 'text-fg'}`}>{connectedBrokers.length}</span></span>
+            <span className="h-3 w-px bg-border" />
+            <span className="text-fg-muted">Available <span className="ml-1 font-mono tnum text-fg">{ALL_BROKERS_BASE.length}</span></span>
           </div>
-          <div className="px-4 py-2 rounded-lg bg-surface border border-border text-center">
-            <div className="text-lg font-semibold text-fg">{ALL_BROKERS_BASE.length} Total</div>
-            <div className="text-[10px] text-fg-muted uppercase">Available</div>
+        }
+      />
+
+      <div className="overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="flex flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:w-80">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-fg-muted" />
+            <input
+              type="text"
+              placeholder="Search brokers or APIs"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="tw-input pl-8"
+            />
           </div>
-        </div>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-        <div className="relative w-full sm:w-96">
-          <Search className="w-4 h-4 text-fg-muted absolute left-3 top-3" />
-          <input
-            type="text"
-            placeholder="Search brokers (Zerodha, Dhan, Angel One, Groww)..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full bg-surface border border-border rounded-lg pl-9 pr-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:outline-none focus:border-primary"
-          />
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto w-full sm:w-auto">
-          {(['All', 'Discount', 'Full Service', 'Crypto & Global'] as const).map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${category === cat ? 'bg-primary text-primary-fg' : 'bg-surface border border-border text-fg-secondary hover:text-fg'
-                }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Grid of Brokers */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map(broker => (
-          <div
-            key={broker.name}
-            className="p-5 rounded-lg bg-surface border border-border flex flex-col justify-between hover:border-primary/40 transition"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-muted text-fg-secondary">
-                  {broker.category}
-                </span>
-                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${broker.status === 'CONNECTED'
-                  ? 'bg-profit-soft text-profit'
-                  : 'bg-muted text-fg-muted'
-                  }`}>
-                  {broker.status === 'CONNECTED' ? '● Connected' : 'Ready to Connect'}
-                </span>
-              </div>
-
-              <h3 className="font-semibold text-base text-fg">{broker.name}</h3>
-              <p className="text-xs text-fg-muted font-mono mt-0.5">{broker.apiName}</p>
-
-              <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs">
-                <span className="text-fg-muted">API Cost:</span>
-                <span className="font-semibold text-profit">{broker.algoCharge}</span>
-              </div>
-
-              <div className="mt-2 flex flex-wrap gap-1">
-                {broker.segments.map(s => (
-                  <span key={s} className="text-[9px] px-1.5 py-0.5 rounded bg-subtle border border-border text-fg-secondary font-mono">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4 mt-4 border-t border-border flex items-center gap-2">
+          <div className="no-scrollbar flex overflow-x-auto rounded-md border border-border bg-subtle p-0.5">
+            {(['All', 'Discount', 'Full Service', 'Crypto & Global'] as const).map(cat => (
               <button
-                onClick={() => onConfigure(broker.name)}
-                className={`flex-1 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 ${broker.status === 'CONNECTED'
-                  ? 'bg-muted text-fg hover:bg-muted'
-                  : 'bg-primary text-primary-fg hover:brightness-110'
-                  }`}
+                key={cat}
+                onClick={() => setCategory(cat)}
+                className={`h-6 whitespace-nowrap rounded px-2.5 text-[12px] font-medium transition-colors ${
+                  category === cat ? 'bg-surface text-fg shadow-hairline' : 'text-fg-muted hover:text-fg'
+                }`}
               >
-                <Key className="w-3.5 h-3.5" />
-                <span>{broker.status === 'CONNECTED' ? 'Edit Credentials' : 'Connect Account'}</span>
+                {cat}
               </button>
-            </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[760px] text-left text-[13px]">
+            <thead className="border-b border-border bg-subtle text-[11px] text-fg-muted">
+              <tr>
+                <th className="px-4 py-2 font-medium">Broker</th>
+                <th className="px-3 py-2 font-medium">Type</th>
+                <th className="px-3 py-2 font-medium">Segments</th>
+                <th className="px-3 py-2 font-medium">API cost</th>
+                <th className="px-3 py-2 font-medium">Status</th>
+                <th className="px-4 py-2 text-right font-medium" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filtered.map(broker => {
+                const connected = broker.status === 'CONNECTED';
+                return (
+                  <tr key={broker.name} className="transition-colors hover:bg-subtle">
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-subtle text-[11px] font-semibold text-fg-secondary">
+                          {broker.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase()}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="font-medium text-fg">{broker.name}</div>
+                          <div className="truncate font-mono text-[11px] text-fg-muted">{broker.apiName}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2.5 text-[12px] text-fg-secondary">{broker.category}</td>
+                    <td className="px-3 py-2.5">
+                      <div className="flex flex-wrap gap-1">
+                        {broker.segments.map(s => (
+                          <span key={s} className="rounded border border-border px-1 font-mono text-[10.5px] leading-4 text-fg-secondary">{s}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2.5 text-[12px] text-fg-secondary">{broker.algoCharge}</td>
+                    <td className="whitespace-nowrap px-3 py-2.5">
+                      <span className={`inline-flex items-center gap-1.5 text-[12px] ${connected ? 'text-profit' : 'text-fg-muted'}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${connected ? 'bg-profit' : 'bg-border-strong'}`} />
+                        {connected ? 'Connected' : 'Not connected'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 text-right">
+                      <button onClick={() => onConfigure(broker.name)} className={connected ? 'tw-btn-ghost h-7 text-[12px]' : 'tw-btn-secondary h-7 text-[12px]'}>
+                        <Key className="h-3 w-3" /> {connected ? 'Edit keys' : 'Connect'}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {filtered.length === 0 && (
+            <div className="px-4 py-12 text-center text-[13px] text-fg-muted">No brokers match “{search}”.</div>
+          )}
+        </div>
       </div>
     </div>
   );

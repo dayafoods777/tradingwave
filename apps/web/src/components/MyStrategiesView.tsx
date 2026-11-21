@@ -564,7 +564,7 @@ export default function MyStrategiesView({
 
       {/* 5. API WEBHOOK MODAL */}
       {apiModalStrategy && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-ink/50 flex items-center justify-center p-4">
           <div className="max-w-xl w-full bg-surface border border-border rounded-lg p-6 shadow-pop space-y-4 duration-150">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
@@ -605,7 +605,7 @@ export default function MyStrategiesView({
                       setCopiedText(true);
                       setTimeout(() => setCopiedText(false), 2000);
                     }}
-                    className="px-3 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold hover:brightness-110 flex items-center gap-1 transition shrink-0"
+                    className="px-3 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold hover:opacity-90 flex items-center gap-1 transition shrink-0"
                   >
                     {copiedText ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedText ? 'Copied' : 'Copy'}</span>
@@ -617,7 +617,7 @@ export default function MyStrategiesView({
                 <label className="block text-fg-muted font-semibold mb-1">
                   TradingView PineScript Alert Message
                 </label>
-                <pre className="p-3 bg-ink text-profit rounded-lg font-mono text-[11px] overflow-x-auto">
+                <pre className="p-3 bg-ink text-ink-fg/85 rounded-lg font-mono text-[11px] overflow-x-auto">
 {`{
   "strategy": "${apiModalStrategy.name}",
   "action": "{{strategy.order.action}}",

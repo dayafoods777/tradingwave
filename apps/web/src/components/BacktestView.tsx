@@ -164,13 +164,13 @@ export default function BacktestView() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 pb-8">
       {/* Top Banner */}
-      <div className="p-6 rounded-lg bg-primary-soft border border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Quantitative Backtesting</span>
-          <h2 className="text-2xl font-semibold text-fg mt-1">Zero-Lookahead Event-Driven Engine</h2>
-          <p className="text-sm text-fg-secondary mt-1 max-w-2xl">
+          <span className="tw-label">Quantitative Backtesting</span>
+          <h2 className="mt-1 text-[22px] font-semibold tracking-[-0.02em] text-fg">Zero-Lookahead Event-Driven Engine</h2>
+          <p className="mt-0.5 max-w-2xl text-[13px] text-fg-muted">
             Simulate every second tick against historical NSE tick data. Accurately accounts for bid-ask slippage, lot-size changes, and Indian regulatory charges (STT, GST, Stamp Duty).
           </p>
         </div>
@@ -178,7 +178,7 @@ export default function BacktestView() {
           {hasRun && (
             <button
               onClick={handleReset}
-              className="px-4 py-2.5 rounded-lg border border-border-strong text-fg-secondary hover:bg-muted text-xs font-semibold flex items-center gap-1.5 transition"
+              className="tw-btn-secondary"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset</span>
@@ -187,7 +187,7 @@ export default function BacktestView() {
           <button
             onClick={handleRun}
             disabled={isRunning}
-            className="px-5 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 flex items-center gap-2 transition disabled:opacity-50"
+            className="tw-btn-primary"
           >
             {isRunning ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-current" />}
             <span>{isRunning ? 'Simulating Ticks...' : 'Execute Backtest'}</span>
@@ -269,7 +269,7 @@ export default function BacktestView() {
           </p>
           <button
             onClick={handleRun}
-            className="mt-6 px-6 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 inline-flex items-center gap-2 transition"
+            className="mt-6 px-6 py-2.5 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:opacity-90 inline-flex items-center gap-2 transition"
           >
             <Play className="w-4 h-4 fill-current" />
             <span>Execute Backtest</span>
@@ -344,14 +344,15 @@ export default function BacktestView() {
               <span className="text-xs text-fg-muted font-mono">{metrics.totalTrades} Executed Trades · Simulation Complete</span>
             </div>
 
-            <div className="h-44 w-full bg-ink rounded-lg border border-ink-line p-3 flex items-center justify-center">
-              <svg width="100%" height="100%" viewBox="0 0 600 120" className="overflow-visible">
-                <line x1="0" y1="100" x2="600" y2="100" className="stroke-border-strong" strokeWidth="1" />
+            <div className="h-grid-bg h-48 w-full rounded-md border border-border bg-surface p-3">
+              <svg width="100%" height="100%" viewBox="0 0 600 120" preserveAspectRatio="none" className="overflow-visible text-profit">
+                <line x1="0" y1="100" x2="600" y2="100" className="stroke-border-strong" strokeWidth="1" vectorEffect="non-scaling-stroke" />
                 <path
                   d={equityCurveSvgPath}
                   fill="none"
                   className="stroke-profit"
-                  strokeWidth="2.5"
+                  strokeWidth="1.75"
+                  vectorEffect="non-scaling-stroke"
                   strokeLinecap="round"
                 />
                 <path

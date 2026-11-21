@@ -200,7 +200,7 @@ export default function ReadyStrategiesView({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 pb-8">
       <PageHeader
         title="Marketplace"
         description="Pre-built rule sets with published entry, leg and exit logic. Deploy to paper first, then live."
@@ -338,7 +338,7 @@ export default function ReadyStrategiesView({
             <div className="pt-2 flex items-center gap-2">
               <button
                 onClick={() => setDeployModalStrategy(strat)}
-                className="flex-1 py-2.5 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold active:scale-95 transition flex items-center justify-center gap-1.5"
+                className="flex-1 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-primary-fg text-xs font-semibold  transition flex items-center justify-center gap-1.5"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Deploy 1-Click</span>

@@ -116,7 +116,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4">
       <div className="bg-surface border border-border rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col shadow-pop overflow-hidden text-fg duration-150 transition-colors">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-subtle">
@@ -198,7 +198,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
           <div className="w-1/2 p-6 flex flex-col overflow-y-auto bg-surface">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary">Configure Keyword</span>
+                <span className="tw-label">Configure Keyword</span>
                 <h4 className="text-xl font-semibold text-fg mt-0.5">{selectedKeyword.name}</h4>
               </div>
               <span className="text-xs px-2.5 py-1 rounded-full bg-muted border border-border text-fg-secondary font-medium">
@@ -319,7 +319,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
             </button>
             <button
               onClick={handleConfirm}
-              className="px-5 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 transition flex items-center gap-1.5"
+              className="px-5 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:opacity-90 transition flex items-center gap-1.5"
             >
               <Check className="w-4 h-4" /> Add Condition to Strategy
             </button>

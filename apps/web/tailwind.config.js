@@ -76,8 +76,8 @@ module.exports = {
         marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
       },
       animation: {
-        'fade-up': 'fade-up 220ms cubic-bezier(0.22,1,0.36,1) both',
-        'fade-in': 'fade-in 180ms ease-out both',
+        'fade-up': 'fade-up 220ms cubic-bezier(0.22,1,0.36,1) backwards',
+        'fade-in': 'fade-in 180ms ease-out backwards',
       },
     },
   },
