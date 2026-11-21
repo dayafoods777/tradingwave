@@ -132,23 +132,23 @@ export default function PricingView() {
     <div className="space-y-8">
       {/* Pricing Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="text-xs font-bold uppercase tracking-wider text-[#FF6B00]">
+        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
           Transparent & Simple Pricing
         </span>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
-          Start Free. <span className="text-[#FF6B00]">Pay only when you go live.</span>
+        <h2 className="text-3xl sm:text-4xl font-semibold text-fg">
+          Start Free. <span className="text-primary">Pay only when you go live.</span>
         </h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+        <p className="text-sm text-fg-secondary leading-relaxed">
           Build unlimited strategies and run in Live Offline / Paper Trading for ₹0 — Free for Life. Pick a plan only when you are ready to deploy real capital into your own broker account.
         </p>
 
         {/* Billing Switch */}
         <div className="pt-4 flex items-center justify-center gap-3">
-          <div className="bg-slate-100 dark:bg-[#1F2937] p-1 rounded-xl border border-slate-200 dark:border-[#334155] flex items-center gap-1 transition-colors">
+          <div className="bg-muted p-1 rounded-lg border border-border flex items-center gap-1 transition-colors">
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition ${
-                billingCycle === 'monthly' ? 'bg-[#FF6B00] text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                billingCycle === 'monthly' ? 'bg-primary text-primary-fg' : 'text-fg-secondary hover:text-fg'
               }`}
             >
               Monthly Billing
@@ -156,11 +156,11 @@ export default function PricingView() {
             <button
               onClick={() => setBillingCycle('yearly')}
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-                billingCycle === 'yearly' ? 'bg-[#FF6B00] text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                billingCycle === 'yearly' ? 'bg-primary text-primary-fg' : 'text-fg-secondary hover:text-fg'
               }`}
             >
               <span>Yearly Billing</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500 text-slate-950 font-bold uppercase">
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-profit text-fg font-semibold uppercase">
                 Save 16%
               </span>
             </button>
@@ -173,39 +173,39 @@ export default function PricingView() {
         {plans.slice(0, 4).map(plan => (
           <div
             key={plan.name}
-            className={`p-6 rounded-2xl border flex flex-col justify-between transition relative ${
+            className={`p-6 rounded-lg border flex flex-col justify-between transition relative ${
               plan.highlight
-                ? 'bg-orange-50/50 dark:bg-[#15233E] border-[#FF6B00] shadow-md dark:shadow-xl shadow-orange-500/10'
-                : 'bg-white dark:bg-[#1F2937] border-slate-200 dark:border-[#334155] shadow-sm dark:shadow-md'
+                ? 'bg-primary-soft border-primary'
+                : 'bg-surface border-border'
             }`}
           >
             {plan.badge && (
-              <span className="absolute -top-3 left-6 px-3 py-0.5 rounded-full bg-[#FF6B00] text-white text-[10px] font-bold uppercase tracking-wider shadow">
+              <span className="absolute -top-3 left-6 px-3 py-0.5 rounded-full bg-primary text-primary-fg text-[10px] font-semibold uppercase tracking-wider shadow">
                 {plan.badge}
               </span>
             )}
             <div>
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-1">{plan.name}</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 min-h-[36px]">{plan.description}</p>
+              <h3 className="font-semibold text-lg text-fg mb-1">{plan.name}</h3>
+              <p className="text-xs text-fg-secondary min-h-[36px]">{plan.description}</p>
 
-              <div className="my-5 pb-5 border-b border-slate-200 dark:border-[#334155]">
+              <div className="my-5 pb-5 border-b border-border">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-slate-900 dark:text-white">
+                  <span className="text-3xl font-semibold text-fg">
                     {billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{plan.period}</span>
+                  <span className="text-xs text-fg-muted font-medium">{plan.period}</span>
                 </div>
                 {billingCycle === 'yearly' && plan.name !== 'Free' && (
-                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 block">
+                  <span className="text-[11px] text-profit font-medium mt-1 block">
                     Billed annually with 16% discount
                   </span>
                 )}
               </div>
 
-              <div className="space-y-2.5 mb-6 text-xs text-slate-700 dark:text-slate-300">
+              <div className="space-y-2.5 mb-6 text-xs text-fg-secondary">
                 {plan.features.map(f => (
                   <div key={f} className="flex items-start gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#FF6B00] shrink-0 mt-0.5" />
+                    <Check className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
                     <span>{f}</span>
                   </div>
                 ))}
@@ -213,10 +213,10 @@ export default function PricingView() {
             </div>
 
             <button
-              className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold transition ${
+              className={`w-full py-2.5 px-4 rounded-lg text-xs font-semibold transition ${
                 plan.highlight
-                  ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white shadow-md shadow-orange-500/20 hover:brightness-110'
-                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white'
+                  ? 'bg-primary text-primary-fg hover:brightness-110'
+                  : 'bg-muted hover:bg-muted text-fg'
               }`}
             >
               {plan.cta}
@@ -226,36 +226,36 @@ export default function PricingView() {
       </div>
 
       {/* Advanced & Creator Plans Strip */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm dark:shadow-md space-y-4 transition-colors">
+      <div className="p-6 rounded-lg bg-surface border border-border space-y-4 transition-colors">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white">Advanced & Creator Tiers</h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400">For high-volume traders, quant hedge funds, and private wealth desks</p>
+            <h3 className="font-semibold text-lg text-fg">Advanced & Creator Tiers</h3>
+            <p className="text-xs text-fg-secondary">For high-volume traders, quant hedge funds, and private wealth desks</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {plans.slice(4).map(plan => (
-            <div key={plan.name} className="p-4 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] flex flex-col justify-between">
+            <div key={plan.name} className="p-4 rounded-lg bg-subtle border border-border flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-bold text-base text-slate-900 dark:text-white">{plan.name}</h4>
-                  <span className="text-xs font-bold text-[#FF6B00]">
+                  <h4 className="font-semibold text-base text-fg">{plan.name}</h4>
+                  <span className="text-xs font-semibold text-primary">
                     {billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}
-                    <span className="text-slate-500 dark:text-slate-400 text-[10px] font-normal">{plan.period}</span>
+                    <span className="text-fg-muted text-[10px] font-normal">{plan.period}</span>
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">{plan.description}</p>
-                <div className="space-y-1.5 mb-4 text-xs text-slate-700 dark:text-slate-300">
+                <p className="text-xs text-fg-secondary mb-3">{plan.description}</p>
+                <div className="space-y-1.5 mb-4 text-xs text-fg-secondary">
                   {plan.features.map(f => (
                     <div key={f} className="flex items-center gap-1.5">
-                      <Check className="w-3 h-3 text-[#FF6B00] shrink-0" />
+                      <Check className="w-3 h-3 text-primary shrink-0" />
                       <span className="line-clamp-1">{f}</span>
                     </div>
                   ))}
                 </div>
               </div>
-              <button className="w-full py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-white transition">
+              <button className="w-full py-2 rounded-lg bg-muted hover:bg-border-strong text-xs font-semibold text-fg transition">
                 {plan.cta}
               </button>
             </div>

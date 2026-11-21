@@ -201,22 +201,22 @@ export default function ReadyStrategiesView({
   return (
     <div className="space-y-6">
       {/* 1. TOP BANNER - Exact Tradetron Signature Header */}
-      <div className="relative p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#F8F7FF] via-white to-white dark:from-[#1F2937] dark:via-[#1F2937] dark:to-[#0B1220] border-2 border-[#5B45E0] dark:border-[#6366F1] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      <div className="relative p-6 sm:p-7 rounded-lg bg-subtle border-2 border-primary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           {/* Eyebrow */}
-          <div className="flex items-center gap-1.5 text-[#5B45E0] dark:text-[#818CF8] font-bold text-[11px] tracking-widest uppercase mb-1">
-            <span className="w-3.5 h-[2px] bg-[#5B45E0] dark:bg-[#818CF8] inline-block rounded-full"></span>
-            <span className="w-3.5 h-[2px] bg-[#5B45E0] dark:bg-[#818CF8] inline-block rounded-full"></span>
+          <div className="flex items-center gap-1.5 text-primary font-semibold text-[11px] tracking-widest uppercase mb-1">
+            <span className="w-3.5 h-[2px] bg-primary inline-block rounded-full"></span>
+            <span className="w-3.5 h-[2px] bg-primary inline-block rounded-full"></span>
             <span>STRATEGIES</span>
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-fg tracking-tight">
             Ready Strategies
           </h2>
 
           {/* Subtitle */}
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-fg-muted mt-1">
             Pre-built quantitative strategies with proven backtested rules, ready for 1-click Live or Paper deployment.
           </p>
         </div>
@@ -225,7 +225,7 @@ export default function ReadyStrategiesView({
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => onNavigateTab('builder')}
-            className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold shadow-sm transition flex items-center gap-1.5"
+            className="px-4 py-2 rounded-full border border-border bg-surface text-fg hover:bg-subtle text-xs font-semibold transition flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>Custom Strategy</span>
@@ -234,81 +234,81 @@ export default function ReadyStrategiesView({
       </div>
 
       {/* 2. SUB-NAVIGATION TABS STRIP (Ready Strategies after My Strategies - SS1) */}
-      <div className="flex items-center gap-8 border-b border-slate-200 dark:border-[#334155] text-sm font-semibold">
+      <div className="flex items-center gap-8 border-b border-border text-sm font-semibold">
         <button
           onClick={() => onNavigateTab('dashboard')}
-          className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
+          className="pb-3 text-fg-muted hover:text-fg transition"
         >
           Deployed
         </button>
         <button
           onClick={() => onNavigateTab('mystrategies')}
-          className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
+          className="pb-3 text-fg-muted hover:text-fg transition"
         >
           My Strategies
         </button>
         <button
-          className="pb-3 text-[#5B45E0] dark:text-[#818CF8] border-b-2 border-[#5B45E0] dark:border-[#818CF8] font-bold"
+          className="pb-3 text-primary border-b-2 border-primary font-semibold"
         >
           Ready Strategies
         </button>
         <button
           onClick={() => onNavigateTab('backtest')}
-          className="pb-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition"
+          className="pb-3 text-fg-muted hover:text-fg transition"
         >
           Backtest
         </button>
       </div>
 
       {/* 3. METRIC COUNTERS STRIP */}
-      <div className="rounded-2xl border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1F2937] overflow-hidden shadow-sm grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-[#334155] transition-colors">
+      <div className="rounded-lg border border-border bg-surface overflow-hidden grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border transition-colors">
         <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
             Ready Setups
           </span>
-          <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
+          <div className="text-2xl font-semibold text-fg font-mono mt-1">
             {READY_STRATEGIES_CATALOG.length}
           </div>
         </div>
 
         <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
             Asset Classes
           </span>
-          <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
+          <div className="text-2xl font-semibold text-fg font-mono mt-1">
             5 Markets
           </div>
         </div>
 
         <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
             Execution Latency
           </span>
-          <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-1">
+          <div className="text-2xl font-semibold text-profit font-mono mt-1">
             &lt; 50ms
           </div>
         </div>
 
         <div className="p-4 sm:p-5">
-          <span className="text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+          <span className="text-[10px] font-semibold tracking-wider text-fg-muted uppercase">
             Compliance
           </span>
-          <div className="text-2xl font-black text-[#5B45E0] dark:text-[#818CF8] font-mono mt-1">
+          <div className="text-2xl font-semibold text-primary font-mono mt-1">
             100% Safe
           </div>
         </div>
       </div>
 
       {/* 4. SEARCH & CATEGORY FILTER BAR */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 transition-colors">
+      <div className="p-4 rounded-lg bg-surface border border-border flex flex-col md:flex-row items-center justify-between gap-4 transition-colors">
         <div className="relative w-full md:w-96">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-fg-muted" />
           <input
             type="text"
             placeholder="Search ready strategy name, index, or rules..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#5B45E0]"
+            className="w-full bg-subtle border border-border rounded-lg pl-9 pr-3 py-2 text-xs text-fg placeholder:text-fg-muted focus:outline-none focus:border-primary"
           />
         </div>
 
@@ -317,10 +317,10 @@ export default function ReadyStrategiesView({
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
                 selectedCategory === cat
-                  ? 'bg-[#5B45E0] text-white shadow-sm'
-                  : 'bg-slate-100 dark:bg-[#0B1220] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-primary text-primary-fg'
+                  : 'bg-muted text-fg-secondary hover:text-fg'
               }`}
             >
               {cat === 'ALL' ? 'All Setups' : cat}
@@ -334,52 +334,52 @@ export default function ReadyStrategiesView({
         {filteredStrategies.map(strat => (
           <div
             key={strat.id}
-            className="p-5 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] hover:border-[#5B45E0]/60 transition-all flex flex-col justify-between shadow-sm hover:shadow-lg space-y-4"
+            className="p-5 rounded-lg bg-surface border border-border hover:border-primary/40 transition-all flex flex-col justify-between hover:shadow-pop space-y-4"
           >
             <div>
               {/* Badges */}
               <div className="flex items-start justify-between gap-2 mb-2.5">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-[#F0EDFF] dark:bg-[#1E1B4B] text-[#5B45E0] dark:text-[#818CF8]">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-primary-soft text-primary">
                     {strat.underlying}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#0B1220] text-slate-600 dark:text-slate-400 font-mono uppercase">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-muted text-fg-secondary font-mono uppercase">
                     {strat.segment}
                   </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-profit-soft text-profit">
                   {strat.badge}
                 </span>
               </div>
 
               {/* Title & Description */}
-              <h3 className="text-base font-black text-slate-900 dark:text-white line-clamp-1">
+              <h3 className="text-base font-semibold text-fg line-clamp-1">
                 {strat.name}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed line-clamp-2">
+              <p className="text-xs text-fg-muted mt-1 leading-relaxed line-clamp-2">
                 {strat.description}
               </p>
 
               {/* Quantitative Rules Box */}
-              <div className="mt-3.5 p-3 rounded-xl bg-slate-50 dark:bg-[#0B1220] border border-slate-100 dark:border-[#334155] space-y-2 text-[11px] font-mono">
+              <div className="mt-3.5 p-3 rounded-lg bg-subtle border border-border space-y-2 text-[11px] font-mono">
                 <div>
-                  <span className="text-[9px] uppercase font-sans font-bold text-slate-400 block">Entry Condition</span>
-                  <span className="text-slate-800 dark:text-slate-200 font-medium">{strat.entryRule}</span>
+                  <span className="text-[9px] uppercase font-sans font-semibold text-fg-muted block">Entry Condition</span>
+                  <span className="text-fg font-medium">{strat.entryRule}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-sans font-bold text-slate-400 block">Leg Structure</span>
-                  <span className="text-indigo-600 dark:text-indigo-400 font-medium">{strat.legs}</span>
+                  <span className="text-[9px] uppercase font-sans font-semibold text-fg-muted block">Leg Structure</span>
+                  <span className="text-primary font-medium">{strat.legs}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-sans font-bold text-slate-400 block">Exit &amp; Stoploss</span>
-                  <span className="text-slate-700 dark:text-slate-300 font-medium">{strat.exitRule}</span>
+                  <span className="text-[9px] uppercase font-sans font-semibold text-fg-muted block">Exit &amp; Stoploss</span>
+                  <span className="text-fg-secondary font-medium">{strat.exitRule}</span>
                 </div>
               </div>
 
               {/* Capital & Frequency */}
-              <div className="mt-3 flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-[#334155]">
-                <span className="text-slate-500 dark:text-slate-400">Min Capital:</span>
-                <span className="font-black text-slate-900 dark:text-white font-mono">{strat.minCapitalDisplay}</span>
+              <div className="mt-3 flex items-center justify-between text-xs pt-1 border-t border-border">
+                <span className="text-fg-muted">Min Capital:</span>
+                <span className="font-semibold text-fg font-mono">{strat.minCapitalDisplay}</span>
               </div>
             </div>
 
@@ -387,7 +387,7 @@ export default function ReadyStrategiesView({
             <div className="pt-2 flex items-center gap-2">
               <button
                 onClick={() => setDeployModalStrategy(strat)}
-                className="flex-1 py-2.5 rounded-xl bg-[#5B45E0] hover:bg-[#4E38D0] text-white text-xs font-bold shadow-md shadow-indigo-500/20 active:scale-95 transition flex items-center justify-center gap-1.5"
+                className="flex-1 py-2.5 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold active:scale-95 transition flex items-center justify-center gap-1.5"
               >
                 <Play className="w-3.5 h-3.5 fill-white" />
                 <span>Deploy 1-Click</span>
@@ -395,7 +395,7 @@ export default function ReadyStrategiesView({
 
               <button
                 onClick={() => onEdit(strat.name)}
-                className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold flex items-center gap-1 transition"
+                className="px-3 py-2.5 rounded-lg border border-border text-fg-secondary hover:bg-subtle text-xs font-semibold flex items-center gap-1 transition"
                 title="Inspect rules in Strategy Builder"
               >
                 <Cpu className="w-3.5 h-3.5" />
@@ -404,7 +404,7 @@ export default function ReadyStrategiesView({
 
               <button
                 onClick={() => onBacktest(strat.name)}
-                className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold flex items-center gap-1 transition"
+                className="px-3 py-2.5 rounded-lg border border-border text-fg-secondary hover:bg-subtle text-xs font-semibold flex items-center gap-1 transition"
                 title="Backtest against historical ticks"
               >
                 <RotateCcw className="w-3.5 h-3.5" />

@@ -131,30 +131,30 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       <div>
         {/* Top Eyebrow & Language Selector */}
         <div className="flex items-center justify-between text-xs font-semibold mb-6">
-          <div className="flex items-center gap-1.5 text-[#5B45E0] dark:text-[#818CF8] uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 text-primary uppercase tracking-wider">
             <span className="font-mono">—</span>
             <span>BUILD WITH AI</span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-1.5 text-fg-muted">
             <span>Language</span>
             <button
               onClick={() => setSelectedLanguage(prev => (prev === 'English' ? 'Hindi' : 'English'))}
-              className="font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1 flex items-center gap-1 hover:bg-slate-50 dark:hover:bg-[#1F2937] transition"
+              className="font-semibold text-fg border border-border rounded-lg px-2.5 py-1 flex items-center gap-1 hover:bg-subtle transition"
             >
               <span>{selectedLanguage}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <ChevronDown className="w-3.5 h-3.5 text-fg-muted" />
             </button>
           </div>
         </div>
 
         {/* Main Heading & Subtitle */}
-        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+        <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-fg leading-tight">
           Describe the strategy.{' '}
-          <span className="text-[#5B45E0] dark:text-[#818CF8] italic font-serif font-normal">
+          <span className="text-primary italic font-serif font-normal">
             Pick who builds it.
           </span>
         </h1>
-        <p className="mt-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+        <p className="mt-4 text-sm sm:text-base text-fg-secondary max-w-3xl leading-relaxed">
           Three ways to get a working strategy into your TradingWave account. The first two are the same flat
           price and include the same extras. The third is free to connect and runs on the AI subscription you
           already pay for; what you run through it is charged at your usual TradingWave fees.
@@ -163,99 +163,99 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         {/* 3 Option Doors */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {/* DOOR 1: Build it now with Cookie (Featured) */}
-          <div className="rounded-2xl p-6 bg-white dark:bg-[#1F2937] border-2 border-[#5B45E0] shadow-xl relative flex flex-col justify-between">
+          <div className="rounded-lg p-6 bg-surface border-2 border-primary shadow-pop relative flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] tracking-wider uppercase">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-primary-soft text-primary tracking-wider uppercase">
                   01 FASTEST
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-fg mb-2">
                 Build it now with Cookie
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-fg-secondary leading-relaxed">
                 Cookie, TradingWave&apos;s AI, asks what the strategy needs, restates it back for you to confirm,
                 builds it and delivers it into your account as a Strategy Template. Most are delivered the
                 same day.
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="text-sm font-black text-slate-900 dark:text-white mb-4">
+            <div className="mt-6 pt-4 border-t border-border">
+              <div className="text-sm font-semibold text-fg mb-4">
                 <span>₹4,999 + GST</span>{' '}
-                <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+                <span className="text-xs font-normal text-fg-muted">
                   · flat, any strategy TradingWave can build
                 </span>
               </div>
               <button
                 onClick={handleStartCookie}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#5B45E0] hover:bg-[#4935C7] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-500/20"
+                className="w-full py-2.5 px-4 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold transition flex items-center justify-center gap-1.5"
               >
                 <span>Start now</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
-              <div className="text-[11px] font-semibold text-[#5B45E0] dark:text-[#818CF8] text-center mt-2.5">
+              <div className="text-[11px] font-semibold text-primary text-center mt-2.5">
                 • SHOWN BELOW
               </div>
             </div>
           </div>
 
           {/* DOOR 2: Talk to a quant */}
-          <div className="rounded-2xl p-6 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+          <div className="rounded-lg p-6 bg-surface border border-border flex flex-col justify-between hover:border-border-strong transition">
             <div>
-              <div className="flex items-center gap-2 mb-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="flex items-center gap-2 mb-3 text-xs text-fg-muted font-medium">
                 <span className="font-bold">02</span>
                 <span>• Team hours 9 am – 7 pm IST</span>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-fg mb-2">
                 Talk to a quant
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-fg-secondary leading-relaxed">
                 Would rather explain it to a person? Send the idea and a quant from our build team takes it
                 from there — they ask what it needs, build it and deliver it the same way. Same flat price; the
                 help costs nothing extra.
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="text-sm font-black text-slate-900 dark:text-white mb-4">
+            <div className="mt-6 pt-4 border-t border-border">
+              <div className="text-sm font-semibold text-fg mb-4">
                 <span>₹4,999 + GST</span>{' '}
-                <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+                <span className="text-xs font-normal text-fg-muted">
                   · no fee for the quant
                 </span>
               </div>
               <button
                 onClick={() => setQuantModalOpen(true)}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1"
+                className="w-full py-2 px-4 rounded-lg border border-border bg-surface hover:bg-subtle text-fg text-xs font-semibold transition flex items-center justify-center gap-1"
               >
                 <span>Talk to a quant</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-fg-muted" />
               </button>
               <button
                 onClick={() => {
                   const el = document.getElementById('what-it-costs');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
+                className="w-full py-2 px-4 rounded-lg border border-border bg-surface hover:bg-subtle text-fg text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
               >
                 <span>How it works</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-fg-muted" />
               </button>
             </div>
           </div>
 
           {/* DOOR 3: Connect your own AI */}
-          <div className="rounded-2xl p-6 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+          <div className="rounded-lg p-6 bg-surface border border-border flex flex-col justify-between hover:border-border-strong transition">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-fg-secondary uppercase tracking-wider">
                   03 FREE TO CONNECT
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-fg mb-2">
                 Connect your own AI
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-fg-secondary leading-relaxed">
                 Paste one URL into Claude, ChatGPT, Gemini, Cursor or Codex and build, backtest and change
                 strategies by describing them in the chat you already use. Connecting is free. Backtests,
                 deployments and other actions you run through it are charged at your usual TradingWave fees,
@@ -263,52 +263,52 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="text-sm font-black text-slate-900 dark:text-white mb-4">
+            <div className="mt-6 pt-4 border-t border-border">
+              <div className="text-sm font-semibold text-fg mb-4">
                 <span>Free to connect</span>{' '}
-                <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+                <span className="text-xs font-normal text-fg-muted">
                   · usage at your usual TradingWave fees
                 </span>
               </div>
               <button
                 onClick={() => setConnectAiModalOpen(true)}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1"
+                className="w-full py-2 px-4 rounded-lg border border-border bg-surface hover:bg-subtle text-fg text-xs font-semibold transition flex items-center justify-center gap-1"
               >
                 <span>Connect it in two minutes</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-fg-muted" />
               </button>
               <button
                 onClick={() => setConnectAiModalOpen(true)}
-                className="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B1220] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
+                className="w-full py-2 px-4 rounded-lg border border-border bg-surface hover:bg-subtle text-fg text-xs font-semibold transition flex items-center justify-center gap-1 mt-2"
               >
                 <span>How it works</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-fg-muted" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Included with Door 1 & 2 Banner */}
-        <div className="mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-slate-800 text-xs">
-          <div className="font-bold text-[#5B45E0] dark:text-[#818CF8] uppercase tracking-wider text-[11px] mb-2 flex items-center gap-1.5">
+        <div className="mt-6 p-4 rounded-lg bg-subtle border border-border text-xs">
+          <div className="font-semibold text-primary uppercase tracking-wider text-[11px] mb-2 flex items-center gap-1.5">
             <Check className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>INCLUDED WITH DOOR 1 AND DOOR 2</span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-700 dark:text-slate-300 font-medium">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-fg-secondary font-medium">
             <span className="flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5 text-[#5B45E0]" />
+              <Check className="w-3.5 h-3.5 text-primary" />
               <span>₹500 in your wallet for backtests</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5 text-[#5B45E0]" />
+              <Check className="w-3.5 h-3.5 text-primary" />
               <span>30 days of the Starter plan, free, if your account has no plan</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5 text-[#5B45E0]" />
+              <Check className="w-3.5 h-3.5 text-primary" />
               <span>5 changes to the strategy</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5 text-[#5B45E0]" />
+              <Check className="w-3.5 h-3.5 text-primary" />
               <span>Nothing charged if it can&apos;t be built</span>
             </span>
           </div>
@@ -318,12 +318,12 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* ========================================================= */}
       {/* 2. DOOR 01: BUILD IT NOW WITH COOKIE (Image 2 Parity) */}
       {/* ========================================================= */}
-      <div className="pt-8 border-t border-slate-200 dark:border-slate-800">
-        <div className="flex items-center gap-1.5 text-[#5B45E0] dark:text-[#818CF8] text-xs font-semibold uppercase tracking-wider mb-2">
+      <div className="pt-8 border-t border-border">
+        <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
           <span className="font-mono">—</span>
           <span>DOOR 01 · BUILD IT NOW WITH COOKIE</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-4xl font-semibold text-fg">
           You describe it once.{' '}
           <span className="italic font-serif font-normal">Cookie does the rest.</span>
         </h2>
@@ -331,15 +331,15 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         {/* 4 Steps Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           {/* Step 1 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-lg bg-surface border border-border flex flex-col justify-between">
             <div>
-              <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
+              <div className="w-6 h-6 rounded-full bg-primary-soft text-primary text-xs font-semibold flex items-center justify-center mb-4">
                 1
               </div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-2">
+              <h4 className="text-sm font-semibold text-fg mb-2">
                 Tell her the strategy
               </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-fg-muted leading-relaxed">
                 One message, in your own words. Screenshots and files are welcome. There is no form to fight
                 with.
               </p>
@@ -347,15 +347,15 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* Step 2 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-lg bg-surface border border-border flex flex-col justify-between">
             <div>
-              <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
+              <div className="w-6 h-6 rounded-full bg-primary-soft text-primary text-xs font-semibold flex items-center justify-center mb-4">
                 2
               </div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-2">
+              <h4 className="text-sm font-semibold text-fg mb-2">
                 She restates it
               </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-fg-muted leading-relaxed">
                 You get the strategy written back as rules — entries, exits, stops, sizing. You confirm it or
                 correct it. Nothing is built from a guess.
               </p>
@@ -363,15 +363,15 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* Step 3 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-lg bg-surface border border-border flex flex-col justify-between">
             <div>
-              <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
+              <div className="w-6 h-6 rounded-full bg-primary-soft text-primary text-xs font-semibold flex items-center justify-center mb-4">
                 3
               </div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-2">
+              <h4 className="text-sm font-semibold text-fg mb-2">
                 She builds and checks it
               </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-fg-muted leading-relaxed">
                 It is built in TradingWave&apos;s own Strategy Builder and checked, field by field, against the
                 words you confirmed.
               </p>
@@ -379,15 +379,15 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           </div>
 
           {/* Step 4 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-6 rounded-lg bg-surface border border-border flex flex-col justify-between">
             <div>
-              <div className="w-6 h-6 rounded-full bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] text-xs font-bold flex items-center justify-center mb-4">
+              <div className="w-6 h-6 rounded-full bg-primary-soft text-primary text-xs font-semibold flex items-center justify-center mb-4">
                 4
               </div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-2">
+              <h4 className="text-sm font-semibold text-fg mb-2">
                 It lands in your account
               </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-fg-muted leading-relaxed">
                 As a Strategy Template under My Strategies, with the ₹500 in your wallet so you can backtest it
                 the same day.
               </p>
@@ -396,8 +396,8 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         </div>
 
         {/* What it costs block */}
-        <div id="what-it-costs" className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-1.5 text-[#5B45E0] dark:text-[#818CF8] text-xs font-semibold uppercase tracking-wider mb-4">
+        <div id="what-it-costs" className="mt-12 pt-8 border-t border-border">
+          <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-4">
             <span className="font-mono">—</span>
             <span>WHAT IT COSTS</span>
           </div>
@@ -405,35 +405,35 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white">
+                <span className="text-4xl sm:text-5xl font-semibold text-fg">
                   ₹4,999
                 </span>
-                <span className="text-base font-semibold text-slate-500 dark:text-slate-400">+ GST</span>
+                <span className="text-base font-semibold text-fg-muted">+ GST</span>
               </div>
-              <p className="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="mt-3 text-xs sm:text-sm text-fg-secondary leading-relaxed">
                 One flat price for any strategy TradingWave can build — Python and TradingView-signal
                 strategies included.{' '}
-                <strong className="text-slate-900 dark:text-white">
+                <strong className="text-fg">
                   If it can&apos;t be built, you are told plainly and nothing is charged.
                 </strong>
               </p>
             </div>
 
-            <div className="space-y-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+            <div className="space-y-2.5 text-xs sm:text-sm text-fg-secondary">
               <div className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-[#5B45E0] shrink-0" />
+                <Check className="w-4 h-4 text-primary shrink-0" />
                 <span>₹500 in your TradingWave wallet for backtests</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-[#5B45E0] shrink-0" />
+                <Check className="w-4 h-4 text-primary shrink-0" />
                 <span>30 days of the Starter plan, free, if your account has no plan</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-[#5B45E0] shrink-0" />
+                <Check className="w-4 h-4 text-primary shrink-0" />
                 <span>5 changes to the strategy after it is delivered</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-[#5B45E0] shrink-0" />
+                <Check className="w-4 h-4 text-primary shrink-0" />
                 <span>Delivered into your own account — it is yours</span>
               </div>
             </div>
@@ -444,17 +444,17 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* ========================================================= */}
       {/* 3. QUESTIONS / BEFORE YOU START ACCORDION (Image 3 Parity) */}
       {/* ========================================================= */}
-      <div className="pt-8 border-t border-slate-200 dark:border-slate-800">
-        <div className="flex items-center gap-1.5 text-[#5B45E0] dark:text-[#818CF8] text-xs font-semibold uppercase tracking-wider mb-2">
+      <div className="pt-8 border-t border-border">
+        <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
           <span className="font-mono">—</span>
           <span>QUESTIONS</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-6">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-fg mb-6">
           Before you start
         </h2>
 
         {/* Accordions */}
-        <div className="divide-y divide-slate-200 dark:divide-slate-800 border-t border-b border-slate-200 dark:border-slate-800">
+        <div className="divide-y divide-border border-t border-b border-border">
           {FAQS.map(faq => {
             const isOpen = expandedFaq === faq.id;
             return (
@@ -463,15 +463,15 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                   onClick={() => toggleFaq(faq.id)}
                   className="w-full flex items-center justify-between text-left group"
                 >
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-[#5B45E0] transition">
+                  <span className="text-sm font-semibold text-fg group-hover:text-primary transition">
                     {faq.question}
                   </span>
-                  <span className="text-[#5B45E0] dark:text-[#818CF8] text-lg font-bold ml-4">
+                  <span className="text-primary text-lg font-semibold ml-4">
                     {isOpen ? '−' : '+'}
                   </span>
                 </button>
                 {isOpen && (
-                  <div className="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed pr-6 animate-in fade-in duration-150">
+                  <div className="mt-3 text-xs sm:text-sm text-fg-secondary leading-relaxed pr-6 duration-150">
                     {faq.answer}
                   </div>
                 )}
@@ -484,7 +484,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
         <div className="mt-8">
           <button
             onClick={handleStartCookie}
-            className="px-8 py-3 rounded-xl bg-[#5B45E0] hover:bg-[#4935C7] text-white text-sm font-bold transition flex items-center gap-2 shadow-lg shadow-indigo-500/20"
+            className="px-8 py-3 rounded-lg bg-primary hover:bg-primary text-primary-fg text-sm font-semibold transition flex items-center gap-2 shadow-pop"
           >
             <span>Start now</span>
             <ArrowRight className="w-4 h-4" />
@@ -496,29 +496,29 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* MODAL 1: COOKIE AI STRATEGY BUILDER DIALOG */}
       {/* ========================================================= */}
       {cookieModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-pop duration-150">
             {/* Header */}
-            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#0B1220]">
+            <div className="p-5 border-b border-border flex items-center justify-between bg-subtle">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] text-[#5B45E0] dark:bg-[#1E1B4B] dark:text-[#818CF8] flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-fg flex items-center gap-2">
                     <span>Cookie · TradingWave AI</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-profit-soft text-profit">
                       Online
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-fg-muted">
                     Describe your strategy in plain words — Cookie will translate it into verified rules
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setCookieModalOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="p-1.5 rounded-lg text-fg-muted hover:text-fg-secondary"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -528,10 +528,10 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
             <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto text-xs sm:text-sm">
               {/* Bot Greeting */}
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#5B45E0] text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-fg flex items-center justify-center shrink-0 font-semibold text-xs">
                   C
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 max-w-[85%] leading-relaxed">
+                <div className="p-4 rounded-lg bg-muted text-fg max-w-[85%] leading-relaxed">
                   Hi! I&apos;m <strong>Cookie</strong>. Tell me about your strategy — what instruments do you trade (e.g. NIFTY, BANKNIFTY), what are your entry signals (time, indicators), your stop loss, targets, and when should it exit?
                 </div>
               </div>
@@ -539,10 +539,10 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               {/* User Prompt (if submitted) */}
               {chatStep !== 'input' && (
                 <div className="flex items-start gap-3 justify-end">
-                  <div className="p-4 rounded-2xl bg-[#5B45E0] text-white max-w-[85%] leading-relaxed">
+                  <div className="p-4 rounded-lg bg-primary text-primary-fg max-w-[85%] leading-relaxed">
                     {strategyPrompt}
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shrink-0 font-bold text-xs">
+                  <div className="w-8 h-8 rounded-full bg-muted text-fg-secondary flex items-center justify-center shrink-0 font-semibold text-xs">
                     You
                   </div>
                 </div>
@@ -551,13 +551,13 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               {/* Restating Animation */}
               {chatStep === 'restating' && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#5B45E0] text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-fg flex items-center justify-center shrink-0 font-semibold text-xs">
                     C
                   </div>
-                  <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#5B45E0] animate-bounce"></span>
-                    <span className="w-2 h-2 rounded-full bg-[#5B45E0] animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-2 h-2 rounded-full bg-[#5B45E0] animate-bounce [animation-delay:0.4s]"></span>
+                  <div className="p-4 rounded-lg bg-muted text-fg flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
+                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
                     <span className="text-xs font-semibold ml-1">Analyzing rules & syntax...</span>
                   </div>
                 </div>
@@ -566,15 +566,15 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               {/* Confirmed Rule Breakdown */}
               {(chatStep === 'confirmed' || chatStep === 'delivered') && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#5B45E0] text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-fg flex items-center justify-center shrink-0 font-semibold text-xs">
                     C
                   </div>
-                  <div className="p-4 rounded-2xl bg-[#EEF2FF] dark:bg-[#1E1B4B]/50 border border-[#5B45E0]/30 text-slate-800 dark:text-slate-200 max-w-[90%] space-y-2">
-                    <div className="font-bold text-[#5B45E0] dark:text-[#818CF8] flex items-center gap-1.5 text-xs">
+                  <div className="p-4 rounded-lg bg-primary-soft border border-primary/40 text-fg max-w-[90%] space-y-2">
+                    <div className="font-semibold text-primary flex items-center gap-1.5 text-xs">
                       <CheckCircle2 className="w-4 h-4" />
                       <span>Here is how I restate your strategy:</span>
                     </div>
-                    <ul className="space-y-1 text-xs list-disc list-inside text-slate-700 dark:text-slate-300 font-mono">
+                    <ul className="space-y-1 text-xs list-disc list-inside text-fg-secondary font-mono">
                       <li><strong>Underlying:</strong> NIFTY 50 / BANKNIFTY Options</li>
                       <li><strong>Entry Condition:</strong> Time &gt;= 09:20 AND Candle Close confirmation</li>
                       <li><strong>Leg 1:</strong> SELL 1x ATM CALL (SL: 25%, Target: 60%)</li>
@@ -583,12 +583,12 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                       <li><strong>Exit:</strong> Time &gt;= 15:10 auto square-off</li>
                     </ul>
                     {chatStep === 'delivered' ? (
-                      <div className="pt-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs flex items-center gap-1.5">
+                      <div className="pt-2 text-profit font-semibold text-xs flex items-center gap-1.5">
                         <Check className="w-4 h-4 stroke-[3]" />
                         <span>Delivered to My Strategies! Redirecting...</span>
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 pt-1">
+                      <p className="text-xs text-fg-muted pt-1">
                         Does this match what you want? Click below to confirm and deliver into your account.
                       </p>
                     )}
@@ -598,7 +598,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
             </div>
 
             {/* Input Footer */}
-            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0B1220]">
+            <div className="p-4 border-t border-border bg-subtle">
               {chatStep === 'input' && (
                 <div className="flex items-center gap-2">
                   <input
@@ -607,12 +607,12 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                     onChange={e => setStrategyPrompt(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendPromptToCookie()}
                     placeholder="e.g. 9:20 NIFTY short straddle with 25% SL and 15:10 square-off..."
-                    className="flex-1 bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                    className="flex-1 bg-surface border border-border rounded-lg px-4 py-2.5 text-xs sm:text-sm text-fg focus:outline-none focus:border-primary"
                   />
                   <button
                     onClick={handleSendPromptToCookie}
                     disabled={!strategyPrompt.trim()}
-                    className="px-4 py-2.5 rounded-xl bg-[#5B45E0] disabled:opacity-50 text-white font-bold text-xs flex items-center gap-1.5 transition"
+                    className="px-4 py-2.5 rounded-lg bg-primary disabled:opacity-50 text-primary-fg font-semibold text-xs flex items-center gap-1.5 transition"
                   >
                     <span>Send</span>
                     <Send className="w-3.5 h-3.5" />
@@ -624,13 +624,13 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                 <div className="flex items-center justify-end gap-3">
                   <button
                     onClick={() => setChatStep('input')}
-                    className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100"
+                    className="px-4 py-2 rounded-lg border border-border-strong text-xs font-semibold hover:bg-muted"
                   >
                     Edit Words
                   </button>
                   <button
                     onClick={handleConfirmAndDeliver}
-                    className="px-6 py-2 rounded-xl bg-[#5B45E0] hover:bg-[#4935C7] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+                    className="px-6 py-2 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold transition flex items-center gap-1.5"
                   >
                     <Check className="w-4 h-4" />
                     <span>Confirm & Deliver Strategy</span>
@@ -639,7 +639,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               )}
 
               {chatStep === 'delivered' && (
-                <div className="text-center text-xs font-bold text-emerald-600 dark:text-emerald-400 py-1">
+                <div className="text-center text-xs font-semibold text-profit py-1">
                   ✓ Strategy delivered to your account as a Strategy Template!
                 </div>
               )}
@@ -652,53 +652,53 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* MODAL 2: TALK TO A QUANT */}
       {/* ========================================================= */}
       {quantModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-xl w-full max-w-lg p-6 shadow-pop duration-150">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Users className="w-5 h-5 text-[#5B45E0]" />
+              <h3 className="text-base font-semibold text-fg flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
                 <span>Talk to a TradingWave Quant</span>
               </h3>
               <button
                 onClick={() => setQuantModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="p-1 text-fg-muted hover:text-fg-secondary"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+            <p className="text-xs text-fg-secondary leading-relaxed mb-4">
               Our quant build team is available <strong>9 am – 7 pm IST</strong>. Describe your strategy idea below, or leave your phone/email and a quant will get in touch directly.
             </p>
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Your Name</label>
+                <label className="block font-semibold text-fg-secondary mb-1">Your Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Rahul Sharma"
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                  className="w-full p-2.5 rounded-lg border border-border bg-subtle text-fg focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Email / Phone</label>
+                <label className="block font-semibold text-fg-secondary mb-1">Email / Phone</label>
                 <input
                   type="text"
                   placeholder="name@example.com or +91 9876543210"
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                  className="w-full p-2.5 rounded-lg border border-border bg-subtle text-fg focus:outline-none focus:border-primary"
                 />
               </div>
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Strategy Notes</label>
+                <label className="block font-semibold text-fg-secondary mb-1">Strategy Notes</label>
                 <textarea
                   rows={3}
                   placeholder="Describe your rules, indicators, and instruments..."
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0]"
+                  className="w-full p-2.5 rounded-lg border border-border bg-subtle text-fg focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-2">
               <button
                 onClick={() => setQuantModalOpen(false)}
-                className="px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-lg border border-border-strong text-xs font-semibold"
               >
                 Cancel
               </button>
@@ -707,7 +707,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                   alert('Thank you! A TradingWave quant will reach out to you within 2 hours.');
                   setQuantModalOpen(false);
                 }}
-                className="px-5 py-2 rounded-xl bg-[#5B45E0] text-white text-xs font-bold hover:bg-[#4935C7]"
+                className="px-5 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold hover:bg-primary"
               >
                 Submit Request
               </button>
@@ -720,27 +720,27 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
       {/* MODAL 3: CONNECT YOUR OWN AI (DOOR 3) */}
       {/* ========================================================= */}
       {connectAiModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-xl p-6 shadow-2xl animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-xl w-full max-w-xl p-6 shadow-pop duration-150">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Bot className="w-5 h-5 text-[#5B45E0]" />
+              <h3 className="text-base font-semibold text-fg flex items-center gap-2">
+                <Bot className="w-5 h-5 text-primary" />
                 <span>Connect Claude, ChatGPT, Gemini, Cursor or Codex</span>
               </h3>
               <button
                 onClick={() => setConnectAiModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="p-1 text-fg-muted hover:text-fg-secondary"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+            <p className="text-xs text-fg-secondary leading-relaxed mb-4">
               Add TradingWave&apos;s Strategy MCP endpoint into your Claude Desktop, Custom GPT, Cursor, or Gemini CLI. It connects in 2 minutes for free:
             </p>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-semibold text-fg-secondary mb-1">
                   1. Copy TradingWave MCP Endpoint URL
                 </label>
                 <div className="flex items-center gap-2">
@@ -748,7 +748,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                     type="text"
                     readOnly
                     value="https://api.tradingwave.tech/v1/ai/mcp/manifest.json"
-                    className="flex-1 p-2 rounded-xl font-mono border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1220] text-slate-900 dark:text-white"
+                    className="flex-1 p-2 rounded-lg font-mono border border-border bg-subtle text-fg"
                   />
                   <button
                     onClick={() => {
@@ -756,7 +756,7 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
                       setIsCopied(true);
                       setTimeout(() => setIsCopied(false), 2000);
                     }}
-                    className="px-3 py-2 rounded-xl bg-[#5B45E0] text-white font-bold flex items-center gap-1"
+                    className="px-3 py-2 rounded-lg bg-primary text-primary-fg font-semibold flex items-center gap-1"
                   >
                     {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{isCopied ? 'Copied' : 'Copy'}</span>
@@ -765,10 +765,10 @@ export default function UsingAIView({ onSaveStrategy, onNavigateTab }: UsingAIVi
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-semibold text-fg-secondary mb-1">
                   2. Claude / ChatGPT System Prompt Instructions
                 </label>
-                <pre className="p-3 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[11px] overflow-x-auto leading-relaxed">
+                <pre className="p-3 rounded-lg bg-ink text-profit font-mono text-[11px] overflow-x-auto leading-relaxed">
 {`You are an assistant connected to TradingWave.
 When I ask for a strategy, output JSON:
 {
@@ -786,7 +786,7 @@ When I ask for a strategy, output JSON:
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setConnectAiModalOpen(false)}
-                className="px-5 py-2 rounded-xl bg-[#5B45E0] text-white text-xs font-bold hover:bg-[#4935C7]"
+                className="px-5 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold hover:bg-primary"
               >
                 Done
               </button>

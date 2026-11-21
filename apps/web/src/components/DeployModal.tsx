@@ -89,19 +89,19 @@ export default function DeployModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 duration-200">
       <div
-        className="bg-white dark:bg-[#1F2937] w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white transition-all"
+        className="bg-surface w-full max-w-lg rounded-lg shadow-pop border border-border overflow-hidden text-fg transition-all"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-2">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white truncate pr-2">
+          <h2 className="text-lg font-semibold text-fg truncate pr-2">
             {strategy.name}
           </h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="p-1 rounded-lg text-fg-muted hover:text-fg-secondary hover:bg-muted transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -112,13 +112,13 @@ export default function DeployModal({
           {/* Row 1: Multiplier & Capital Recommended */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-fg-muted mb-1.5">
                 Multiplier
               </label>
               <select
                 value={multiplier}
                 onChange={e => setMultiplier(e.target.value)}
-                className="w-full bg-white dark:bg-[#0B1220] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                className="w-full bg-surface border border-border-strong rounded-lg px-3.5 py-2.5 text-xs font-semibold text-fg focus:outline-none focus:border-primary cursor-pointer"
               >
                 <option value="0.5x">0.5x</option>
                 <option value="1x">1x</option>
@@ -133,14 +133,14 @@ export default function DeployModal({
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-fg-muted mb-1.5">
                 Capital Recommended
               </label>
               <input
                 type="text"
                 value={capitalRecommended}
                 onChange={e => setCapitalRecommended(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#0B1220]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:border-[#5B45E0]"
+                className="w-full bg-subtle border border-border rounded-lg px-3.5 py-2.5 text-xs font-mono font-medium text-fg-secondary focus:outline-none focus:border-primary"
               />
             </div>
           </div>
@@ -148,13 +148,13 @@ export default function DeployModal({
           {/* Row 2: Execution Type & Stop Looping */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-fg-muted mb-1.5">
                 Execution Type
               </label>
               <select
                 value={executionType}
                 onChange={e => handleExecutionTypeChange(e.target.value as any)}
-                className="w-full bg-white dark:bg-[#0B1220] border border-[#5B45E0] ring-1 ring-[#5B45E0]/30 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                className="w-full bg-surface border border-primary ring-1 ring-primary/40 rounded-lg px-3.5 py-2.5 text-xs font-semibold text-fg focus:outline-none focus:border-primary cursor-pointer"
               >
                 <option value="Paper Trading">Paper Trading</option>
                 <option value="Live Offline">Live Offline</option>
@@ -165,17 +165,17 @@ export default function DeployModal({
 
             <div>
               <div className="flex items-center gap-1 mb-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <label className="text-[11px] font-semibold uppercase tracking-wider text-fg-muted">
                   Stop Looping
                 </label>
                 <span title="Stop strategy execution after reaching this many loops in a single day">
-                  <Info className="w-3.5 h-3.5 text-slate-400 cursor-pointer" />
+                  <Info className="w-3.5 h-3.5 text-fg-muted cursor-pointer" />
                 </span>
               </div>
               <select
                 value={stopLooping}
                 onChange={e => setStopLooping(e.target.value)}
-                className="w-full bg-white dark:bg-[#0B1220] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                className="w-full bg-surface border border-border-strong rounded-lg px-3.5 py-2.5 text-xs font-semibold text-fg focus:outline-none focus:border-primary cursor-pointer"
               >
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -190,15 +190,15 @@ export default function DeployModal({
 
           {/* Row 3: Broker Selection */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-fg-muted mb-1.5">
               {segmentLabel} BROKER
             </label>
             <div className="flex items-center gap-2">
               <div className="flex-1">
                 {executionType === 'Paper Trading' ? (
-                  <div className="w-full bg-slate-50 dark:bg-[#0B1220]/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                  <div className="w-full bg-subtle border border-border rounded-lg px-3.5 py-2.5 text-xs font-semibold text-fg-secondary flex items-center justify-between">
                     <span>TT Paper Trading</span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-primary-soft text-primary">
                       VIRTUAL
                     </span>
                   </div>
@@ -206,7 +206,7 @@ export default function DeployModal({
                   <select
                     value={broker}
                     onChange={e => setBroker(e.target.value)}
-                    className="w-full bg-white dark:bg-[#0B1220] border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-[#5B45E0] cursor-pointer"
+                    className="w-full bg-surface border border-border-strong rounded-lg px-3.5 py-2.5 text-xs font-semibold text-fg focus:outline-none focus:border-primary cursor-pointer"
                   >
                     <option value="Select broker">Select broker</option>
                     {connectedBrokers.length > 0 ? (
@@ -234,7 +234,7 @@ export default function DeployModal({
               <button
                 type="button"
                 onClick={onAddBroker}
-                className="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition whitespace-nowrap"
+                className="px-3.5 py-2.5 rounded-lg border border-border-strong text-xs font-semibold text-fg-secondary hover:bg-subtle transition whitespace-nowrap"
               >
                 + Add broker
               </button>
@@ -248,15 +248,15 @@ export default function DeployModal({
               id="exitOnError"
               checked={exitOnError}
               onChange={e => setExitOnError(e.target.checked)}
-              className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-[#5B45E0] focus:ring-[#5B45E0] cursor-pointer"
+              className="w-4 h-4 rounded border-border-strong text-primary focus:ring-primary cursor-pointer"
             />
             <label
               htmlFor="exitOnError"
-              className="text-xs text-slate-600 dark:text-slate-300 cursor-pointer select-none flex items-center gap-1"
+              className="text-xs text-fg-secondary cursor-pointer select-none flex items-center gap-1"
             >
               <span>Exit strategy on error</span>
               <span title="Automatically exit all open positions and pause strategy if a broker or order execution error occurs">
-                <Info className="w-3.5 h-3.5 text-slate-400" />
+                <Info className="w-3.5 h-3.5 text-fg-muted" />
               </span>
             </label>
           </div>
@@ -265,7 +265,7 @@ export default function DeployModal({
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold shadow-lg shadow-indigo-500/25 active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 rounded-lg bg-primary hover:bg-primary text-primary-fg text-xs font-semibold shadow-pop active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Deploy</span>
             </button>

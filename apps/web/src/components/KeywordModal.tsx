@@ -116,20 +116,20 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 animate-in fade-in zoom-in-95 duration-150 transition-colors">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+      <div className="bg-surface border border-border rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col shadow-pop overflow-hidden text-fg duration-150 transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0B1220]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-subtle">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#FF6B00]/15 text-[#FF6B00] flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center font-semibold">
               <Code className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white">Tradetron Keyword Catalogue (214 Built-in)</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Select an indicator, market metric, or position keyword to build conditions</p>
+              <h3 className="font-semibold text-lg text-fg">Tradetron Keyword Catalogue (214 Built-in)</h3>
+              <p className="text-xs text-fg-muted">Select an indicator, market metric, or position keyword to build conditions</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted text-fg-muted hover:text-fg transition">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -137,16 +137,16 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
         {/* Content Split: Left list, Right parameter configurator */}
         <div className="flex-1 flex overflow-hidden">
           {/* Left Panel: Search & Keyword list */}
-          <div className="w-1/2 border-r border-slate-200 dark:border-[#334155] flex flex-col p-4 bg-slate-50/70 dark:bg-[#0B1220]/50">
+          <div className="w-1/2 border-r border-border flex flex-col p-4 bg-subtle/70">
             {/* Search */}
             <div className="relative mb-3">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Search className="w-4 h-4 text-fg-muted absolute left-3 top-3" />
               <input
                 type="text"
                 placeholder="Search 214 keywords (e.g. EMA, RSI, CPR, LTP, Delta)..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full bg-white dark:bg-[#1F2937] border border-slate-200 dark:border-[#334155] rounded-xl pl-9 pr-3 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#FF6B00]"
+                className="w-full bg-surface border border-border rounded-lg pl-9 pr-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:outline-none focus:border-primary"
               />
             </div>
 
@@ -157,7 +157,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition ${
-                    selectedCategory === cat ? 'bg-[#FF6B00] text-white shadow-sm' : 'bg-slate-200/80 dark:bg-[#334155] text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    selectedCategory === cat ? 'bg-primary text-primary-fg' : 'bg-muted/80 text-fg-secondary hover:text-fg'
                   }`}
                 >
                   {cat}
@@ -171,23 +171,23 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                 <div
                   key={kw.name}
                   onClick={() => handleSelectKeyword(kw)}
-                  className={`p-2.5 rounded-xl border cursor-pointer transition flex items-center justify-between ${
+                  className={`p-2.5 rounded-lg border cursor-pointer transition flex items-center justify-between ${
                     selectedKeyword.name === kw.name
-                      ? 'bg-[#FF6B00]/10 border-[#FF6B00] text-slate-900 dark:text-white'
-                      : 'bg-white dark:bg-[#1F2937]/60 border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-[#1F2937]'
+                      ? 'bg-primary-soft border-primary text-fg'
+                      : 'bg-surface border-border text-fg-secondary hover:border-border-strong hover:bg-muted'
                   }`}
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white">{kw.name}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 uppercase font-mono">
+                      <span className="font-semibold text-sm tracking-tight text-fg">{kw.name}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-fg-secondary uppercase font-mono">
                         {kw.category}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">{kw.description}</p>
+                    <p className="text-xs text-fg-muted line-clamp-1 mt-0.5">{kw.description}</p>
                   </div>
                   {selectedKeyword.name === kw.name && (
-                    <Check className="w-4 h-4 text-[#FF6B00] shrink-0 ml-2" />
+                    <Check className="w-4 h-4 text-primary shrink-0 ml-2" />
                   )}
                 </div>
               ))}
@@ -195,34 +195,34 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
           </div>
 
           {/* Right Panel: Parameters, Comparator & Preview */}
-          <div className="w-1/2 p-6 flex flex-col overflow-y-auto bg-white dark:bg-[#1F2937]">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-[#334155]">
+          <div className="w-1/2 p-6 flex flex-col overflow-y-auto bg-surface">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#FF6B00]">Configure Keyword</span>
-                <h4 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{selectedKeyword.name}</h4>
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary">Configure Keyword</span>
+                <h4 className="text-xl font-semibold text-fg mt-0.5">{selectedKeyword.name}</h4>
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-muted border border-border text-fg-secondary font-medium">
                 {selectedKeyword.category}
               </span>
             </div>
 
-            <p className="text-sm text-slate-700 dark:text-slate-300 mb-5 leading-relaxed bg-slate-50 dark:bg-[#0B1220] p-3 rounded-xl border border-slate-200 dark:border-[#334155]">
+            <p className="text-sm text-fg-secondary mb-5 leading-relaxed bg-subtle p-3 rounded-lg border border-border">
               {selectedKeyword.description}
             </p>
 
             {/* Parameter Inputs */}
             {selectedKeyword.params.length > 0 && (
               <div className="space-y-3 mb-6">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Parameters</label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-fg-secondary">Parameters</label>
                 <div className="grid grid-cols-2 gap-3">
                   {selectedKeyword.params.map(param => (
                     <div key={param.name}>
-                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">{param.name}</label>
+                      <label className="block text-xs font-medium text-fg-secondary mb-1">{param.name}</label>
                       {param.type === 'instrument' ? (
                         <select
                           value={paramValues[param.name] || param.default}
                           onChange={e => setParamValues({ ...paramValues, [param.name]: e.target.value })}
-                          className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
+                          className="w-full bg-subtle border border-border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary"
                         >
                           <option value="NIFTY 50">NIFTY 50</option>
                           <option value="BANKNIFTY">BANKNIFTY</option>
@@ -235,7 +235,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                         <select
                           value={paramValues[param.name] || param.default}
                           onChange={e => setParamValues({ ...paramValues, [param.name]: e.target.value })}
-                          className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
+                          className="w-full bg-subtle border border-border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary"
                         >
                           <option value="1m">1 min</option>
                           <option value="3m">3 min</option>
@@ -250,7 +250,7 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                           type="text"
                           value={paramValues[param.name] ?? param.default}
                           onChange={e => setParamValues({ ...paramValues, [param.name]: e.target.value })}
-                          className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
+                          className="w-full bg-subtle border border-border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary"
                         />
                       )}
                     </div>
@@ -261,14 +261,14 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
 
             {/* Condition Comparator & Value */}
             <div className="space-y-3 mb-6">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Comparator & Target Value</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-fg-secondary">Comparator & Target Value</label>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Operator</label>
+                  <label className="block text-xs font-medium text-fg-secondary mb-1">Operator</label>
                   <select
                     value={comparator}
                     onChange={e => setComparator(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
+                    className="w-full bg-subtle border border-border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary"
                   >
                     <option value=">">Greater than (&gt;)</option>
                     <option value=">=">Greater than or Equal (&gt;=)</option>
@@ -281,24 +281,24 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Target / Threshold Value</label>
+                  <label className="block text-xs font-medium text-fg-secondary mb-1">Target / Threshold Value</label>
                   <input
                     type="text"
                     value={rightValue}
                     onChange={e => setRightValue(e.target.value)}
                     placeholder="e.g. 50, 09:20, or SMA(50)"
-                    className="w-full bg-slate-50 dark:bg-[#0B1220] border border-slate-200 dark:border-[#334155] rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6B00]"
+                    className="w-full bg-subtle border border-border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
             </div>
 
             {/* Preview Box */}
-            <div className="mt-auto pt-4 border-t border-slate-200 dark:border-[#334155]">
-              <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+            <div className="mt-auto pt-4 border-t border-border">
+              <span className="block text-[11px] font-semibold uppercase tracking-wider text-fg-muted mb-1.5">
                 Calculated Condition Expression
               </span>
-              <div className="p-3 bg-slate-100 dark:bg-[#0B1220] border border-[#FF6B00]/40 rounded-xl font-mono text-sm text-[#FF6B00] font-semibold overflow-x-auto whitespace-nowrap shadow-inner">
+              <div className="p-3 bg-muted border border-primary/40 rounded-lg font-mono text-sm text-primary font-semibold overflow-x-auto whitespace-nowrap shadow-inner">
                 {constructExpression()}
               </div>
             </div>
@@ -306,20 +306,20 @@ export default function KeywordModal({ isOpen, onClose, onSelect }: KeywordModal
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0B1220]">
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-subtle">
+          <span className="text-xs text-fg-muted font-mono">
             Tradetron AST Engine · Zero-Eval Safe
           </span>
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 text-xs font-semibold transition"
+              className="px-4 py-2 rounded-lg border border-border-strong text-fg-secondary hover:text-fg hover:bg-muted text-xs font-semibold transition"
             >
               Cancel
             </button>
             <button
               onClick={handleConfirm}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] text-white text-xs font-bold shadow-lg shadow-orange-500/20 hover:brightness-110 transition flex items-center gap-1.5"
+              className="px-5 py-2 rounded-lg bg-primary text-primary-fg text-xs font-semibold shadow-pop hover:brightness-110 transition flex items-center gap-1.5"
             >
               <Check className="w-4 h-4" /> Add Condition to Strategy
             </button>
